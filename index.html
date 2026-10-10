@@ -67,7 +67,7 @@ const h = location.hash.slice(1).split('/').map(Number);
 if (h.length === 3 && h.every(isFinite)) map.setView([h[1], h[2]], h[0]); else map.setView([51.838, 21.418], 14);
 map.on('moveend', () => { const c = map.getCenter(); history.replaceState(null, '', `#${map.getZoom()}/${c.lat.toFixed(5)}/${c.lng.toFixed(5)}`); });
 const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 20, maxNativeZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' });
+  maxZoom: 20, maxNativeZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
 const jasny = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
   maxZoom: 20, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; CARTO' }).addTo(map);
 const orto = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution', {
@@ -85,7 +85,7 @@ const get = n => fetch('data/' + n + '.geojson').then(r => r.json());
 fetch('data/stan.json').then(r => r.json()).then(s => document.getElementById('stan').textContent = 'stan na ' + s.stan_na).catch(() => {});
 
 const warstwy = {};
-const ctl = L.control.layers({ 'Jasny podkład': jasny, 'OpenStreetMap': osm, 'Ortofotomapa': orto, 'Cieniowanie terenu': cien }, {}, { collapsed: true }).addTo(map);
+const ctl = L.control.layers({ 'OpenStreetMap': osm, 'Ortofotomapa': orto, 'Cieniowanie terenu': cien }, {}, { collapsed: true }).addTo(map);
 function dodaj(nazwa, lay, wlacz = true) { warstwy[nazwa] = lay; ctl.addOverlay(lay, nazwa); if (wlacz) lay.addTo(map); }
 // warstwy pokazywane dopiero od danego przybliżenia
 const odZoomu = [];
