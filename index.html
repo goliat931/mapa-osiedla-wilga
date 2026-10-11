@@ -28,9 +28,34 @@
   .kom { font:700 22px "Segoe UI",sans-serif; color:rgba(40,40,40,.28); }
   .poi { width:22px; height:22px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.4); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; }
   .leaflet-div-icon { background:none; border:none; }
+  #top .wiersz { display:flex; gap:6px; }
+  #top .wiersz input { flex:1; min-width:0; }
+  #btn-indeks, #btn-info { font-size:14px; padding:6px 10px; border:1px solid #b8c0cc; border-radius:6px; background:#f4f6f9; cursor:pointer; white-space:nowrap; }
+  #indeks { top:10px; right:10px; bottom:22px; width:330px; display:none; flex-direction:column; }
+  #indeks.otwarty { display:flex; }
+  #indeks header { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid #e3e6ea; }
+  #indeks header h2 { font-size:16px; margin:0; }
+  #indeks header button, #info header button { border:0; background:none; font-size:22px; cursor:pointer; line-height:1; }
+  #indeks .lista { overflow:auto; padding:4px 12px 12px; font-size:14px; }
+  #indeks .lit { font-weight:700; color:var(--niebieski); margin:10px 0 2px; border-bottom:1px solid #e3e6ea; }
+  #indeks .ul { margin:5px 0; }
+  #indeks .ul > a { font-weight:600; color:var(--tekst); text-decoration:none; cursor:pointer; }
+  #indeks .ul > a:hover { color:var(--niebieski); text-decoration:underline; }
+  #indeks .kw { display:flex; gap:6px; margin-left:10px; color:var(--szary); font-size:13px; }
+  #indeks .kw a { color:var(--niebieski); font-weight:600; cursor:pointer; }
+  #indeks .kw .k { min-width:64px; }
+  #info { top:70px; left:54px; right:10px; max-width:460px; display:none; }
+  #info.otwarty { display:block; }
+  #info header { display:flex; justify-content:space-between; align-items:center; padding:8px 12px 0; }
+  #info header h2 { font-size:16px; margin:0; }
+  #info .tresc { padding:4px 12px 12px; font-size:14px; line-height:1.45; }
   @media (max-width: 600px) {
     #legenda { display:none; bottom:10px; max-height:60vh; }
     #legenda.otwarta { display:block; }
+    #indeks { left:10px; width:auto; top:60px; }
+    #top { left:54px; right:10px; }
+    #btn-indeks { padding:6px 8px; }
+    #info { top:96px; left:10px; }
     #pokaz-leg { display:block; position:absolute; z-index:1000; bottom:22px; left:10px; padding:8px 12px; font-size:14px; border:0; border-radius:8px; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.25); }
   }
 </style>
@@ -39,9 +64,20 @@
 <div id="map"></div>
 <div id="top" class="panel">
   <h1>Mapa Osiedla Wilga <span class="stan" id="stan"></span></h1>
-  <input id="szukaj" list="lista" placeholder="Szukaj ulicy lub adresu, np. Lipowa 12" autocomplete="off">
+  <div class="wiersz">
+    <input id="szukaj" list="lista" placeholder="Szukaj ulicy lub adresu, np. Lipowa 12" autocomplete="off">
+    <button id="btn-indeks">Indeks ulic</button>
+    <button id="btn-info" title="O mapie">ⓘ</button>
+  </div>
   <datalist id="lista"></datalist>
 </div>
+<div id="indeks" class="panel"><header><h2>Indeks ulic</h2><button id="zamknij-indeks" aria-label="Zamknij">×</button></header><div class="lista" id="indeks-lista"></div></div>
+<div id="info" class="panel"><header><h2>O mapie</h2><button id="zamknij-info" aria-label="Zamknij">×</button></header>
+  <div class="tresc">
+    <p>Mapa powstała jako oddolna inicjatywa mieszkańca Osiedla Wilga, wsparta przez Sołtysa Osiedla Wilga, Marcina Olkowicza.</p>
+    <p>Pomysł narodził się na zebraniu wiejskim, w dyskusji ze strażakami: w lesie gubi się sygnał GPS, a trafienie pod właściwy adres zajmuje cenne minuty. Dlatego mapa ma przede wszystkim <b>ułatwić służbom ratunkowym dojazd do posesji</b>: pokazuje nazwy ulic i numery domów, przejezdność dróg dla wozów strażackich, hydranty, zbiorniki wody i strome podjazdy.</p>
+    <p>To wersja robocza, uzupełniana na bieżąco. Przejezdność dróg i stromizny są wstępne i weryfikowane razem z jednostkami OSP. Uwagi i poprawki mile widziane.</p>
+  </div></div>
 <button id="pokaz-leg">Legenda</button>
 <div id="legenda" class="panel">
   <h2>Drogi — przejezdność</h2>
@@ -56,7 +92,7 @@
   <div class="lw"><img src="ikony/strzalka_spadek_1.svg" alt="">6–10%</div>
   <div class="lw"><img src="ikony/strzalka_spadek_2.svg" alt="">10–15%</div>
   <div class="lw"><img src="ikony/strzalka_spadek_3.svg" alt="">ponad 15%</div>
-  <div class="uwaga">Mapa robocza oddolnej inicjatywy mieszkańców (Przedsięwzięcie nr 3, gm. Wilga). Przejezdność i stromizny są wstępne, do potwierdzenia z OSP. Adresy: PRG, ulice: eTeryt, drogi i woda: OpenStreetMap, teren: NMT GUGiK. Kliknij drogę lub punkt, żeby zobaczyć szczegóły.</div>
+  <div class="uwaga">Mapa dla służb ratunkowych — wersja robocza. Przejezdność i stromizny są wstępne, weryfikowane z OSP. Kliknij drogę lub punkt, żeby zobaczyć szczegóły.</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -177,7 +213,36 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     e.target.blur();
   });
   map.fire('zoomend');
+
+  // indeks ulic
+  const komorki = {};
+  siat.features.forEach(f => komorki[f.properties.c] = L.geoJSON(f).getBounds());
+  let ramka;
+  const pokaz = b => { if (ramka) map.removeLayer(ramka); map.fitBounds(b, { maxZoom: 17, padding: [30, 30] });
+    ramka = L.rectangle(b, { color: '#1d4f91', weight: 3, fill: false, dashArray: '6 4' }).addTo(map);
+    if (window.innerWidth <= 600) document.getElementById('indeks').classList.remove('otwarty'); };
+  fetch('data/indeks.json').then(r => r.json()).then(ind => {
+    const el = document.getElementById('indeks-lista'); let lit = '';
+    ind.forEach(({ u, w }) => {
+      const l = u[0].toUpperCase();
+      if (l !== lit) { lit = l; el.insertAdjacentHTML('beforeend', `<div class="lit">${esc(l)}</div>`); }
+      const d = document.createElement('div'); d.className = 'ul';
+      d.innerHTML = `<a>${esc(u)}</a>` + w.map(r => `<div class="kw"><span class="k">${r.k.map(k => `<a data-k="${esc(k)}">${esc(k)}</a>`).join(', ')}</span>${r.nr ? `<span>nr ${esc(r.nr)}</span>` : ''}</div>`).join('');
+      d.querySelector('a').onclick = () => indeks[u] && pokaz(indeks[u]);
+      d.querySelectorAll('a[data-k]').forEach(a => a.onclick = () => {
+        const [p, q] = a.dataset.k.split('-'), b = komorki[p] && L.latLngBounds(komorki[p].getSouthWest(), komorki[p].getNorthEast());
+        if (b) { if (q && komorki[q]) b.extend(komorki[q]); pokaz(b); } });
+      el.appendChild(d);
+    });
+  });
 });
+document.getElementById('btn-indeks').onclick = () => document.getElementById('indeks').classList.toggle('otwarty');
+document.getElementById('zamknij-indeks').onclick = () => document.getElementById('indeks').classList.remove('otwarty');
+document.getElementById('btn-info').onclick = () => document.getElementById('info').classList.toggle('otwarty');
+document.getElementById('zamknij-info').onclick = () => document.getElementById('info').classList.remove('otwarty');
+// przy pierwszej wizycie pokaż „O mapie”
+try { if (!localStorage.getItem('wilga-info')) { document.getElementById('info').classList.add('otwarty'); localStorage.setItem('wilga-info', '1'); } } catch (e) {}
+if (location.search.includes('indeks')) document.getElementById('indeks').classList.add('otwarty');
 
 document.getElementById('pokaz-leg').addEventListener('click', () => document.getElementById('legenda').classList.toggle('otwarta'));
 </script>

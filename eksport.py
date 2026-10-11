@@ -53,5 +53,23 @@ prg.setCrs(QgsCoordinateReferenceSystem('EPSG:2180'))
 dump(prg, 'adresy', lambda f: {'u': f['NAZWA_ULC'], 'n': f['NUMER_PORZ']},
      expr="\"ID_SIMC\"='0694095' AND \"NAZWA_ULC\" != 'Wilgi'")
 
+# indeks ulic: to samo źródło co indeks w atlasie A3
+with open('C:/Users/golia/wilga-mapa/data/indeks_ulic_bloki.json', encoding='utf8') as fi:
+    bloki = json.load(fi)
+indeks = []
+for b in bloki:
+    nazwa, wiersze_txt = b[0], b[1:]
+    if not wiersze_txt and ' — ' in nazwa:  # krótki wpis w jednej linii: "Biedronki — C7, nr 3"
+        nazwa, reszta = nazwa.split(' — ', 1)
+        wiersze_txt = [reszta.replace(', nr ', ' nr ')]
+    wiersze = []
+    for w in wiersze_txt:
+        kom, _, nr = w.strip().partition(' nr ')
+        wiersze.append({'k': [k.strip() for k in kom.split(',') if k.strip()], 'nr': nr or None})
+    indeks.append({'u': nazwa, 'w': wiersze})
+with open(f'{OUT}/indeks.json', 'w', encoding='utf8') as fo:
+    json.dump(indeks, fo, ensure_ascii=False, separators=(',', ':'))
+print('indeks', len(indeks))
+
 with open(f'{OUT}/stan.json', 'w', encoding='utf8') as fo:
     json.dump({'stan_na': datetime.date.today().isoformat()}, fo)
