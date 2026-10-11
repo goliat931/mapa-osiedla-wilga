@@ -11,7 +11,7 @@
   html, body { margin:0; height:100%; font-family: "Segoe UI", system-ui, sans-serif; color:var(--tekst); background:var(--tlo); }
   #map { position:absolute; inset:0; }
   .panel { position:absolute; z-index:1000; background:#fff; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.25); }
-  #top { top:10px; left:54px; right:10px; max-width:460px; padding:8px 10px; }
+  #top { top:10px; left:54px; right:10px; max-width:600px; padding:8px 10px; }
   #top h1 { font-size:17px; margin:0 0 6px; }
   #top .stan { font-size:12px; color:var(--szary); margin-left:6px; font-weight:400; }
   #szukaj { width:100%; box-sizing:border-box; font-size:16px; padding:7px 9px; border:1px solid #b8c0cc; border-radius:6px; }
@@ -44,7 +44,14 @@
   #indeks .kw { display:flex; gap:6px; margin-left:10px; color:var(--szary); font-size:13px; }
   #indeks .kw a { color:var(--niebieski); font-weight:600; cursor:pointer; }
   #indeks .kw .k { min-width:64px; }
-  #info { top:70px; left:54px; right:10px; max-width:460px; display:none; }
+  #info { top:70px; left:54px; right:10px; max-width:460px; display:none; max-height:calc(100vh - 100px); overflow:auto; }
+  body.info-otwarte #legenda { display:none; }
+  #btn-zglos { font-size:14px; padding:6px 10px; border:0; border-radius:6px; background:#c62828; color:#fff; cursor:pointer; white-space:nowrap; }
+  body.tryb-zglos #map { cursor:crosshair; }
+  #zglos-pasek { top:70px; left:50%; transform:translateX(-50%); padding:8px 12px; font-size:14px; display:none; }
+  body.tryb-zglos #zglos-pasek { display:block; }
+  .zglos-popup p { margin:4px 0; }
+  .zglos-popup a.btn { display:inline-block; margin-top:6px; padding:6px 10px; background:#1d4f91; color:#fff; border-radius:6px; text-decoration:none; }
   #info.otwarty { display:block; }
   #info header { display:flex; justify-content:space-between; align-items:center; padding:8px 12px 0; }
   #info header h2 { font-size:16px; margin:0; }
@@ -53,6 +60,7 @@
     #legenda { display:none; bottom:10px; max-height:60vh; }
     #legenda.otwarta { display:block; }
     #indeks { left:10px; width:auto; top:60px; }
+    .dl { display:none; }
     #top { left:54px; right:10px; }
     #btn-indeks { padding:6px 8px; }
     #info { top:96px; left:10px; }
@@ -66,7 +74,8 @@
   <h1>Mapa Osiedla Wilga <span class="stan" id="stan"></span></h1>
   <div class="wiersz">
     <input id="szukaj" list="lista" placeholder="Szukaj ulicy lub adresu, np. Lipowa 12" autocomplete="off">
-    <button id="btn-indeks">Indeks ulic</button>
+    <button id="btn-indeks">Indeks<span class="dl"> ulic</span></button>
+    <button id="btn-zglos" title="Zgłoś błąd lub brak na mapie">Zgłoś<span class="dl"> uwagę</span></button>
     <button id="btn-info" title="O mapie">ⓘ</button>
   </div>
   <datalist id="lista"></datalist>
@@ -76,8 +85,10 @@
   <div class="tresc">
     <p>Mapa powstała jako oddolna inicjatywa mieszkańca Osiedla Wilga, wsparta przez Sołtysa Osiedla Wilga, Marcina Olkowicza.</p>
     <p>Pomysł narodził się na zebraniu wiejskim, w dyskusji ze strażakami: w lesie gubi się sygnał GPS, a trafienie pod właściwy adres zajmuje cenne minuty. Dlatego mapa ma przede wszystkim <b>ułatwić służbom ratunkowym dojazd do posesji</b>: pokazuje nazwy ulic i numery domów, przejezdność dróg dla wozów strażackich, hydranty, zbiorniki wody i strome podjazdy.</p>
-    <p>To wersja robocza, uzupełniana na bieżąco. Przejezdność dróg i stromizny są wstępne i weryfikowane razem z jednostkami OSP. Uwagi i poprawki mile widziane.</p>
+    <p>To wersja robocza, uzupełniana na bieżąco. Przejezdność dróg i stromizny są wstępne i weryfikowane razem z jednostkami OSP.</p>
+    <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś uwagę</b> i wskaż miejsce na mapie. Każde zgłoszenie sprawdzamy, zanim zmienimy mapę; lista zgłoszeń i ich status: <a href="https://github.com/goliat931/mapa-osiedla-wilga/issues" target="_blank" rel="noopener">zgłoszenia na GitHubie</a>.</p>
   </div></div>
+<div id="zglos-pasek" class="panel">Kliknij miejsce na mapie, którego dotyczy uwaga. <a href="#" id="zglos-anuluj">Anuluj</a></div>
 <button id="pokaz-leg">Legenda</button>
 <div id="legenda" class="panel">
   <h2>Drogi — przejezdność</h2>
@@ -221,6 +232,35 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   const pokaz = b => { if (ramka) map.removeLayer(ramka); map.fitBounds(b, { maxZoom: 17, padding: [30, 30] });
     ramka = L.rectangle(b, { color: '#1d4f91', weight: 3, fill: false, dashArray: '6 4' }).addTo(map);
     if (window.innerWidth <= 600) document.getElementById('indeks').classList.remove('otwarty'); };
+  // zgłoszenie uwagi: komórka siatki + najbliższa ulica, potem gotowy formularz na GitHubie
+  const wKomorce = ll => { for (const f of siat.features) { const r = f.geometry.coordinates[0][0] || f.geometry.coordinates[0];
+      const ring = typeof r[0] === 'number' ? f.geometry.coordinates[0] : r; let w = false;
+      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) { const [xi, yi] = ring[i], [xj, yj] = ring[j];
+        if ((yi > ll.lat) !== (yj > ll.lat) && ll.lng < (xj - xi) * (ll.lat - yi) / (yj - yi) + xi) w = !w; }
+      if (w) return f.properties.c; } return null; };
+  const najblizsza = ll => { const p = map.project(ll, 18); let best = [Infinity, null];
+    drogi.features.forEach(f => { if (!f.properties.n) return;
+      const lines = f.geometry.type === 'MultiLineString' ? f.geometry.coordinates : [f.geometry.coordinates];
+      lines.forEach(c => { for (let i = 1; i < c.length; i++) {
+        const d = L.LineUtil.pointToSegmentDistance(p, map.project([c[i - 1][1], c[i - 1][0]], 18), map.project([c[i][1], c[i][0]], 18));
+        if (d < best[0]) best = [d, f.properties.n]; } }); });
+    return best[1] ? [best[1], Math.round(best[0] * map.distance(map.unproject([0, 0], 18), map.unproject([1, 0], 18)))] : null; };
+  let zglosMarker;
+  map.on('click', e => {
+    if (!document.body.classList.contains('tryb-zglos')) return;
+    document.body.classList.remove('tryb-zglos');
+    const ll = e.latlng, kom = wKomorce(ll), ul = najblizsza(ll);
+    const link = `${location.origin}${location.pathname}#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
+    const miejsce = `${ul ? ul[0] + (ul[1] > 15 ? ` (ok. ${ul[1]} m od ulicy)` : '') : 'brak ulicy w pobliżu'}, komórka ${kom || '—'}, GPS ${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)} — ${link}`;
+    const url = 'https://github.com/goliat931/mapa-osiedla-wilga/issues/new?template=zgloszenie.yml'
+      + '&title=' + encodeURIComponent(`[Zgłoszenie] ${ul ? ul[0] : 'komórka ' + (kom || '—')}`) + '&lokalizacja=' + encodeURIComponent(miejsce);
+    if (zglosMarker) map.removeLayer(zglosMarker);
+    zglosMarker = L.circleMarker(ll, { radius: 10, color: '#c62828', weight: 3, fillOpacity: .15 }).addTo(map)
+      .bindPopup(`<div class="zglos-popup"><p><b>${esc(ul ? ul[0] : 'Miejsce bez nazwy ulicy')}</b>, komórka ${esc(kom || '—')}</p>
+        <p>Otworzy się formularz na GitHubie z wpisanym miejscem — dopisz tylko, co jest nie tak. Potrzebne darmowe konto GitHub; zgłoszenie jest publiczne.</p>
+        <a class="btn" href="${url}" target="_blank" rel="noopener">Opisz zgłoszenie →</a></div>`).openPopup();
+  });
+
   fetch('data/indeks.json').then(r => r.json()).then(ind => {
     const el = document.getElementById('indeks-lista'); let lit = '';
     ind.forEach(({ u, w }) => {
@@ -238,10 +278,14 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
 });
 document.getElementById('btn-indeks').onclick = () => document.getElementById('indeks').classList.toggle('otwarty');
 document.getElementById('zamknij-indeks').onclick = () => document.getElementById('indeks').classList.remove('otwarty');
-document.getElementById('btn-info').onclick = () => document.getElementById('info').classList.toggle('otwarty');
-document.getElementById('zamknij-info').onclick = () => document.getElementById('info').classList.remove('otwarty');
+const info = document.getElementById('info');
+const ustawInfo = otw => { info.classList.toggle('otwarty', otw); document.body.classList.toggle('info-otwarte', otw); };
+document.getElementById('btn-info').onclick = () => ustawInfo(!info.classList.contains('otwarty'));
+document.getElementById('zamknij-info').onclick = () => ustawInfo(false);
+document.getElementById('btn-zglos').onclick = () => { ustawInfo(false); document.body.classList.add('tryb-zglos'); };
+document.getElementById('zglos-anuluj').onclick = e => { e.preventDefault(); document.body.classList.remove('tryb-zglos'); };
 // przy pierwszej wizycie pokaż „O mapie”
-try { if (!localStorage.getItem('wilga-info')) { document.getElementById('info').classList.add('otwarty'); localStorage.setItem('wilga-info', '1'); } } catch (e) {}
+try { if (!localStorage.getItem('wilga-info')) { ustawInfo(true); localStorage.setItem('wilga-info', '1'); } } catch (e) {}
 if (location.search.includes('indeks')) document.getElementById('indeks').classList.add('otwarty');
 
 document.getElementById('pokaz-leg').addEventListener('click', () => document.getElementById('legenda').classList.toggle('otwarta'));
