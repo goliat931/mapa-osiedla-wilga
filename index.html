@@ -5,23 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mapa Osiedla Wilga</title>
 <meta name="description" content="Robocza mapa Osiedla Wilga: ulice, adresy, przejezdność dróg, hydranty i stromizny.">
+<link rel="icon" href="herb.svg" type="image/svg+xml">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1d1f" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="wilga.css">
 <style>
-  :root { --niebieski:#1d4f91; --tekst:#141414; --tlo:#ffffff; --szary:#5b6470; }
-  html, body { margin:0; height:100%; font-family: "Segoe UI", system-ui, sans-serif; color:var(--tekst); background:var(--tlo); }
-  #map { position:absolute; inset:0; }
-  .panel { position:absolute; z-index:1000; background:#fff; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,.25); }
-  #top { top:10px; left:54px; right:10px; max-width:600px; padding:8px 10px; }
-  #top h1 { font-size:17px; margin:0 0 6px; }
-  #top .stan { font-size:12px; color:var(--szary); margin-left:6px; font-weight:400; }
-  #szukaj { width:100%; box-sizing:border-box; font-size:16px; padding:7px 9px; border:1px solid #b8c0cc; border-radius:6px; }
-  #legenda { bottom:22px; left:10px; padding:8px 10px; font-size:13px; max-width:270px; max-height:55vh; overflow:auto; }
-  #legenda h2 { font-size:13px; margin:8px 0 4px; }
+  :root { --niebieski:#1d4f91; --nad: calc(var(--bar-h) + 10px); }
+  html, body { margin:0; height:100%; font-family: var(--font); color:var(--text); background:var(--bg); }
+  #map { position:absolute; inset:var(--bar-h) 0 0 0; background:var(--surface-2); }
+  .panel { position:absolute; z-index:1000; background:var(--surface); color:var(--text); border:1px solid var(--edge); border-radius:10px; box-shadow:var(--shadow); }
+  #top { top:var(--nad); left:54px; right:10px; max-width:600px; padding:10px 12px; }
+  #top h1 { font-size:17px; margin:0 0 8px; }
+  #top .stan { font-size:12px; color:var(--muted); margin-left:6px; font-weight:400; }
+  #szukaj { width:100%; box-sizing:border-box; font:inherit; font-size:16px; padding:7px 10px; color:var(--text); background:var(--bg); border:1px solid var(--border-strong); border-radius:7px; }
+  #szukaj::placeholder { color:var(--muted); }
+  #legenda { bottom:22px; left:10px; padding:10px 12px; font-size:13px; max-width:280px; max-height:55vh; overflow:auto; }
+  #legenda h2 { font-size:13px; margin:10px 0 4px; }
   #legenda h2:first-child { margin-top:0; }
   .lw { display:flex; align-items:center; gap:8px; margin:3px 0; }
   .lw i { flex:0 0 26px; display:inline-block; height:0; border-top:5px solid; border-radius:3px; }
   .lw img { width:20px; height:20px; flex:0 0 26px; object-fit:contain; }
-  .uwaga { font-size:12px; color:var(--szary); margin-top:8px; line-height:1.35; }
+  .uwaga { font-size:12px; color:var(--muted); margin-top:8px; line-height:1.4; }
   #pokaz-leg { display:none; }
   .ulica { background:var(--niebieski); color:#fff; font:600 12px "Bahnschrift","Segoe UI",sans-serif; padding:1px 5px; border-radius:3px; border:1px solid #fff; white-space:nowrap; box-shadow:0 1px 2px rgba(0,0,0,.3); }
   .nr { font:700 11px "Bahnschrift","Segoe UI",sans-serif; color:#0b2545; text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff; white-space:nowrap; }
@@ -30,53 +35,73 @@
   .leaflet-div-icon { background:none; border:none; }
   #top .wiersz { display:flex; gap:6px; }
   #top .wiersz input { flex:1; min-width:0; }
-  #btn-indeks, #btn-info { font-size:14px; padding:6px 10px; border:1px solid #b8c0cc; border-radius:6px; background:#f4f6f9; cursor:pointer; white-space:nowrap; }
-  #indeks { top:10px; right:10px; bottom:22px; width:330px; display:none; flex-direction:column; }
+  #btn-indeks, #btn-info, #btn-zglos { font-size:14px; padding:6px 11px; white-space:nowrap; }
+  #indeks { top:var(--nad); right:10px; bottom:22px; width:330px; display:none; flex-direction:column; }
   #indeks.otwarty { display:flex; }
-  #indeks header { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid #e3e6ea; }
+  #indeks header { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid var(--border); }
   #indeks header h2 { font-size:16px; margin:0; }
-  #indeks header button, #info header button { border:0; background:none; font-size:22px; cursor:pointer; line-height:1; }
+  #indeks header button, #info header button { border:0; background:none; color:var(--muted); font-size:22px; cursor:pointer; line-height:1; border-radius:6px; padding:2px 6px; }
+  #indeks header button:hover, #info header button:hover { color:var(--text); background:var(--surface-2); }
   #indeks .lista { overflow:auto; padding:4px 12px 12px; font-size:14px; }
-  #indeks .lit { font-weight:700; color:var(--niebieski); margin:10px 0 2px; border-bottom:1px solid #e3e6ea; }
+  #indeks .lit { font-weight:700; color:var(--link); margin:10px 0 2px; border-bottom:1px solid var(--border); }
   #indeks .ul { margin:5px 0; }
-  #indeks .ul > a { font-weight:600; color:var(--tekst); text-decoration:none; cursor:pointer; }
-  #indeks .ul > a:hover { color:var(--niebieski); text-decoration:underline; }
-  #indeks .kw { display:flex; gap:6px; margin-left:10px; color:var(--szary); font-size:13px; }
-  #indeks .kw a { color:var(--niebieski); font-weight:600; cursor:pointer; }
+  #indeks .ul > a { font-weight:600; color:var(--text); text-decoration:none; cursor:pointer; }
+  #indeks .ul > a:hover { color:var(--link); text-decoration:underline; }
+  #indeks .kw { display:flex; gap:6px; margin-left:10px; color:var(--muted); font-size:13px; }
+  #indeks .kw a { color:var(--link); font-weight:600; cursor:pointer; }
   #indeks .kw .k { min-width:64px; }
-  #info { top:70px; left:54px; right:10px; max-width:460px; display:none; max-height:calc(100vh - 100px); overflow:auto; }
+  #info { top:calc(var(--bar-h) + 76px); left:54px; right:10px; max-width:460px; display:none; max-height:calc(100vh - var(--bar-h) - 100px); overflow:auto; }
   body.info-otwarte #legenda { display:none; }
-  #btn-zglos { font-size:14px; padding:6px 10px; border:0; border-radius:6px; background:#c62828; color:#fff; cursor:pointer; white-space:nowrap; }
   body.tryb-zglos #map { cursor:crosshair; }
-  #zglos-pasek { top:70px; left:50%; transform:translateX(-50%); padding:8px 12px; font-size:14px; display:none; }
+  #zglos-pasek { top:calc(var(--bar-h) + 76px); left:50%; transform:translateX(-50%); padding:8px 12px; font-size:14px; display:none; }
   body.tryb-zglos #zglos-pasek { display:block; }
   .zglos-popup p { margin:4px 0; }
-  .zglos-popup a.btn { display:inline-block; margin-top:6px; padding:6px 10px; background:#1d4f91; color:#fff; border-radius:6px; text-decoration:none; }
+  .zglos-popup a.btn { display:inline-block; margin-top:6px; padding:6px 10px; background:var(--wilga); color:#fff; border-radius:7px; text-decoration:none; font-weight:600; }
+  .zglos-popup a.btn:hover { background:var(--wilga-hover); }
   #info.otwarty { display:block; }
-  #info header { display:flex; justify-content:space-between; align-items:center; padding:8px 12px 0; }
+  #info header { display:flex; justify-content:space-between; align-items:center; padding:10px 12px 0; }
   #info header h2 { font-size:16px; margin:0; }
-  #info .tresc { padding:4px 12px 12px; font-size:14px; line-height:1.45; }
+  #info .tresc { padding:4px 12px 12px; font-size:14px; line-height:1.5; }
+  /* Leaflet w barwach motywu */
+  .leaflet-container { font-family:var(--font); }
+  .leaflet-bar a, .leaflet-control-layers { background:var(--surface); color:var(--text); border-color:var(--border); }
+  .leaflet-bar a:hover { background:var(--surface-2); color:var(--text); }
+  .leaflet-popup-content-wrapper, .leaflet-popup-tip { background:var(--surface); color:var(--text); }
+  .leaflet-popup-content a { color:var(--link); }
+  .leaflet-container a.leaflet-popup-close-button { color:var(--muted); }
+  .leaflet-container .leaflet-control-attribution { background:color-mix(in srgb, var(--surface) 82%, transparent); color:var(--muted); }
+  .leaflet-control-attribution a { color:var(--link); }
+  .leaflet-tooltip { background:var(--surface); color:var(--text); border-color:var(--border); }
+  @media (prefers-color-scheme: dark) { .leaflet-control-layers-toggle { filter:invert(1) hue-rotate(180deg); } }
   @media (max-width: 600px) {
     #legenda { display:none; bottom:10px; max-height:60vh; }
     #legenda.otwarta { display:block; }
-    #indeks { left:10px; width:auto; top:60px; }
+    #indeks { left:10px; width:auto; top:calc(var(--bar-h) + 104px); }
     .dl { display:none; }
     #top { left:54px; right:10px; }
-    #btn-indeks { padding:6px 8px; }
-    #info { top:96px; left:10px; }
-    #pokaz-leg { display:block; position:absolute; z-index:1000; bottom:22px; left:10px; padding:8px 12px; font-size:14px; border:0; border-radius:8px; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.25); }
+    #btn-indeks, #btn-zglos { padding:6px 8px; }
+    #info, #zglos-pasek { top:calc(var(--bar-h) + 104px); left:10px; }
+    #zglos-pasek { right:10px; transform:none; }
+    #pokaz-leg { display:block; position:absolute; z-index:1000; bottom:22px; left:10px; padding:8px 12px; font-size:14px; border-radius:8px; box-shadow:var(--shadow); }
   }
 </style>
 </head>
 <body>
+<header class="wilga-bar">
+  <a class="wilga-brand" href="https://wilga.goliat.dev/"><img src="herb.svg" alt=""><span>Osiedle Wilga</span></a>
+  <nav class="wilga-nav" aria-label="Projekty Osiedla Wilga">
+    <a href="https://mapa-wilga.goliat.dev/" aria-current="page">Mapa</a>
+    <a href="https://tabliczki-adresowe.goliat.dev/">Tabliczki adresowe</a>
+  </nav>
+</header>
 <div id="map"></div>
 <div id="top" class="panel">
   <h1>Mapa Osiedla Wilga <span class="stan" id="stan"></span></h1>
   <div class="wiersz">
     <input id="szukaj" list="lista" placeholder="Szukaj ulicy lub adresu, np. Lipowa 12" autocomplete="off">
-    <button id="btn-indeks">Indeks<span class="dl"> ulic</span></button>
-    <button id="btn-zglos" title="Zgłoś błąd lub brak na mapie">Zgłoś<span class="dl"> uwagę</span></button>
-    <button id="btn-info" title="O mapie">ⓘ</button>
+    <button id="btn-indeks" class="btn-secondary">Indeks<span class="dl"> ulic</span></button>
+    <button id="btn-zglos" class="btn-primary" title="Zgłoś błąd lub brak na mapie">Zgłoś<span class="dl"> uwagę</span></button>
+    <button id="btn-info" class="btn-secondary" title="O mapie" aria-label="O mapie"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:block"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
   </div>
   <datalist id="lista"></datalist>
 </div>
@@ -89,7 +114,7 @@
     <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś uwagę</b> i wskaż miejsce na mapie. Każde zgłoszenie sprawdzamy, zanim zmienimy mapę; lista zgłoszeń i ich status: <a href="https://github.com/goliat931/mapa-osiedla-wilga/issues" target="_blank" rel="noopener">zgłoszenia na GitHubie</a>.</p>
   </div></div>
 <div id="zglos-pasek" class="panel">Kliknij miejsce na mapie, którego dotyczy uwaga. <a href="#" id="zglos-anuluj">Anuluj</a></div>
-<button id="pokaz-leg">Legenda</button>
+<button id="pokaz-leg" class="btn-secondary">Legenda</button>
 <div id="legenda" class="panel">
   <h2>Drogi — przejezdność</h2>
   <div class="lw"><i style="border-color:#1e9e4a"></i>przejezdna dla ciężkiego wozu OSP</div>
