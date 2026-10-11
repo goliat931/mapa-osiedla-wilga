@@ -1,6 +1,6 @@
 # Mapa Osiedla Wilga
 
-**Mapa:** https://mapa-wilga.goliat.dev/
+**Mapa:** https://mapa-osiedle-wilga.goliat.dev/
 
 Oddolna inicjatywa mieszkańca Osiedla Wilga, wsparta przez Sołtysa Osiedla Wilga, Marcina Olkowicza.
 
