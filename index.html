@@ -95,6 +95,11 @@
   .leaflet-control-attribution a { color:var(--link); }
   .leaflet-tooltip { background:var(--surface); color:var(--text); border-color:var(--border); }
   @media (prefers-color-scheme: dark) { .leaflet-control-layers-toggle { filter:invert(1) hue-rotate(180deg); } }
+  /* wąski ekran: panel #top sięga prawej krawędzi, więc przełącznik warstw schodzi pod niego */
+  @media (max-width: 720px) {
+    .leaflet-top.leaflet-right { top:94px; }
+    body.tryb-zglos .leaflet-top.leaflet-right { display:none; }
+  }
   @media (max-width: 600px) {
     #legenda { display:none; bottom:10px; max-height:60vh; }
     #legenda.otwarta { display:block; }
