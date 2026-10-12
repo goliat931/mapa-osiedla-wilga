@@ -56,8 +56,17 @@
   #zglos-pasek { top:calc(var(--bar-h) + 76px); left:50%; transform:translateX(-50%); padding:8px 12px; font-size:14px; display:none; }
   body.tryb-zglos #zglos-pasek { display:block; }
   .zglos-popup p { margin:4px 0; }
-  .zglos-popup a.btn { display:inline-block; margin-top:6px; padding:6px 10px; background:var(--wilga); color:#fff; border-radius:7px; text-decoration:none; font-weight:600; }
-  .zglos-popup a.btn:hover { background:var(--wilga-hover); }
+  .zglos-popup { width:min(270px, 68vw); }
+  .zglos-popup label { display:block; margin:8px 0 0; font-size:13px; font-weight:600; }
+  .zglos-popup select, .zglos-popup textarea, .zglos-popup input { display:block; width:100%; box-sizing:border-box; margin-top:3px; font:inherit; font-size:16px; font-weight:400; }
+  .zglos-popup select, .zglos-popup textarea, .zglos-popup input:not([type=file]) { padding:5px 7px; border:1px solid #9aa0a6; border-radius:7px; }
+  .zglos-popup input[type=file] { font-size:13px; }
+  .zglos-popup .pulapka { position:absolute; left:-9999px; }
+  .zglos-popup button { margin-top:10px; padding:7px 12px; border:0; cursor:pointer; background:var(--wilga); color:#fff; border-radius:7px; font:inherit; font-weight:600; }
+  .zglos-popup button:hover { background:var(--wilga-hover); }
+  .zglos-popup button:disabled { opacity:.6; cursor:progress; }
+  .zglos-popup .drobne { font-size:12px; color:#5f6368; }
+  .zglos-popup .blad { color:#b3261e; font-weight:600; }
   #info.otwarty { display:block; }
   #info header { display:flex; justify-content:space-between; align-items:center; padding:10px 12px 0; }
   #info header h2 { font-size:16px; margin:0; }
@@ -110,7 +119,7 @@
     <p>Mapa powstała jako oddolna inicjatywa mieszkańca Osiedla Wilga, wsparta przez Sołtysa Osiedla Wilga, Marcina Olkowicza.</p>
     <p>Pomysł narodził się na zebraniu wiejskim, w dyskusji ze strażakami: w lesie gubi się sygnał GPS, a trafienie pod właściwy adres zajmuje cenne minuty. Dlatego mapa ma przede wszystkim <b>ułatwić służbom ratunkowym dojazd do posesji</b>: pokazuje nazwy ulic i numery domów, przejezdność dróg dla wozów strażackich, hydranty, zbiorniki wody i strome podjazdy.</p>
     <p>To wersja robocza, uzupełniana na bieżąco. Przejezdność dróg i stromizny są wstępne i weryfikowane razem z jednostkami OSP.</p>
-    <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś uwagę</b> i wskaż miejsce na mapie. Każde zgłoszenie sprawdzamy, zanim zmienimy mapę; lista zgłoszeń i ich status: <a href="https://github.com/goliat931/mapa-osiedla-wilga/issues" target="_blank" rel="noopener">zgłoszenia na GitHubie</a>.</p>
+    <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś uwagę</b> i wskaż miejsce na mapie: nie trzeba się logować, można dołączyć zdjęcie z terenu albo zrzut ekranu. Każdą uwagę sprawdzamy, zanim zmienimy mapę.</p>
   </div></div>
 <div id="zglos-pasek" class="panel">Kliknij miejsce na mapie, którego dotyczy uwaga. <a href="#" id="zglos-anuluj">Anuluj</a></div>
 <button id="pokaz-leg" class="btn-secondary">Legenda</button>
@@ -256,7 +265,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   const pokaz = b => { if (ramka) map.removeLayer(ramka); map.fitBounds(b, { maxZoom: 17, padding: [30, 30] });
     ramka = L.rectangle(b, { color: '#1d4f91', weight: 3, fill: false, dashArray: '6 4' }).addTo(map);
     if (window.innerWidth <= 600) document.getElementById('indeks').classList.remove('otwarty'); };
-  // zgłoszenie uwagi: komórka siatki + najbliższa ulica, potem gotowy formularz na GitHubie
+  // zgłoszenie uwagi: komórka siatki + najbliższa ulica, potem formularz w dymku (zapis: Mapa/apps-script/Uwagi.js)
   const wKomorce = ll => { for (const f of siat.features) { const r = f.geometry.coordinates[0][0] || f.geometry.coordinates[0];
       const ring = typeof r[0] === 'number' ? f.geometry.coordinates[0] : r; let w = false;
       for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) { const [xi, yi] = ring[i], [xj, yj] = ring[j];
@@ -270,19 +279,48 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
         if (d < best[0]) best = [d, f.properties.n]; } }); });
     return best[1] ? [best[1], Math.round(best[0] * map.distance(map.unproject([0, 0], 18), map.unproject([1, 0], 18)))] : null; };
   let zglosMarker;
+  const UWAGI_URL = 'https://script.google.com/macros/s/AKfycbx5_boeKa5TW8bYz6l0BVVLcDrarPWOq-bw0F1mqtb853NetDbo1quVrEEqta77Y_FK_Q/exec';
+  const TYPY_UWAG = ['Droga nieprzejezdna lub trudny dojazd', 'Droga przejezdna, a na mapie oznaczona inaczej', 'Hydrant lub zbiornik wody',
+    'Numer domu lub adres', 'Nazwa ulicy', 'Brakująca droga lub skrót', 'Inne'];
+  // zdjęcie z telefonu zmniejszone do 1600 px (JPEG), żeby wysyłka działała też przy słabym zasięgu
+  const zmniejsz = plik => new Promise((ok, zle) => { const img = new Image();
+    img.onload = () => { const k = Math.min(1, 1600 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src); ok(c.toDataURL('image/jpeg', .82)); };
+    img.onerror = () => zle(new Error('Nie udało się odczytać zdjęcia.')); img.src = URL.createObjectURL(plik); });
   map.on('click', e => {
     if (!document.body.classList.contains('tryb-zglos')) return;
     document.body.classList.remove('tryb-zglos');
     const ll = e.latlng, kom = wKomorce(ll), ul = najblizsza(ll);
     const link = `${location.origin}${location.pathname}#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
-    const miejsce = `${ul ? ul[0] + (ul[1] > 15 ? ` (ok. ${ul[1]} m od ulicy)` : '') : 'brak ulicy w pobliżu'}, komórka ${kom || '—'}, GPS ${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)} — ${link}`;
-    const url = 'https://github.com/goliat931/mapa-osiedla-wilga/issues/new?template=zgloszenie.yml'
-      + '&title=' + encodeURIComponent(`[Zgłoszenie] ${ul ? ul[0] : 'komórka ' + (kom || '—')}`) + '&lokalizacja=' + encodeURIComponent(miejsce);
+    const miejsce = `${ul ? ul[0] + (ul[1] > 15 ? ` (ok. ${ul[1]} m od ulicy)` : '') : 'brak ulicy w pobliżu'}, komórka ${kom || '—'}, GPS ${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}`;
+    const f = document.createElement('form'); f.className = 'zglos-popup';
+    f.innerHTML = `<p><b>${esc(ul ? ul[0] : 'Miejsce bez nazwy ulicy')}</b>, komórka ${esc(kom || '—')}</p>
+      <label>Czego dotyczy<select name="typ">${TYPY_UWAG.map(t => `<option>${esc(t)}</option>`).join('')}</select></label>
+      <label>Opis<textarea name="opis" rows="4" maxlength="2000" required placeholder="Co jest nie tak i jak jest w rzeczywistości?"></textarea></label>
+      <label>Zdjęcie lub zrzut ekranu (nieobowiązkowo)<input type="file" name="plik" accept="image/*"></label>
+      <label>Podpis lub kontakt (nieobowiązkowo)<input name="podpis" maxlength="200" autocomplete="off"></label>
+      <input class="pulapka" name="www" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button>Wyślij uwagę</button>
+      <p class="drobne" role="status">Uwagi nie są publikowane; trafiają do autora mapy.</p>`;
+    f.onsubmit = async ev => {
+      ev.preventDefault();
+      const stan = f.querySelector('[role=status]'), btn = f.querySelector('button');
+      btn.disabled = true; stan.className = 'drobne'; stan.textContent = 'Wysyłanie…';
+      try {
+        const plik = f.plik.files[0];
+        const r = await fetch(UWAGI_URL, { method: 'POST', body: JSON.stringify({ typ: f.typ.value, opis: f.opis.value, podpis: f.podpis.value,
+          www: f.www.value, miejsce, link, zdjecie: plik ? await zmniejsz(plik) : '' }) }).then(r => r.json());
+        if (!r.ok) throw new Error(r.blad);
+        f.innerHTML = `<p><b>Dziękujemy!</b> Uwaga${r.nr ? ' nr ' + esc(r.nr) : ''} została zapisana.</p><p>Sprawdzimy ją, zanim zmienimy mapę.</p>`;
+      } catch (err) {
+        btn.disabled = false; stan.className = 'blad';
+        stan.textContent = (err && err.message && !/fetch|JSON|token/i.test(err.message) ? err.message + ' ' : 'Nie udało się wysłać uwagi. ') + 'Spróbuj ponownie.';
+      }
+    };
     if (zglosMarker) map.removeLayer(zglosMarker);
     zglosMarker = L.circleMarker(ll, { radius: 10, color: '#c62828', weight: 3, fillOpacity: .15 }).addTo(map)
-      .bindPopup(`<div class="zglos-popup"><p><b>${esc(ul ? ul[0] : 'Miejsce bez nazwy ulicy')}</b>, komórka ${esc(kom || '—')}</p>
-        <p>Otworzy się formularz na GitHubie z wpisanym miejscem — dopisz tylko, co jest nie tak. Potrzebne darmowe konto GitHub; zgłoszenie jest publiczne.</p>
-        <a class="btn" href="${url}" target="_blank" rel="noopener">Opisz zgłoszenie →</a></div>`).openPopup();
+      .bindPopup(f, { maxWidth: 300, closeOnClick: false, autoClose: false, autoPanPaddingTopLeft: [10, 125] }).openPopup();
   });
 
   fetch('data/indeks.json').then(r => r.json()).then(ind => {

@@ -9,3 +9,7 @@ Pomysł narodził się na zebraniu wiejskim, w dyskusji ze strażakami. Mapa ma 
 To wersja robocza, uzupełniana na bieżąco. Przejezdność dróg i stromizny są wstępne i weryfikowane razem z jednostkami OSP.
 
 Źródła danych: adresy — PRG (GUGiK), nazwy ulic — eTeryt (GUS), drogi i woda — © OpenStreetMap, model terenu — NMT GUGiK, sieć wodociągowa — GESUT (Starostwo Powiatowe w Garwolinie).
+
+## Uwagi i poprawki
+
+Uwagi zgłasza się z mapy przyciskiem **Zgłoś uwagę** (bez logowania, można dołączyć zdjęcie). Trafiają do prywatnego arkusza; po sprawdzeniu poprawka jest nanoszona w danych, a ślad zostaje w [ZMIANY.md](ZMIANY.md) i w historii commitów.

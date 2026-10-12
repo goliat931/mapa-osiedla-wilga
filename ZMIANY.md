@@ -1,0 +1,6 @@
+# Historia zmian mapy
+
+Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z arkusza „Uwagi do mapy Osiedla Wilga” albo inne źródło) i co zmieniono. Ten sam numer jest w opisie commita (`Uwaga nr 12: …`), więc `git log -- data/` pokazuje dokładne różnice w danych.
+
+| Data | Źródło | Co zmieniono |
+| --- | --- | --- |
