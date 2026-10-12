@@ -53,6 +53,15 @@ prg.setCrs(QgsCoordinateReferenceSystem('EPSG:2180'))
 dump(prg, 'adresy', lambda f: {'u': f['NAZWA_ULC'], 'n': f['NUMER_PORZ']},
      expr="\"ID_SIMC\"='0694095' AND \"NAZWA_ULC\" != 'Wilgi'")
 
+# adresy, których nie ma w PRG, a potwierdził je mieszkaniec (położenie z OSM): ulica, numer, lon, lat
+POZA_PRG = [('Lipowa', '12', 21.431453, 51.843599)]
+with open(f'{OUT}/adresy.geojson', encoding='utf8') as fi:
+    adresy = json.load(fi)
+adresy['features'] += [{'type': 'Feature', 'properties': {'u': u, 'n': n},
+                        'geometry': {'coordinates': [x, y], 'type': 'Point'}} for u, n, x, y in POZA_PRG]
+with open(f'{OUT}/adresy.geojson', 'w', encoding='utf8') as fo:
+    json.dump(adresy, fo, ensure_ascii=False, separators=(',', ':'))
+
 # indeks ulic: to samo źródło co indeks w atlasie A3
 with open('C:/Users/golia/wilga-mapa/data/indeks_ulic_bloki.json', encoding='utf8') as fi:
     bloki = json.load(fi)
