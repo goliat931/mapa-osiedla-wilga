@@ -220,22 +220,72 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       l.bindPopup(`<b>${esc(p.n || 'droga bez nazwy')}</b><br>${opis}${p.u ? '<br><small>' + esc(p.u) + '</small>' : ''}`);
     } }));
 
-  // nazwy ulic: jedna ramka na najdłuższy odcinek każdej ulicy
-  const naj = {};
-  drogi.features.forEach(f => { if (!f.properties.n) return; const g = L.geoJSON(f), len = g.getBounds().getNorthEast().distanceTo(g.getBounds().getSouthWest());
-    if (!naj[f.properties.n] || naj[f.properties.n][0] < len) naj[f.properties.n] = [len, f]; });
-  const ulL = L.layerGroup();
-  const indeks = {};
-  Object.entries(naj).forEach(([n, [, f]]) => {
-    const coords = f.geometry.type === 'MultiLineString' ? f.geometry.coordinates[0] : f.geometry.coordinates;
-    const i = Math.floor(coords.length / 2), m = coords[i], a = coords[i - 1], b = coords[Math.min(coords.length - 1, i + 1)];
-    // ramka wzdłuż ulicy (odwzorowanie mapy zachowuje kąty, więc kąt nie zależy od powiększenia); nigdy do góry nogami
-    let kat = Math.atan2(a[1] - b[1], (b[0] - a[0]) * Math.cos(m[1] * Math.PI / 180)) * 180 / Math.PI;
-    if (kat > 90) kat -= 180; else if (kat < -90) kat += 180;
-    const pos = coords.length > 2 ? [m[1], m[0]] : [(coords[0][1] + coords[1][1]) / 2, (coords[0][0] + coords[1][0]) / 2];
-    L.marker(pos, { interactive: false, icon: L.divIcon({ className: '', html: `<span class="ulica" style="transform:translate(-50%,-50%) rotate(${kat.toFixed(1)}deg)">${esc(n)}</span>`, iconSize: null, iconAnchor: [0, 0] }) }).addTo(ulL);
-    indeks[n] = L.geoJSON({ type: 'FeatureCollection', features: drogi.features.filter(x => x.properties.n === n) }).getBounds();
+  // nazwy ulic: ramka wzdłuż ulicy, z dala od skrzyżowań i od innych ramek.
+  // Ramka ma stały rozmiar na ekranie, więc układ liczymy osobno dla każdego powiększenia (w pikselach).
+  const ulL = L.layerGroup(), indeks = {}, ulice = {}, uklady = {};
+  const linie = f => f.geometry.type === 'MultiLineString' ? f.geometry.coordinates : [f.geometry.coordinates];
+  drogi.features.forEach(f => { if (f.properties.n) (ulice[f.properties.n] = ulice[f.properties.n] || []).push(f); });
+  const miara = document.createElement('canvas').getContext('2d');
+  miara.font = '600 12px Bahnschrift, "Segoe UI", sans-serif';
+  const WYS = 20, szer = {};
+  Object.entries(ulice).forEach(([n, fs]) => {
+    indeks[n] = L.geoJSON({ type: 'FeatureCollection', features: fs }).getBounds();
+    szer[n] = miara.measureText(n).width + 14;
   });
+  const odl = (p, a, b) => { // odległość punktu od odcinka
+    const dx = b.x - a.x, dy = b.y - a.y, d2 = dx * dx + dy * dy, t = d2 ? Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / d2)) : 0;
+    return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy);
+  };
+  const naLinii = (p, cum, s) => { // punkt w odległości s od początku linii
+    let i = 1; while (i < cum.length - 1 && cum[i] < s) i++;
+    const t = (s - cum[i - 1]) / ((cum[i] - cum[i - 1]) || 1);
+    return { x: p[i - 1].x + t * (p[i].x - p[i - 1].x), y: p[i - 1].y + t * (p[i].y - p[i - 1].y) };
+  };
+  function ulozNazwy(z) {
+    const wszystkie = drogi.features.flatMap(f => linie(f).filter(l => l.length > 1).map(l => {
+      const p = l.map(c => map.project([c[1], c[0]], z)), cum = [0];
+      for (let i = 1; i < p.length; i++) cum.push(cum[i - 1] + Math.hypot(p[i].x - p[i - 1].x, p[i].y - p[i - 1].y));
+      return { n: f.properties.n, p, cum, L: cum[cum.length - 1] };
+    }));
+    const dlugosc = n => wszystkie.reduce((s, l) => s + (l.n === n ? l.L : 0), 0);
+    const postawione = [], markery = []; // postawione: punkty wzdłuż osi już ustawionych ramek
+    // od najkrótszych ulic, bo mają najmniej miejsc do wyboru
+    Object.keys(ulice).map(n => [dlugosc(n), n]).sort((a, b) => a[0] - b[0]).forEach(([, n]) => {
+      const w = szer[n], moje = wszystkie.filter(l => l.n === n);
+      const xs = moje.flatMap(l => l.p.map(q => q.x)), ys = moje.flatMap(l => l.p.map(q => q.y));
+      const x0 = Math.min(...xs) - 30, x1 = Math.max(...xs) + 30, y0 = Math.min(...ys) - 30, y1 = Math.max(...ys) + 30;
+      const obce = []; // odcinki innych dróg w pobliżu tej ulicy
+      wszystkie.forEach(l => { if (l.n === n) return; for (let i = 1; i < l.p.length; i++) { const a = l.p[i - 1], b = l.p[i];
+        if (Math.max(a.x, b.x) >= x0 && Math.min(a.x, b.x) <= x1 && Math.max(a.y, b.y) >= y0 && Math.min(a.y, b.y) <= y1) obce.push([a, b]); } });
+      const blisko = postawione.filter(r => r.x >= x0 && r.x <= x1 && r.y >= y0 && r.y <= y1);
+      let naj = null;
+      moje.forEach(l => {
+        const krok = Math.max(12, l.L / 40), miejsca = [];
+        if (l.L > w + 8) for (let s = w / 2 + 4; s <= l.L - w / 2 - 4; s += krok) miejsca.push(s); else miejsca.push(l.L / 2);
+        miejsca.forEach(s => {
+          const a = naLinii(l.p, l.cum, Math.max(0, s - w / 2)), b = naLinii(l.p, l.cum, Math.min(l.L, s + w / 2));
+          const c = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, kat = Math.atan2(b.y - a.y, b.x - a.x), os = [];
+          for (let t = -w / 2; t <= w / 2; t += 6) os.push({ x: c.x + t * Math.cos(kat), y: c.y + t * Math.sin(kat) });
+          const naRamce = os.some(q => blisko.some(r => Math.hypot(q.x - r.x, q.y - r.y) < WYS));
+          const zas = w / 2 + WYS, tuz = naRamce ? [] : obce.filter(([u, v]) => Math.max(u.x, v.x) >= c.x - zas && Math.min(u.x, v.x) <= c.x + zas && Math.max(u.y, v.y) >= c.y - zas && Math.min(u.y, v.y) <= c.y + zas);
+          const przeciecia = os.filter(q => tuz.some(([u, v]) => odl(q, u, v) < WYS / 2 + 3)).length;
+          // najpierw bez kolizji z ramką, potem najmniej przecięć z drogami, potem bliżej środka dłuższego odcinka
+          const ocena = (naRamce ? 1e9 : 0) + przeciecia * 1e5 + Math.abs(s - l.L / 2) - l.L;
+          if (!naj || ocena < naj.ocena) naj = { ocena, naRamce, c, kat, os };
+        });
+      });
+      if (!naj || naj.naRamce) return; // brak wolnego miejsca: przy tym powiększeniu bez ramki
+      postawione.push(...naj.os);
+      let st = naj.kat * 180 / Math.PI; if (st > 90) st -= 180; else if (st <= -90) st += 180; // nigdy do góry nogami
+      markery.push(L.marker(map.unproject(naj.c, z), { interactive: false, icon: L.divIcon({ className: '',
+        html: `<span class="ulica" style="transform:translate(-50%,-50%) rotate(${st.toFixed(1)}deg)">${esc(n)}</span>`, iconSize: null, iconAnchor: [0, 0] }) }));
+    });
+    return markery;
+  }
+  const odswiezNazwy = () => { const z = Math.round(map.getZoom()); if (z < 15) return;
+    ulL.clearLayers(); (uklady[z] = uklady[z] || ulozNazwy(z)).forEach(m => ulL.addLayer(m)); };
+  map.on('zoomend', odswiezNazwy);
+  map.whenReady(odswiezNazwy);
   zalezne(ulL, 15);
 
   const nrL = L.layerGroup();
