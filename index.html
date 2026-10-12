@@ -6,6 +6,8 @@
 <title>Mapa Osiedla Wilga</title>
 <meta name="description" content="Robocza mapa Osiedla Wilga: ulice, adresy, przejezdność dróg, hydranty i stromizny.">
 <link rel="icon" href="znak.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="ikony/app-180.png">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1c1d1f" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -35,7 +37,20 @@
   .poi { width:22px; height:22px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.4); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; }
   .leaflet-div-icon { background:none; border:none; }
   #top .wiersz { display:flex; gap:6px; }
-  #top .wiersz input { flex:1; min-width:0; }
+  #top .wiersz .pole { flex:1; min-width:0; position:relative; }
+  #szukaj { padding-right:34px; }
+  #szukaj-x { position:absolute; right:2px; top:50%; transform:translateY(-50%); border:0; background:none; color:var(--muted); font-size:22px; line-height:1; padding:4px 9px; cursor:pointer; border-radius:6px; }
+  #szukaj-x:hover { color:var(--text); }
+  #podp { list-style:none; margin:8px 0 0; padding:4px 0 0; max-height:45vh; overflow:auto; border-top:1px solid var(--border); }
+  #podp li { display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:9px 6px; font-size:15px; cursor:pointer; border-radius:6px; }
+  #podp li small { color:var(--muted); white-space:nowrap; }
+  #podp li[aria-selected=true], #podp li:hover { background:var(--surface-2); }
+  #podp li.brak { color:var(--muted); cursor:default; background:none; }
+  #skrot { left:10px; right:10px; bottom:22px; max-width:420px; margin:0 auto; z-index:1001; padding:10px 8px 10px 14px; display:flex; align-items:center; gap:10px; font-size:14px; line-height:1.35; }
+  #skrot[hidden] { display:none; }
+  #skrot span { flex:1; }
+  #skrot-dodaj { flex:none; font-size:14px; padding:6px 12px; }
+  #skrot-x { flex:none; border:0; background:none; color:var(--muted); font-size:24px; line-height:1; padding:2px 8px; cursor:pointer; }
   #btn-indeks, #btn-info, #btn-zglos { font-size:14px; padding:6px 11px; white-space:nowrap; }
   #indeks { top:var(--nad); right:10px; bottom:22px; width:330px; display:none; flex-direction:column; }
   #indeks.otwarty { display:flex; }
@@ -110,7 +125,7 @@
     #zamknij-leg { display:block; position:sticky; top:0; float:right; margin:-4px -6px 0 8px; border:0; background:var(--surface); color:var(--muted); font-size:26px; line-height:1; padding:2px 8px; border-radius:6px; cursor:pointer; }
     #indeks { left:10px; width:auto; top:calc(var(--bar-h) + 104px); }
     .dl { display:none; }
-    #top { left:54px; right:10px; }
+    #top { left:10px; right:10px; } /* przyciski powiększania są wtedy w prawym dolnym rogu */
     #btn-indeks, #btn-zglos { padding:6px 8px; }
     #info, #zglos-pasek { top:calc(var(--bar-h) + 104px); left:10px; }
     #zglos-pasek { right:10px; transform:none; width:auto; max-width:none; }
@@ -129,14 +144,14 @@
 <div id="top" class="panel">
   <h1>Mapa Osiedla Wilga <span class="stan" id="stan"></span></h1>
   <div class="wiersz">
-    <input id="szukaj" list="lista" placeholder="Szukaj ulicy lub adresu, np. Lipowa 12" autocomplete="off">
+    <div class="pole"><input id="szukaj" placeholder="Ulica, adres, miejsce" aria-label="Szukaj ulicy, adresu lub miejsca" autocomplete="off" enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls="podp" aria-expanded="false"><button id="szukaj-x" type="button" aria-label="Wyczyść wyszukiwanie" hidden>×</button></div>
     <button id="btn-indeks" class="btn-secondary">Indeks<span class="dl"> ulic</span></button>
     <button id="btn-zglos" class="btn-primary" title="Zgłoś błąd lub brak na mapie">Zgłoś<span class="dl"> uwagę</span></button>
     <button id="btn-info" class="btn-secondary" title="O mapie" aria-label="O mapie"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:block"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
   </div>
-  <datalist id="lista"></datalist>
+  <ul id="podp" role="listbox" aria-label="Podpowiedzi" hidden></ul>
 </div>
-<div id="indeks" class="panel"><header><h2>Indeks ulic</h2><button id="zamknij-indeks" aria-label="Zamknij">×</button></header><div class="lista" id="indeks-lista"></div></div>
+<div id="indeks" class="panel"><header><h2>Indeks ulic i miejsc</h2><button id="zamknij-indeks" aria-label="Zamknij">×</button></header><div class="lista" id="indeks-lista"></div></div>
 <div id="info" class="panel"><header><h2>O mapie</h2><button id="zamknij-info" aria-label="Zamknij">×</button></header>
   <div class="tresc">
     <p>Mapa powstała jako oddolna inicjatywa mieszkańca Osiedla Wilga, wsparta przez Sołtysa Osiedla Wilga, Marcina Olkowicza.</p>
@@ -146,6 +161,7 @@
   </div></div>
 <div id="zglos-pasek" class="panel" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg><span>Kliknij na mapie miejsce, którego dotyczy uwaga</span><button id="zglos-anuluj" type="button">Anuluj</button></div>
 <div id="zglos-wskaz" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg></div>
+<div id="skrot" class="panel" hidden><span></span><button id="skrot-dodaj" class="btn-primary" type="button" hidden>Dodaj</button><button id="skrot-x" type="button" aria-label="Zamknij">×</button></div>
 <button id="pokaz-leg" class="btn-secondary">Legenda</button>
 <div id="legenda" class="panel">
   <button id="zamknij-leg" aria-label="Zamknij legendę">×</button>
@@ -167,6 +183,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 const map = L.map('map', { zoomControl: true, minZoom: 12, maxZoom: 20 });
+const waski = matchMedia('(max-width: 600px)');
+const ustawZoom = () => map.zoomControl.setPosition(waski.matches ? 'bottomright' : 'topleft');
+ustawZoom(); waski.addEventListener('change', ustawZoom);
 // pozycja w adresie: #zoom/szer/dl — do wysyłania linków do konkretnego miejsca
 const h = location.hash.slice(1).split('/').map(Number);
 if (h.length === 3 && h.every(isFinite)) map.setView([h[1], h[2]], h[0]); else map.setView([51.838, 21.418], 14);
@@ -337,26 +356,54 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     onEachFeature: (f, l) => l.bindPopup(`<b>Stromy podjazd ${Math.round(f.properties.s)}%</b><br>${esc(f.properties.n || 'droga bez nazwy')}, komórka ${f.properties.c}<br>długość ok. ${f.properties.l} m, grot wskazuje pod górę`) });
   zalezne(strL, 15);
 
-  dodaj('Miejsca charakterystyczne', L.geoJSON(mie, { pointToLayer: (f, ll) => { const [k, z] = POI[f.properties.t] || POI.inne;
+  const miejsca = [];
+  const mieL = L.geoJSON(mie, { pointToLayer: (f, ll) => { const [k, z] = POI[f.properties.t] || POI.inne;
       return L.marker(ll, { icon: L.divIcon({ className: '', html: `<div class="poi" style="background:${k}">${z}</div>`, iconSize: [22, 22], iconAnchor: [11, 11] }) }); },
-    onEachFeature: (f, l) => l.bindPopup(`<b>${esc(f.properties.n)}</b><br>${(POI[f.properties.t] || POI.inne)[2]}`) }));
+    onEachFeature: (f, l) => { const o = (POI[f.properties.t] || POI.inne)[2]; miejsca.push({ n: f.properties.n, o, l });
+      l.bindPopup(`<b>${esc(f.properties.n)}</b><br>${o}`); } });
+  dodaj('Miejsca charakterystyczne', mieL);
   dodaj('Miejsca zawracania', L.geoJSON(zaw, { pointToLayer: (f, ll) => L.circleMarker(ll, { radius: 8, color: '#1d3f73', fillColor: '#4f7fc4', fillOpacity: 1, weight: 2 }),
     onEachFeature: (f, l) => l.bindPopup('<b>Miejsce zawracania</b> (ocena wstępna)') }));
 
-  // wyszukiwarka
-  const dl = document.getElementById('lista');
-  const PL = ' .aąbcćdeęfghijklłmnńoóprsśtuwyzźż';
-  const klucz = s => [...s.toLowerCase()].map(c => { const i = PL.indexOf(c); return i < 0 ? 100 + c.charCodeAt(0) : i; });
-  const porownaj = (a, b) => { const x = klucz(a), y = klucz(b); for (let i = 0; i < Math.min(x.length, y.length); i++) if (x[i] !== y[i]) return x[i] - y[i]; return x.length - y.length; };
-  Object.keys(indeks).sort(porownaj).forEach(k => { const o = document.createElement('option'); o.value = k; dl.appendChild(o); });
-  let znacznik;
-  document.getElementById('szukaj').addEventListener('change', e => {
-    const t = indeks[e.target.value.trim()]; if (!t) return;
-    if (znacznik) map.removeLayer(znacznik);
+  // wyszukiwarka: podpowiada najpierw ulice, potem miejsca, potem adresy; bez polskich znaków też znajduje
+  const bez = t => t.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
+  const baza = [...Object.keys(ulice).map(t => ({ t, r: 0, o: 'ulica' })), ...miejsca.map(m => ({ t: m.n, r: 1, o: m.o, m })),
+    ...adr.features.map(f => ({ t: `${f.properties.u} ${f.properties.n}`, r: 2, o: 'adres' }))]
+    .map(w => ({ ...w, k: bez(w.t) })).sort((a, b) => a.r - b.r || a.t.localeCompare(b.t, 'pl', { numeric: true }));
+  const sz = document.getElementById('szukaj'), podp = document.getElementById('podp'), szX = document.getElementById('szukaj-x');
+  let znacznik, wyniki = [], akt = -1;
+  const zamknijPodp = () => { podp.hidden = true; sz.setAttribute('aria-expanded', 'false'); akt = -1; };
+  const pokazMiejsce = m => { if (!map.hasLayer(mieL)) map.addLayer(mieL); map.setView(m.l.getLatLng(), 18); m.l.openPopup();
+    if (window.innerWidth <= 600) document.getElementById('indeks').classList.remove('otwarty'); };
+  const idz = w => {
+    sz.value = w.t; szX.hidden = false; zamknijPodp(); sz.blur();
+    if (znacznik) map.removeLayer(znacznik); znacznik = null;
+    if (w.m) return pokazMiejsce(w.m);
+    const t = indeks[w.t];
     if (t instanceof L.LatLngBounds) { map.fitBounds(t, { maxZoom: 17, padding: [40, 40] }); znacznik = L.rectangle(t, { color: '#1d4f91', weight: 2, fill: false, dashArray: '6 4' }).addTo(map); }
     else { map.setView(t, 18); znacznik = L.circleMarker(t, { radius: 16, color: '#d00', weight: 3, fill: false }).addTo(map); }
-    e.target.blur();
+  };
+  const zaznacz = i => { akt = i; [...podp.children].forEach((li, j) => li.setAttribute('aria-selected', j === i)); if (podp.children[i]) podp.children[i].scrollIntoView({ block: 'nearest' }); };
+  const podpowiedz = () => {
+    const q = bez(sz.value); szX.hidden = !sz.value;
+    if (!q) return zamknijPodp();
+    // w każdej grupie najpierw nazwy zaczynające się od wpisanego tekstu
+    wyniki = [...baza.filter(w => w.k.startsWith(q)), ...baza.filter(w => !w.k.startsWith(q) && w.k.includes(q))].sort((a, b) => a.r - b.r).slice(0, 12);
+    podp.innerHTML = wyniki.length ? wyniki.map((w, i) => `<li role="option" data-i="${i}"><span>${esc(w.t)}</span><small>${esc(w.o)}</small></li>`).join('') : '<li class="brak">Brak wyników</li>';
+    podp.hidden = false; sz.setAttribute('aria-expanded', 'true'); akt = -1;
+  };
+  sz.addEventListener('input', podpowiedz);
+  sz.addEventListener('focus', podpowiedz);
+  sz.addEventListener('blur', zamknijPodp);
+  sz.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (wyniki.length && !podp.hidden) zaznacz((akt + (e.key === 'ArrowDown' ? 1 : wyniki.length - 1) + (akt < 0 && e.key === 'ArrowUp' ? 1 : 0)) % wyniki.length); }
+    else if (e.key === 'Enter') { if (!podp.hidden && wyniki.length) idz(wyniki[Math.max(0, akt)]); }
+    else if (e.key === 'Escape') zamknijPodp();
   });
+  podp.addEventListener('mousedown', e => e.preventDefault()); // żeby pole nie traciło fokusu przed kliknięciem
+  podp.addEventListener('click', e => { const li = e.target.closest('li[data-i]'); if (li) idz(wyniki[+li.dataset.i]); });
+  szX.addEventListener('mousedown', e => e.preventDefault());
+  szX.onclick = () => { sz.value = ''; if (znacznik) map.removeLayer(znacznik); znacznik = null; podpowiedz(); sz.focus(); };
   map.fire('zoomend');
 
   // indeks ulic
@@ -434,16 +481,23 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
 
   fetch('data/indeks.json').then(r => r.json()).then(ind => {
     const el = document.getElementById('indeks-lista'); let lit = '';
+    const doKomorek = d => d.querySelectorAll('a[data-k]').forEach(a => a.onclick = () => {
+      const [p, q] = a.dataset.k.split('-'), b = komorki[p] && L.latLngBounds(komorki[p].getSouthWest(), komorki[p].getNorthEast());
+      if (b) { if (q && komorki[q]) b.extend(komorki[q]); pokaz(b); } });
+    el.insertAdjacentHTML('beforeend', '<div class="lit">Miejsca</div>');
+    [...miejsca].sort((a, b) => a.n.localeCompare(b.n, 'pl')).forEach(m => {
+      const d = document.createElement('div'), k = wKomorce(m.l.getLatLng()); d.className = 'ul';
+      d.innerHTML = `<a>${esc(m.n)}</a><div class="kw"><span class="k">${k ? `<a data-k="${esc(k)}">${esc(k)}</a>` : '—'}</span><span>${esc(m.o)}</span></div>`;
+      d.querySelector('a').onclick = () => pokazMiejsce(m);
+      doKomorek(d); el.appendChild(d);
+    });
     ind.forEach(({ u, w }) => {
       const l = u[0].toUpperCase();
       if (l !== lit) { lit = l; el.insertAdjacentHTML('beforeend', `<div class="lit">${esc(l)}</div>`); }
       const d = document.createElement('div'); d.className = 'ul';
       d.innerHTML = `<a>${esc(u)}</a>` + w.map(r => `<div class="kw"><span class="k">${r.k.map(k => `<a data-k="${esc(k)}">${esc(k)}</a>`).join(', ')}</span>${r.nr ? `<span>nr ${esc(r.nr)}</span>` : ''}</div>`).join('');
       d.querySelector('a').onclick = () => indeks[u] && pokaz(indeks[u]);
-      d.querySelectorAll('a[data-k]').forEach(a => a.onclick = () => {
-        const [p, q] = a.dataset.k.split('-'), b = komorki[p] && L.latLngBounds(komorki[p].getSouthWest(), komorki[p].getNorthEast());
-        if (b) { if (q && komorki[q]) b.extend(komorki[q]); pokaz(b); } });
-      el.appendChild(d);
+      doKomorek(d); el.appendChild(d);
     });
   });
 });
@@ -456,7 +510,24 @@ document.getElementById('zamknij-info').onclick = () => ustawInfo(false);
 document.getElementById('btn-zglos').onclick = () => { ustawInfo(false); document.body.classList.add('tryb-zglos'); };
 document.getElementById('zglos-anuluj').onclick = e => { e.preventDefault(); document.body.classList.remove('tryb-zglos'); };
 // przy pierwszej wizycie pokaż „O mapie”
-try { if (!localStorage.getItem('wilga-info')) { ustawInfo(true); localStorage.setItem('wilga-info', '1'); } } catch (e) {}
+let pierwszaWizyta = false;
+try { if (!localStorage.getItem('wilga-info')) { pierwszaWizyta = true; ustawInfo(true); localStorage.setItem('wilga-info', '1'); } } catch (e) {}
+// propozycja skrótu na ekranie głównym: tylko telefon i tablet, nie przy pierwszej wizycie; zamknięta nie wraca
+(() => {
+  const el = document.getElementById('skrot'), txt = el.querySelector('span'), btn = document.getElementById('skrot-dodaj');
+  let zamkniete = true; try { zamkniete = !!localStorage.getItem('wilga-skrot'); } catch (e) {}
+  const koniec = () => { el.hidden = true; try { localStorage.setItem('wilga-skrot', '1'); } catch (e) {} };
+  document.getElementById('skrot-x').onclick = koniec;
+  if (zamkniete || pierwszaWizyta || navigator.standalone || matchMedia('(display-mode: standalone)').matches || !matchMedia('(pointer: coarse)').matches) return;
+  txt.textContent = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    ? 'Miej mapę pod ręką: stuknij Udostępnij, a potem „Do ekranu początkowego”.'
+    : 'Miej mapę pod ręką: w menu przeglądarki wybierz „Dodaj do ekranu głównego”.';
+  el.hidden = false;
+  // przeglądarki z Chromium pozwalają dodać skrót jednym przyciskiem
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); txt.textContent = 'Dodaj mapę do ekranu głównego, żeby mieć ją pod ręką jak aplikację.';
+    btn.hidden = false; btn.onclick = () => { e.prompt(); e.userChoice.then(koniec); }; });
+  addEventListener('appinstalled', koniec);
+})();
 if (location.search.includes('indeks')) document.getElementById('indeks').classList.add('otwarty');
 
 document.getElementById('pokaz-leg').addEventListener('click', () => document.getElementById('legenda').classList.toggle('otwarta'));
