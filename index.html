@@ -157,7 +157,7 @@
     <p>Mapa powstała jako oddolna inicjatywa mieszkańca Osiedla Wilga, wsparta przez Sołtysa Osiedla Wilga, Marcina Olkowicza.</p>
     <p>Pomysł narodził się na zebraniu wiejskim, w dyskusji ze strażakami: w lesie gubi się sygnał GPS, a trafienie pod właściwy adres zajmuje cenne minuty. Dlatego mapa ma przede wszystkim <b>ułatwić służbom ratunkowym dojazd do posesji</b>: pokazuje nazwy ulic i numery domów, przejezdność dróg dla wozów strażackich, hydranty, zbiorniki wody i strome podjazdy.</p>
     <p>To wersja robocza, uzupełniana na bieżąco. Przejezdność dróg i stromizny są wstępne i weryfikowane razem z jednostkami OSP.</p>
-    <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś uwagę</b> i wskaż miejsce na mapie: nie trzeba się logować, można dołączyć zdjęcie z terenu albo zrzut ekranu. Każdą uwagę sprawdzamy, zanim zmienimy mapę. Zgłoszone uwagi i ich status pokazuje warstwa <b>Zgłoszone uwagi</b> (przycisk warstw).</p>
+    <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś uwagę</b> i wskaż miejsce na mapie: nie trzeba się logować, można dołączyć zdjęcie z terenu albo zrzut ekranu. Każdą uwagę sprawdzamy, zanim zmienimy mapę.</p>
   </div></div>
 <div id="zglos-pasek" class="panel" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg><span>Kliknij na mapie miejsce, którego dotyczy uwaga</span><button id="zglos-anuluj" type="button">Anuluj</button></div>
 <div id="zglos-wskaz" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg></div>
@@ -428,12 +428,6 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     return best[1] ? [best[1], Math.round(best[0] * map.distance(map.unproject([0, 0], 18), map.unproject([1, 0], 18)))] : null; };
   let zglosMarker;
   const UWAGI_URL = 'https://script.google.com/macros/s/AKfycbx5_boeKa5TW8bYz6l0BVVLcDrarPWOq-bw0F1mqtb853NetDbo1quVrEEqta77Y_FK_Q/exec';
-  const uwL = L.layerGroup();
-  const wczytajUwagi = () => fetch(UWAGI_URL).then(r => r.json()).then(d => { uwL.clearLayers();
-    (d.uwagi || []).forEach(u => L.circleMarker([u.lat, u.lng], { radius: 9, color: '#c62828', weight: 3, fillColor: '#fff', fillOpacity: 1 })
-      .bindPopup(`<b>Uwaga nr ${esc(u.nr)}</b> · ${esc(u.data)}<br><i>${esc(u.typ)}</i><br>${esc(u.opis)}<br><small>Status: ${esc(u.status || 'nowa')}</small>`, { maxWidth: 280 }).addTo(uwL)); }).catch(() => {});
-  uwL.on('add', wczytajUwagi);
-  dodaj('Zgłoszone uwagi', uwL, false);
   const TYPY_UWAG = ['Droga nieprzejezdna lub trudny dojazd', 'Droga przejezdna, a na mapie oznaczona inaczej', 'Hydrant lub zbiornik wody',
     'Numer domu lub adres', 'Nazwa ulicy', 'Brakująca droga lub skrót', 'Inne'];
   // zdjęcie z telefonu zmniejszone do 1600 px (JPEG), żeby wysyłka działała też przy słabym zasięgu
@@ -456,7 +450,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       <label>Podpis lub kontakt (nieobowiązkowo)<input name="podpis" maxlength="200" autocomplete="off"></label>
       <input class="pulapka" name="www" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button>Wyślij uwagę</button>
-      <p class="drobne" role="status">Opis i miejsce uwagi będą widoczne na mapie (warstwa „Zgłoszone uwagi”). Zdjęcie i podpis trafiają tylko do autora mapy.</p>`;
+      <p class="drobne" role="status">Uwagi nie są publikowane; trafiają do autora mapy.</p>`;
     f.onsubmit = async ev => {
       ev.preventDefault();
       const stan = f.querySelector('[role=status]'), btn = f.querySelector('button');
@@ -468,7 +462,6 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
           www: f.www.value, miejsce, link, zdjecie: plik ? await zmniejsz(plik) : '' }) }).then(r => r.json());
         if (!r.ok) throw new Error(r.blad);
         f.innerHTML = `<p><b>Dziękujemy!</b> Uwaga${r.nr ? ' nr ' + esc(r.nr) : ''} została zapisana.</p><p>Sprawdzimy ją, zanim zmienimy mapę.</p>`;
-        if (map.hasLayer(uwL)) wczytajUwagi();
       } catch (err) {
         btn.disabled = false; btn.textContent = 'Wyślij uwagę'; stan.className = 'blad';
         stan.textContent = (err && err.message && !/fetch|JSON|token/i.test(err.message) ? err.message + ' ' : 'Nie udało się wysłać uwagi. ') + 'Spróbuj ponownie.';
