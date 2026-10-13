@@ -71,11 +71,15 @@
   body.tryb-zglos #map { cursor:crosshair; }
   #zglos-pasek { top:calc(var(--bar-h) + 76px); left:50%; transform:translateX(-50%); padding:10px 12px 10px 14px; font-size:16px; font-weight:600; display:none; align-items:center; gap:10px;
     background:var(--wilga); color:#fff; border-color:var(--wilga); width:max-content; max-width:calc(100vw - 20px); box-sizing:border-box; }
-  body.tryb-zglos #zglos-pasek { display:flex; }
+  body.tryb-zglos #zglos-pasek { display:flex; flex-wrap:wrap; justify-content:flex-end; }
+  #zglos-pasek span { min-width:180px; }
+  .lok a { display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .lok a.jest { color:#1a73e8; }
+  #komunikat { left:50%; bottom:76px; transform:translateX(-50%); z-index:1002; padding:10px 14px; font-size:14px; width:max-content; max-width:calc(100vw - 20px); box-sizing:border-box; }
   #zglos-pasek svg { flex:none; width:26px; height:26px; animation:zglos-skok 1s ease-in-out infinite; }
   #zglos-pasek span { flex:1; line-height:1.25; }
-  #zglos-anuluj { flex:none; font:inherit; font-size:14px; padding:5px 10px; color:#fff; background:none; border:1px solid rgba(255,255,255,.7); border-radius:7px; cursor:pointer; }
-  #zglos-anuluj:hover { background:rgba(255,255,255,.15); }
+  #zglos-pasek button { flex:none; font:inherit; font-size:14px; padding:5px 10px; color:#fff; background:none; border:1px solid rgba(255,255,255,.7); border-radius:7px; cursor:pointer; }
+  #zglos-pasek button:hover { background:rgba(255,255,255,.15); }
   /* podpowiedź na środku mapy: pinezka i „stuknięcie”; nie przechwytuje kliknięć */
   #zglos-wskaz { position:absolute; z-index:900; left:50%; top:calc(50% + var(--bar-h) / 2); width:0; height:0; pointer-events:none; display:none; }
   body.tryb-zglos #zglos-wskaz { display:block; }
@@ -158,8 +162,10 @@
     <p>Pomysł narodził się na zebraniu wiejskim, w dyskusji ze strażakami: w lesie gubi się sygnał GPS, a trafienie pod właściwy adres zajmuje cenne minuty. Dlatego mapa ma przede wszystkim <b>ułatwić służbom ratunkowym dojazd do posesji</b>: pokazuje nazwy ulic i numery domów, przejezdność dróg dla wozów strażackich, hydranty, zbiorniki wody i strome podjazdy.</p>
     <p>To wersja robocza, uzupełniana na bieżąco. Przejezdność dróg i stromizny są wstępne i weryfikowane razem z jednostkami OSP.</p>
     <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś uwagę</b> i wskaż miejsce na mapie: nie trzeba się logować, można dołączyć zdjęcie z terenu albo zrzut ekranu. Każdą uwagę sprawdzamy, zanim zmienimy mapę.</p>
+    <p>Przycisk z celownikiem pokazuje Twoje położenie niebieską kropką. Położenie zostaje w Twoim urządzeniu; nigdzie go nie wysyłamy, chyba że sam wskażesz je w zgłoszeniu uwagi.</p>
   </div></div>
-<div id="zglos-pasek" class="panel" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg><span>Kliknij na mapie miejsce, którego dotyczy uwaga</span><button id="zglos-anuluj" type="button">Anuluj</button></div>
+<div id="zglos-pasek" class="panel" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg><span>Kliknij na mapie miejsce, którego dotyczy uwaga</span><button id="zglos-tu" type="button">Tu, gdzie jestem</button><button id="zglos-anuluj" type="button">Anuluj</button></div>
+<div id="komunikat" class="panel" role="status" hidden></div>
 <div id="zglos-wskaz" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg></div>
 <div id="skrot" class="panel" hidden><span></span><button id="skrot-dodaj" class="btn-primary" type="button" hidden>Dodaj</button><button id="skrot-x" type="button" aria-label="Zamknij">×</button></div>
 <button id="pokaz-leg" class="btn-secondary">Legenda</button>
@@ -436,10 +442,9 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
       URL.revokeObjectURL(img.src); ok(c.toDataURL('image/jpeg', .82)); };
     img.onerror = () => zle(new Error('Nie udało się odczytać zdjęcia.')); img.src = URL.createObjectURL(plik); });
-  map.on('click', e => {
-    if (!document.body.classList.contains('tryb-zglos')) return;
+  const zglosW = ll => {
     document.body.classList.remove('tryb-zglos');
-    const ll = e.latlng, kom = wKomorce(ll), ul = najblizsza(ll);
+    const kom = wKomorce(ll), ul = najblizsza(ll);
     const link = `${location.origin}${location.pathname}#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
     const miejsce = `${ul ? ul[0] + (ul[1] > 15 ? ` (ok. ${ul[1]} m od ulicy)` : '') : 'brak ulicy w pobliżu'}, komórka ${kom || '—'}, GPS ${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}`;
     const f = document.createElement('form'); f.className = 'zglos-popup';
@@ -470,7 +475,40 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     if (zglosMarker) map.removeLayer(zglosMarker);
     zglosMarker = L.circleMarker(ll, { radius: 10, color: '#c62828', weight: 3, fillOpacity: .15 }).addTo(map)
       .bindPopup(f, { maxWidth: 300, closeOnClick: false, autoClose: false, autoPanPaddingTopLeft: [10, 125] }).openPopup();
+  };
+  map.on('click', e => { if (document.body.classList.contains('tryb-zglos')) zglosW(e.latlng); });
+
+  // położenie użytkownika: niebieska kropka z okręgiem dokładności; zostaje w przeglądarce
+  // ponytail: śledzenie trwa do zamknięcia strony; wyłącznik dodać, jeśli ktoś zgłosi zużycie baterii
+  const komEl = document.getElementById('komunikat'); let komT;
+  const powiedz = t => { komEl.textContent = t; komEl.hidden = false; clearTimeout(komT); komT = setTimeout(() => komEl.hidden = true, 6000); };
+  let ja, jaKolo, poUstaleniu;
+  const lok = new (L.Control.extend({ onAdd() {
+    const d = L.DomUtil.create('div', 'leaflet-bar lok');
+    d.innerHTML = '<a role="button" href="#" title="Pokaż moje położenie" aria-label="Pokaż moje położenie"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></a>';
+    L.DomEvent.disableClickPropagation(d);
+    d.firstChild.onclick = e => { e.preventDefault(); gdzieJestem(ll => map.setView(ll, Math.max(map.getZoom(), 17))); };
+    return d; } }))();
+  const ustawLok = () => lok.setPosition(waski.matches ? 'bottomright' : 'topleft');
+  lok.addTo(map); ustawLok(); waski.addEventListener('change', ustawLok);
+  // potem(ll) dostaje położenie tylko wtedy, gdy leży ono na mapie
+  const gdzieJestem = potem => {
+    const naMapie = ll => wKomorce(ll) ? potem(ll) : powiedz('Jesteś poza obszarem mapy.');
+    if (ja) return naMapie(ja.getLatLng());
+    poUstaleniu = naMapie; map.stopLocate(); map.locate({ watch: true, enableHighAccuracy: true });
+  };
+  map.on('locationfound', e => {
+    if (ja) { ja.setLatLng(e.latlng); jaKolo.setLatLng(e.latlng).setRadius(e.accuracy); }
+    else {
+      jaKolo = L.circle(e.latlng, { radius: e.accuracy, weight: 1, color: '#1a73e8', fillOpacity: .12, interactive: false }).addTo(map);
+      ja = L.circleMarker(e.latlng, { radius: 7, color: '#fff', weight: 2, fillColor: '#1a73e8', fillOpacity: 1, interactive: false }).addTo(map);
+      lok.getContainer().firstChild.classList.add('jest');
+    }
+    if (poUstaleniu) { const p = poUstaleniu; poUstaleniu = null; p(e.latlng); }
   });
+  map.on('locationerror', e => { if (!poUstaleniu) return; poUstaleniu = null;
+    powiedz(e.code === 1 ? 'Brak zgody na lokalizację. Włącz ją dla tej strony w ustawieniach przeglądarki.' : 'Nie udało się ustalić położenia. Spróbuj ponownie.'); });
+  document.getElementById('zglos-tu').onclick = () => gdzieJestem(ll => { map.setView(ll, Math.max(map.getZoom(), 17)); zglosW(ll); });
 
   fetch('data/indeks.json').then(r => r.json()).then(ind => {
     const el = document.getElementById('indeks-lista'); let lit = '';
