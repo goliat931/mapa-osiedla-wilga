@@ -97,5 +97,22 @@ with open(f'{OUT}/indeks.json', 'w', encoding='utf8') as fo:
     json.dump(indeks, fo, ensure_ascii=False, separators=(',', ':'))
 print('indeks', len(indeks))
 
+# działki w siatce osiedla (indeks i wyszukiwarka): [numer, obręb, komórka, lon, lat] punktu wewnątrz działki
+OBREBY = {'0010': 'Osiedle Wilga', '0019': 'Wilga', '0012': 'Skurcza', '0008': 'Nowy Żabieniec', '0014': 'Stary Żabieniec',
+          '0002': 'Cyganówka', '0016': 'Trzcianka', '0011': 'Ruda Tarnowska'}
+dz = L('dzialki')
+tr_d = QgsCoordinateTransform(dz.crs(), WGS, prj)
+kom_d = [(f['kod'], f.geometry()) for f in siat.getFeatures()]  # siatka i działki są w EPSG:2180
+dzialki = []
+for f in dz.getFeatures():
+    p = f.geometry().pointOnSurface()
+    kom = next((k for k, g in kom_d if g.contains(p)), None)
+    if kom and f['NUMER_OBREBU'] in OBREBY:
+        q = tr_d.transform(p.asPoint())
+        dzialki.append([f['NUMER_DZIALKI'], f['NUMER_OBREBU'], kom, round(q.x(), 6), round(q.y(), 6)])
+with open(f'{OUT}/dzialki.json', 'w', encoding='utf8') as fo:
+    json.dump({'obreby': OBREBY, 'd': dzialki}, fo, ensure_ascii=False, separators=(',', ':'))
+print('dzialki', len(dzialki))
+
 with open(f'{OUT}/stan.json', 'w', encoding='utf8') as fo:
     json.dump({'stan_na': datetime.date.today().isoformat()}, fo)

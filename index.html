@@ -71,6 +71,12 @@
   #indeks .kw { display:flex; gap:6px; margin-left:10px; color:var(--muted); font-size:13px; }
   #indeks .kw a { color:var(--link); font-weight:600; cursor:pointer; }
   #indeks .kw .k { min-width:64px; }
+  #indeks .zakladki { display:flex; border-bottom:1px solid var(--border); }
+  #indeks .zakladki button { flex:1; border:0; border-bottom:2px solid transparent; background:none; padding:8px 4px; font:inherit; font-size:14px; color:var(--muted); cursor:pointer; }
+  #indeks .zakladki button[aria-selected=true] { color:var(--text); font-weight:600; border-bottom-color:var(--wilga); }
+  #indeks .dz { display:grid; grid-template-columns:repeat(auto-fill, minmax(84px, 1fr)); gap:3px 8px; font-size:13px; }
+  #indeks .dz a { color:var(--link); font-weight:600; cursor:pointer; }
+  #indeks .dz small { color:var(--muted); }
   #info { top:calc(var(--bar-h) + 76px); left:10px; right:10px; max-width:460px; display:none; max-height:calc(100vh - var(--bar-h) - 100px); overflow:auto; }
   body.info-otwarte #legenda { display:none; }
   #zglos-pasek { top:calc(var(--bar-h) + 76px); left:50%; transform:translateX(-50%); padding:10px 12px 10px 14px; font-size:16px; font-weight:600; display:none; align-items:center; gap:10px;
@@ -150,13 +156,15 @@
   <h1>Mapa Osiedla Wilga <span class="stan" id="stan"></span></h1>
   <div class="wiersz">
     <div class="pole"><input id="szukaj" placeholder="Ulica, adres, miejsce" aria-label="Szukaj ulicy, adresu lub miejsca" autocomplete="off" enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls="podp" aria-expanded="false"><button id="szukaj-x" type="button" aria-label="Wyczyść wyszukiwanie" hidden>×</button></div>
-    <button id="btn-indeks" class="btn-secondary">Indeks<span class="dl"> ulic</span></button>
+    <button id="btn-indeks" class="btn-secondary">Indeks</button>
     <button id="btn-zglos" class="btn-primary" title="Zgłoś błąd lub brak na mapie">Zgłoś<span class="dl"> uwagę</span></button>
     <button id="btn-info" class="btn-secondary" title="O mapie" aria-label="O mapie"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:block"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
   </div>
   <ul id="podp" role="listbox" aria-label="Podpowiedzi" hidden></ul>
 </div>
-<div id="indeks" class="panel"><header><h2>Indeks ulic i miejsc</h2><button id="zamknij-indeks" aria-label="Zamknij">×</button></header><div class="lista" id="indeks-lista"></div></div>
+<div id="indeks" class="panel"><header><h2>Indeks</h2><button id="zamknij-indeks" aria-label="Zamknij">×</button></header>
+  <div class="zakladki" role="tablist"><button role="tab" data-z="indeks-lista" aria-selected="true">Ulice i adresy</button><button role="tab" data-z="indeks-miejsca" aria-selected="false">Miejsca</button><button role="tab" data-z="indeks-dzialki" aria-selected="false">Działki</button></div>
+  <div class="lista" id="indeks-lista" role="tabpanel"></div><div class="lista" id="indeks-miejsca" role="tabpanel" hidden></div><div class="lista" id="indeks-dzialki" role="tabpanel" hidden></div></div>
 <div id="info" class="panel"><header><h2>O mapie</h2><button id="zamknij-info" aria-label="Zamknij">×</button></header>
   <div class="tresc">
     <p>Mapa powstała jako oddolna inicjatywa mieszkańca Osiedla Wilga, wsparta przez Sołtysa Osiedla Wilga, Marcina Olkowicza.</p>
@@ -430,6 +438,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     sz.value = w.t; szX.hidden = false; zamknijPodp(); sz.blur();
     if (znacznik) map.removeLayer(znacznik); znacznik = null;
     if (w.m) return pokazMiejsce(w.m);
+    if (w.dz) { map.setView(w.dz.ll, 18); znacznik = L.circleMarker(w.dz.ll, { radius: 16, color: '#d00', weight: 3, fill: false }).addTo(map); dymek(w.dz.ll);
+      if (window.innerWidth <= 600) document.getElementById('indeks').classList.remove('otwarty'); return; }
     const t = indeks[w.t];
     if (t instanceof L.LatLngBounds) { map.fitBounds(t, { maxZoom: 17, padding: [40, 40] }); znacznik = L.rectangle(t, { color: '#1d4f91', weight: 2, fill: false, dashArray: '6 4' }).addTo(map); }
     else { map.setView(t, 18); znacznik = L.circleMarker(t, { radius: 16, color: '#d00', weight: 3, fill: false }).addTo(map); }
@@ -558,17 +568,34 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     powiedz(e.code === 1 ? 'Brak zgody na lokalizację. Włącz ją dla tej strony w ustawieniach przeglądarki.' : 'Nie udało się ustalić położenia. Spróbuj ponownie.'); });
   document.getElementById('zglos-tu').onclick = () => gdzieJestem(ll => map.setView(ll, Math.max(map.getZoom(), 17)));
 
+  // działki (eksport.py, warstwa dzialki): wyszukiwarka po numerze i zakładka indeksu; zakładkę budujemy przy pierwszym otwarciu
+  fetch('data/dzialki.json').then(r => r.json()).then(({ obreby, d }) => {
+    const wpisy = d.map(([n, o, k, x, y]) => ({ t: n, r: 3, o: `działka, ${obreby[o]} (obręb ${o})`, k: bez(n), dz: { ll: L.latLng(y, x), kom: k } }));
+    baza.push(...wpisy); baza.sort((a, b) => a.r - b.r || a.t.localeCompare(b.t, 'pl', { numeric: true }));
+    const el = document.getElementById('indeks-dzialki');
+    el.zbuduj = () => { el.zbuduj = null;
+      Object.keys(obreby).forEach(o => {
+        const tu = wpisy.filter(w => w.o.endsWith(`${o})`)); if (!tu.length) return;
+        el.insertAdjacentHTML('beforeend', `<div class="lit">${esc(obreby[o])} (obręb ${o})</div><div class="dz">${tu.map(w => `<span><a data-i="${baza.indexOf(w)}">${esc(w.t)}</a> <small>${w.dz.kom}</small></span>`).join('')}</div>`);
+      });
+      el.onclick = e => { const a = e.target.closest('a[data-i]'); if (a) idz(baza[+a.dataset.i]); };
+    };
+  }).catch(() => {});
+  document.querySelectorAll('#indeks [role=tab]').forEach(b => b.onclick = () => {
+    document.querySelectorAll('#indeks [role=tab]').forEach(x => { x.setAttribute('aria-selected', x === b); document.getElementById(x.dataset.z).hidden = x !== b; });
+    const el = document.getElementById(b.dataset.z); if (el.zbuduj) el.zbuduj();
+  });
   fetch('data/indeks.json').then(r => r.json()).then(ind => {
     const el = document.getElementById('indeks-lista'); let lit = '';
     const doKomorek = d => d.querySelectorAll('a[data-k]').forEach(a => a.onclick = () => {
       const [p, q] = a.dataset.k.split('-'), b = komorki[p] && L.latLngBounds(komorki[p].getSouthWest(), komorki[p].getNorthEast());
       if (b) { if (q && komorki[q]) b.extend(komorki[q]); pokaz(b); } });
-    el.insertAdjacentHTML('beforeend', '<div class="lit">Miejsca</div>');
+    const elM = document.getElementById('indeks-miejsca');
     [...miejsca].sort((a, b) => a.n.localeCompare(b.n, 'pl')).forEach(m => {
       const d = document.createElement('div'), k = wKomorce(m.l.getLatLng()); d.className = 'ul';
       d.innerHTML = `<a>${esc(m.n)}</a><div class="kw"><span class="k">${k ? `<a data-k="${esc(k)}">${esc(k)}</a>` : '—'}</span><span>${esc(m.o)}</span></div>`;
       d.querySelector('a').onclick = () => pokazMiejsce(m);
-      doKomorek(d); el.appendChild(d);
+      doKomorek(d); elM.appendChild(d);
     });
     ind.forEach(({ u, w }) => {
       const l = u[0].toUpperCase();
