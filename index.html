@@ -209,6 +209,8 @@ map.on('rotate', () => { const b = map.getBearing(), d = polnoc.getContainer();
 // pozycja w adresie: #zoom/szer/dl — do wysyłania linków do konkretnego miejsca
 const h = location.hash.slice(1).split('/').map(Number);
 if (h.length === 3 && h.every(isFinite)) map.setView([h[1], h[2]], h[0]); else map.setView([51.838, 21.418], 14);
+// ?pin: link z arkusza uwag; zaznacza punkt na środku
+if (/[?&]pin/.test(location.search)) L.circleMarker(map.getCenter(), { radius: 12, color: '#c62828', weight: 3, fillOpacity: .15, interactive: false }).addTo(map);
 map.on('moveend', () => { const c = map.getCenter(); history.replaceState(null, '', `#${map.getZoom()}/${c.lat.toFixed(5)}/${c.lng.toFixed(5)}`); });
 const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 20, maxNativeZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
@@ -471,7 +473,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   const zglosW = ll => {
     document.body.classList.remove('tryb-zglos');
     const kom = wKomorce(ll), ul = najblizsza(ll);
-    const link = `${location.origin}${location.pathname}#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
+    const link = `${location.origin}${location.pathname}?pin#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
     const miejsce = `${ul ? ul[0] + (ul[1] > 15 ? ` (ok. ${ul[1]} m od ulicy)` : '') : 'brak ulicy w pobliżu'}, komórka ${kom || '—'}, GPS ${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}`;
     const f = document.createElement('form'); f.className = 'zglos-popup';
     f.innerHTML = `<p><b>${esc(ul ? ul[0] : 'Miejsce bez nazwy ulicy')}</b>, komórka ${esc(kom || '—')}</p>
