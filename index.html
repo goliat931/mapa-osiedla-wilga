@@ -17,7 +17,7 @@
   html, body { margin:0; height:100%; font-family: var(--font); color:var(--text); background:var(--bg); }
   #map { position:absolute; inset:var(--bar-h) 0 0 0; background:var(--surface-2); }
   .panel { position:absolute; z-index:1000; background:var(--surface); color:var(--text); border:1px solid var(--edge); border-radius:10px; box-shadow:var(--shadow); }
-  #top { top:var(--nad); left:54px; right:10px; max-width:600px; padding:10px 12px; }
+  #top { top:var(--nad); left:10px; right:10px; max-width:600px; padding:10px 12px; }
   #top h1 { font-size:17px; margin:0 0 8px; }
   #top .stan { font-size:12px; color:var(--muted); margin-left:6px; font-weight:400; }
   body.bez-sieci #top .stan::after { content:' · bez połączenia'; }
@@ -71,7 +71,7 @@
   #indeks .kw { display:flex; gap:6px; margin-left:10px; color:var(--muted); font-size:13px; }
   #indeks .kw a { color:var(--link); font-weight:600; cursor:pointer; }
   #indeks .kw .k { min-width:64px; }
-  #info { top:calc(var(--bar-h) + 76px); left:54px; right:10px; max-width:460px; display:none; max-height:calc(100vh - var(--bar-h) - 100px); overflow:auto; }
+  #info { top:calc(var(--bar-h) + 76px); left:10px; right:10px; max-width:460px; display:none; max-height:calc(100vh - var(--bar-h) - 100px); overflow:auto; }
   body.info-otwarte #legenda { display:none; }
   #zglos-pasek { top:calc(var(--bar-h) + 76px); left:50%; transform:translateX(-50%); padding:10px 12px 10px 14px; font-size:16px; font-weight:600; display:none; align-items:center; gap:10px;
     background:var(--wilga); color:#fff; border-color:var(--wilga); width:max-content; max-width:calc(100vw - 20px); box-sizing:border-box; }
@@ -132,7 +132,6 @@
     #legenda { bottom:10px; max-height:60vh; }
     #indeks { left:10px; width:auto; top:calc(var(--bar-h) + 104px); }
     .dl { display:none; }
-    #top { left:10px; right:10px; } /* przyciski powiększania są wtedy w prawym dolnym rogu */
     #btn-indeks, #btn-zglos { padding:6px 8px; }
     #info, #zglos-pasek { top:calc(var(--bar-h) + 104px); left:10px; }
     #zglos-pasek { right:10px; transform:none; width:auto; max-width:none; }
@@ -195,16 +194,14 @@
 <script src="lib/leaflet-rotate/leaflet-rotate.js"></script>
 <script>
 // obracanie: leaflet-rotate (dwa palce, Shift + kółko); przycisk „północ” pojawia się po obróceniu
-const map = L.map('map', { zoomControl: true, minZoom: 12, maxZoom: 20, rotate: true, touchRotate: true, rotateControl: false });
-const waski = matchMedia('(max-width: 600px)');
-const ustawZoom = () => map.zoomControl.setPosition(waski.matches ? 'bottomright' : 'topleft');
-ustawZoom(); waski.addEventListener('change', ustawZoom);
+const map = L.map('map', { zoomControl: false, minZoom: 12, maxZoom: 20, rotate: true, touchRotate: true, rotateControl: false });
+L.control.zoom({ position: 'bottomright' }).addTo(map);
 const polnoc = new (L.Control.extend({ onAdd() {
   const d = L.DomUtil.create('div', 'leaflet-bar polnoc'); d.hidden = true;
   d.innerHTML = '<a role="button" href="#" title="Północ u góry" aria-label="Ustaw północ u góry"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2l5 10H7z" fill="#c62828"/><path d="M12 22l5-10H7z" fill="currentColor" opacity=".4"/></svg></a>';
   L.DomEvent.disableClickPropagation(d);
   d.firstChild.onclick = e => { e.preventDefault(); map.setBearing(0); };
-  return d; } }))({ position: waski.matches ? 'bottomright' : 'topleft' }).addTo(map);
+  return d; } }))({ position: 'bottomright' }).addTo(map);
 map.on('rotate', () => { const b = map.getBearing(), d = polnoc.getContainer();
   d.hidden = Math.abs(((b + 180) % 360) - 180) < .5; d.querySelector('svg').style.transform = `rotate(${b}deg)`; });
 // pozycja w adresie: #zoom/szer/dl — do wysyłania linków do konkretnego miejsca
@@ -521,9 +518,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     d.innerHTML = '<a role="button" href="#" title="Pokaż moje położenie" aria-label="Pokaż moje położenie"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></a>';
     L.DomEvent.disableClickPropagation(d);
     d.firstChild.onclick = e => { e.preventDefault(); gdzieJestem(ll => map.setView(ll, Math.max(map.getZoom(), 17))); };
-    return d; } }))();
-  const ustawLok = () => { const r = waski.matches ? 'bottomright' : 'topleft'; polnoc.setPosition(r); lok.setPosition(r); };
-  lok.addTo(map); ustawLok(); waski.addEventListener('change', ustawLok);
+    return d; } }))({ position: 'bottomright' }).addTo(map);
   // potem(ll) dostaje położenie tylko wtedy, gdy leży ono na mapie
   const gdzieJestem = potem => {
     const naMapie = ll => wKomorce(ll) ? potem(ll) : powiedz('Jesteś poza obszarem mapy.');
