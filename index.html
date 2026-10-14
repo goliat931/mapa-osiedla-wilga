@@ -210,7 +210,7 @@ map.on('rotate', () => { const b = map.getBearing(), d = polnoc.getContainer();
 const h = location.hash.slice(1).split('/').map(Number);
 if (h.length === 3 && h.every(isFinite)) map.setView([h[1], h[2]], h[0]); else map.setView([51.838, 21.418], 14);
 // ?pin: link z arkusza uwag; zaznacza punkt na środku
-if (/[?&]pin/.test(location.search)) L.circleMarker(map.getCenter(), { radius: 12, color: '#c62828', weight: 3, fillOpacity: .15, interactive: false }).addTo(map);
+if (/[?&]pin\b/.test(location.search)) L.circleMarker(map.getCenter(), { radius: 12, color: '#c62828', weight: 3, fillOpacity: .15, interactive: false }).addTo(map);
 map.on('moveend', () => { const c = map.getCenter(); history.replaceState(null, '', `#${map.getZoom()}/${c.lat.toFixed(5)}/${c.lng.toFixed(5)}`); });
 const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 20, maxNativeZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
