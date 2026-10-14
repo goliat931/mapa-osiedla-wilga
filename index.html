@@ -252,11 +252,20 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
 
   // kliknięcie budynku pokazuje najbliższy adres (punkty adresowe stoją zwykle na budynku albo tuż obok)
   const opisAdresu = p => `<b>${esc(p.u)} ${esc(p.n)}</b><br><small>${p.u === 'Skurcza' ? 'miejscowość Skurcza, adres bez ulicy' : 'Osiedle Wilga'}</small>`;
+  // numer działki z Krajowej Integracji Ewidencji Gruntów (GUGiK), dopisywany do dymka; bez sieci po prostu go nie ma
+  const dzialkaW = ll => fetch(`https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?SERVICE=WMS&REQUEST=GetFeatureInfo&VERSION=1.3.0&LAYERS=dzialki&QUERY_LAYERS=dzialki&CRS=EPSG:4326&BBOX=${ll.lat - 1e-4},${ll.lng - 1e-4},${ll.lat + 1e-4},${ll.lng + 1e-4}&WIDTH=101&HEIGHT=101&I=50&J=50&INFO_FORMAT=text/xml`)
+    .then(r => r.text()).then(t => { const a = n => (t.match(new RegExp(`Name="${n}">([^<]*)<`)) || [])[1];
+      return a('Numer działki') ? `Działka nr <b>${esc(a('Numer działki'))}</b>, obręb ${esc(a('Identyfikator działki').split('.')[1])}` : ''; }).catch(() => '');
+  const dymek = (ll, tresc) => { const pp = L.popup().setLatLng(ll).setContent(tresc || '…').openOn(map);
+    dzialkaW(ll).then(d => d ? pp.setContent((tresc ? tresc + '<br>' : '') + `<small>${d}</small>`) : !tresc && map.closePopup(pp)); };
   const budL = L.geoJSON(bud, { style: { color: '#8a7650', weight: .6, fillColor: '#dccb9b', fillOpacity: 1 } }).on('click', e => {
+    L.DomEvent.stopPropagation(e);
     let naj = [40, null]; // ponytail: przegląd wszystkich ~1200 adresów przy każdym kliknięciu; wystarcza
     adr.features.forEach(f => { const d = map.distance(e.latlng, [f.geometry.coordinates[1], f.geometry.coordinates[0]]); if (d < naj[0]) naj = [d, f]; });
-    L.popup().setLatLng(e.latlng).setContent(naj[1] ? opisAdresu(naj[1].properties) : 'Brak adresu w rejestrze dla tego budynku').openOn(map);
+    dymek(e.latlng, naj[1] ? opisAdresu(naj[1].properties) : 'Brak adresu w rejestrze dla tego budynku');
   });
+  // kliknięcie w puste miejsce przy dużym przybliżeniu: numer działki
+  map.on('click', e => { if (map.getZoom() >= 17 && !document.body.classList.contains('tryb-zglos') && !e.originalEvent.target.closest('.leaflet-interactive')) dymek(e.latlng); });
   zalezne(budL, 16);
   const dzialki = L.tileLayer.wms('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow', {
     layers: 'dzialki', format: 'image/png', transparent: true, opacity: .35, maxZoom: 20, attribution: 'Działki &copy; GUGiK (KIEG)' });
