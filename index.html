@@ -37,7 +37,7 @@
   body:has(#legenda.otwarta) #pokaz-leg, body.info-otwarte #pokaz-leg { display:none; }
   @keyframes ul-wej { from { opacity:0; } }
   .ulica { animation:ul-wej .25s ease-out; display:inline-block; background:var(--niebieski); color:#fff; font:600 12px "Bahnschrift","Segoe UI",sans-serif; padding:1px 5px; border-radius:3px; border:1px solid #fff; white-space:nowrap; box-shadow:0 1px 2px rgba(0,0,0,.3); }
-  .nr { font:700 11px "Bahnschrift","Segoe UI",sans-serif; color:#0b2545; text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff; white-space:nowrap; }
+  .nr { cursor:pointer; font:700 11px "Bahnschrift","Segoe UI",sans-serif; color:#0b2545; text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff; white-space:nowrap; }
   .kom { font:700 22px "Segoe UI",sans-serif; color:rgba(40,40,40,.28); }
   .poi { width:22px; height:22px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.4); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; }
   .leaflet-div-icon { background:none; border:none; }
@@ -250,8 +250,17 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     L.geoJSON(wc, { style: f => ({ color: '#2f78c0', weight: f.properties.t === 'river' ? 4 : f.properties.t === 'canal' ? 2.5 : 1.2 }),
       onEachFeature: (f, l) => f.properties.n && l.bindTooltip(f.properties.n, { sticky: true }) })]));
 
-  const budL = L.geoJSON(bud, { style: { color: '#8a7650', weight: .6, fillColor: '#dccb9b', fillOpacity: 1 }, interactive: false });
+  // kliknięcie budynku pokazuje najbliższy adres (punkty adresowe stoją zwykle na budynku albo tuż obok)
+  const opisAdresu = p => `<b>${esc(p.u)} ${esc(p.n)}</b><br><small>${p.u === 'Skurcza' ? 'miejscowość Skurcza, adres bez ulicy' : 'Osiedle Wilga'}</small>`;
+  const budL = L.geoJSON(bud, { style: { color: '#8a7650', weight: .6, fillColor: '#dccb9b', fillOpacity: 1 } }).on('click', e => {
+    let naj = [40, null]; // ponytail: przegląd wszystkich ~1200 adresów przy każdym kliknięciu; wystarcza
+    adr.features.forEach(f => { const d = map.distance(e.latlng, [f.geometry.coordinates[1], f.geometry.coordinates[0]]); if (d < naj[0]) naj = [d, f]; });
+    L.popup().setLatLng(e.latlng).setContent(naj[1] ? opisAdresu(naj[1].properties) : 'Brak adresu w rejestrze dla tego budynku').openOn(map);
+  });
   zalezne(budL, 16);
+  const dzialki = L.tileLayer.wms('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow', {
+    layers: 'dzialki', format: 'image/png', transparent: true, opacity: .35, maxZoom: 20, attribution: 'Działki &copy; GUGiK (KIEG)' });
+  zalezne(dzialki, 17);
 
   const siatL = L.layerGroup([L.geoJSON(siat, { style: { color: '#333', weight: 1, dashArray: '4 4', fill: false }, interactive: false })]);
   siat.features.forEach(f => {
@@ -369,7 +378,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   const nrL = L.layerGroup();
   adr.features.forEach(f => {
     const [x, y] = f.geometry.coordinates;
-    L.marker([y, x], { interactive: false, icon: L.divIcon({ className: '', html: `<span class="nr">${esc(f.properties.n)}</span>`, iconSize: null, iconAnchor: [6, 7] }) }).addTo(nrL);
+    L.marker([y, x], { icon: L.divIcon({ className: '', html: `<span class="nr">${esc(f.properties.n)}</span>`, iconSize: null, iconAnchor: [6, 7] }) })
+      .bindPopup(opisAdresu(f.properties)).addTo(nrL);
     indeks[`${f.properties.u} ${f.properties.n}`] = L.latLng(y, x);
   });
   zalezne(nrL, 17);
@@ -478,7 +488,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       <label>Czego dotyczy<select name="typ">${TYPY_UWAG.map(t => `<option>${esc(t)}</option>`).join('')}</select></label>
       <label>Opis<textarea name="opis" rows="4" maxlength="2000" required placeholder="Co jest nie tak i jak jest w rzeczywistości?"></textarea></label>
       <label>Zdjęcie lub zrzut ekranu (nieobowiązkowo)<input type="file" name="plik" accept="image/*"></label>
-      <label>Podpis lub kontakt (nieobowiązkowo)<input name="podpis" maxlength="200" autocomplete="off"></label>
+      <label>Imię lub kontakt, jeśli możemy dopytać (nieobowiązkowo)<input name="podpis" maxlength="200" autocomplete="off"></label>
       <input class="pulapka" name="www" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button>Wyślij uwagę</button>
       <p class="drobne" role="status">Uwagi nie są publikowane; trafiają do autora mapy.</p>`;
@@ -499,8 +509,9 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       }
     };
     if (zglosMarker) map.removeLayer(zglosMarker);
-    zglosMarker = L.circleMarker(ll, { radius: 10, color: '#c62828', weight: 3, fillOpacity: .15 }).addTo(map)
+    const m = zglosMarker = L.circleMarker(ll, { radius: 10, color: '#c62828', weight: 3, fillOpacity: .15 }).addTo(map)
       .bindPopup(f, { maxWidth: 300, closeOnClick: false, autoClose: false, autoPanPaddingTopLeft: [10, 125] }).openPopup();
+    m.on('popupclose', () => { map.removeLayer(m); if (zglosMarker === m) zglosMarker = null; });
   };
   // zgłoszenie: miejsce wskazuje pinezka na środku mapy; stuknięcie w mapę przesuwa to miejsce pod pinezkę
   map.on('click', e => { if (document.body.classList.contains('tryb-zglos')) map.panTo(e.latlng); });
