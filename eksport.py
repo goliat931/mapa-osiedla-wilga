@@ -59,6 +59,20 @@ with open(f'{OUT}/adresy.geojson', encoding='utf8') as fi:
     adresy = json.load(fi)
 adresy['features'] += [{'type': 'Feature', 'properties': {'u': u, 'n': n},
                         'geometry': {'coordinates': [x, y], 'type': 'Point'}} for u, n, x, y in POZA_PRG]
+# domy na terenie osiedla, które w PRG należą do miejscowości Skurcza (adres bez ulicy, np. „Skurcza 60”, uwaga nr 16)
+siat = L('siatka_odniesienia')
+tr_s, tr_w = QgsCoordinateTransform(siat.crs(), prg.crs(), prj), QgsCoordinateTransform(prg.crs(), WGS, prj)
+komorki = []
+for f in siat.getFeatures():
+    g = QgsGeometry(f.geometry()); g.transform(tr_s); komorki.append((f['kod'], g))
+skurcza = {}
+for f in prg.getFeatures(QgsFeatureRequest().setFilterExpression("\"ID_SIMC\"='0694072'")):
+    kom = next((k for k, g in komorki if g.contains(f.geometry())), None)
+    if kom:
+        p = tr_w.transform(f.geometry().asPoint())
+        adresy['features'].append({'type': 'Feature', 'properties': {'u': 'Skurcza', 'n': f['NUMER_PORZ']},
+                                   'geometry': {'coordinates': [round(p.x(), 6), round(p.y(), 6)], 'type': 'Point'}})
+        skurcza.setdefault(kom, []).append(f['NUMER_PORZ'])
 with open(f'{OUT}/adresy.geojson', 'w', encoding='utf8') as fo:
     json.dump(adresy, fo, ensure_ascii=False, separators=(',', ':'))
 
@@ -76,6 +90,9 @@ for b in bloki:
         kom, _, nr = w.strip().partition(' nr ')
         wiersze.append({'k': [k.strip() for k in kom.split(',') if k.strip()], 'nr': nr or None})
     indeks.append({'u': nazwa, 'w': wiersze})
+nr_klucz = lambda n: (int(re.match(r'\d+', n).group()), n)
+gdzie = next(i for i, w in enumerate(indeks) if w['u'] > 'Skurcza' and w['u'][0] == 'S')  # indeks jest w polskiej kolejności
+indeks.insert(gdzie, {'u': 'Skurcza (adres bez ulicy)', 'w': [{'k': [k], 'nr': ', '.join(sorted(n, key=nr_klucz))} for k, n in sorted(skurcza.items())]})
 with open(f'{OUT}/indeks.json', 'w', encoding='utf8') as fo:
     json.dump(indeks, fo, ensure_ascii=False, separators=(',', ':'))
 print('indeks', len(indeks))
