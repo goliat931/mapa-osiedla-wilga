@@ -68,7 +68,6 @@
   #indeks .kw .k { min-width:64px; }
   #info { top:calc(var(--bar-h) + 76px); left:54px; right:10px; max-width:460px; display:none; max-height:calc(100vh - var(--bar-h) - 100px); overflow:auto; }
   body.info-otwarte #legenda { display:none; }
-  body.tryb-zglos #map { cursor:crosshair; }
   #zglos-pasek { top:calc(var(--bar-h) + 76px); left:50%; transform:translateX(-50%); padding:10px 12px 10px 14px; font-size:16px; font-weight:600; display:none; align-items:center; gap:10px;
     background:var(--wilga); color:#fff; border-color:var(--wilga); width:max-content; max-width:calc(100vw - 20px); box-sizing:border-box; }
   body.tryb-zglos #zglos-pasek { display:flex; flex-wrap:wrap; justify-content:flex-end; }
@@ -76,18 +75,19 @@
   .lok a { display:flex; align-items:center; justify-content:center; cursor:pointer; }
   .lok a.jest { color:#1a73e8; }
   #komunikat { left:50%; bottom:76px; transform:translateX(-50%); z-index:1002; padding:10px 14px; font-size:14px; width:max-content; max-width:calc(100vw - 20px); box-sizing:border-box; }
-  #zglos-pasek svg { flex:none; width:26px; height:26px; animation:zglos-skok 1s ease-in-out infinite; }
+  #zglos-pasek svg { flex:none; width:26px; height:26px; }
   #zglos-pasek span { flex:1; line-height:1.25; }
   #zglos-pasek button { flex:none; font:inherit; font-size:14px; padding:5px 10px; color:#fff; background:none; border:1px solid rgba(255,255,255,.7); border-radius:7px; cursor:pointer; }
   #zglos-pasek button:hover { background:rgba(255,255,255,.15); }
+  #zglos-pasek #zglos-ok { background:#fff; color:var(--wilga); border-color:#fff; font-weight:700; font-size:15px; }
+  .polnoc a { display:flex; align-items:center; justify-content:center; cursor:pointer; }
   /* podpowiedź na środku mapy: pinezka i „stuknięcie”; nie przechwytuje kliknięć */
   #zglos-wskaz { position:absolute; z-index:900; left:50%; top:calc(50% + var(--bar-h) / 2); width:0; height:0; pointer-events:none; display:none; }
   body.tryb-zglos #zglos-wskaz { display:block; }
-  #zglos-wskaz i { position:absolute; left:-22px; top:-22px; width:44px; height:44px; border-radius:50%; border:3px solid #c62828; animation:zglos-fala 1.4s ease-out infinite; }
-  #zglos-wskaz svg { position:absolute; left:-20px; top:-40px; width:40px; height:40px; filter:drop-shadow(0 2px 3px rgba(0,0,0,.45)); animation:zglos-skok 1.4s ease-in-out infinite; }
-  @keyframes zglos-skok { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-7px); } }
-  @keyframes zglos-fala { 0% { transform:scale(.3); opacity:1; } 100% { transform:scale(1.5); opacity:0; } }
-  @media (prefers-reduced-motion: reduce) { #zglos-pasek svg, #zglos-wskaz svg, #zglos-wskaz i { animation:none; } }
+  /* pinezka stoi na środku mapy; przesuwa się mapa pod nią. Kropka = dokładne miejsce */
+  #zglos-wskaz i { position:absolute; left:-5px; top:-3px; width:10px; height:6px; border-radius:50%; background:rgba(0,0,0,.45); }
+  #zglos-wskaz svg { position:absolute; left:-24px; top:-46px; width:48px; height:48px; filter:drop-shadow(0 2px 3px rgba(0,0,0,.45)); transition:transform .15s; }
+  body.przesuw #zglos-wskaz svg { transform:translateY(-10px); }
   .zglos-popup p { margin:4px 0; }
   .zglos-popup { width:min(270px, 68vw); }
   .zglos-popup label { display:block; margin:8px 0 0; font-size:13px; font-weight:600; }
@@ -161,10 +161,11 @@
     <p>Mapa powstała jako oddolna inicjatywa mieszkańca Osiedla Wilga, wsparta przez Sołtysa Osiedla Wilga, Marcina Olkowicza.</p>
     <p>Pomysł narodził się na zebraniu wiejskim, w dyskusji ze strażakami: w lesie gubi się sygnał GPS, a trafienie pod właściwy adres zajmuje cenne minuty. Dlatego mapa ma przede wszystkim <b>ułatwić służbom ratunkowym dojazd do posesji</b>: pokazuje nazwy ulic i numery domów, przejezdność dróg dla wozów strażackich, hydranty, zbiorniki wody i strome podjazdy.</p>
     <p>To wersja robocza, uzupełniana na bieżąco. Przejezdność dróg i stromizny są wstępne i weryfikowane razem z jednostkami OSP.</p>
-    <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś uwagę</b> i wskaż miejsce na mapie: nie trzeba się logować, można dołączyć zdjęcie z terenu albo zrzut ekranu. Każdą uwagę sprawdzamy, zanim zmienimy mapę.</p>
+    <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś uwagę</b>, przesuń mapę tak, żeby pinezka wskazała miejsce, i kliknij <b>Zgłoś tutaj</b>: nie trzeba się logować, można dołączyć zdjęcie z terenu albo zrzut ekranu. Każdą uwagę sprawdzamy, zanim zmienimy mapę.</p>
+    <p>Mapę obracasz dwoma palcami (na komputerze: Shift + kółko myszy). Przycisk ze strzałką ustawia północ z powrotem u góry.</p>
     <p>Przycisk z celownikiem pokazuje Twoje położenie niebieską kropką. Położenie zostaje w Twoim urządzeniu; nigdzie go nie wysyłamy, chyba że sam wskażesz je w zgłoszeniu uwagi.</p>
   </div></div>
-<div id="zglos-pasek" class="panel" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg><span>Kliknij na mapie miejsce, którego dotyczy uwaga</span><button id="zglos-tu" type="button">Tu, gdzie jestem</button><button id="zglos-anuluj" type="button">Anuluj</button></div>
+<div id="zglos-pasek" class="panel" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg><span>Przesuń mapę tak, żeby czerwona pinezka wskazała miejsce, którego dotyczy uwaga</span><button id="zglos-ok" type="button">Zgłoś tutaj</button><button id="zglos-tu" type="button">Moje położenie</button><button id="zglos-anuluj" type="button">Anuluj</button></div>
 <div id="komunikat" class="panel" role="status" hidden></div>
 <div id="zglos-wskaz" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg></div>
 <div id="skrot" class="panel" hidden><span></span><button id="skrot-dodaj" class="btn-primary" type="button" hidden>Dodaj</button><button id="skrot-x" type="button" aria-label="Zamknij">×</button></div>
@@ -187,11 +188,21 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-rotate@0.2.8/dist/leaflet-rotate-src.js"></script>
 <script>
-const map = L.map('map', { zoomControl: true, minZoom: 12, maxZoom: 20 });
+// obracanie: leaflet-rotate (dwa palce, Shift + kółko); przycisk „północ” pojawia się po obróceniu
+const map = L.map('map', { zoomControl: true, minZoom: 12, maxZoom: 20, rotate: true, touchRotate: true, rotateControl: false });
 const waski = matchMedia('(max-width: 600px)');
 const ustawZoom = () => map.zoomControl.setPosition(waski.matches ? 'bottomright' : 'topleft');
 ustawZoom(); waski.addEventListener('change', ustawZoom);
+const polnoc = new (L.Control.extend({ onAdd() {
+  const d = L.DomUtil.create('div', 'leaflet-bar polnoc'); d.hidden = true;
+  d.innerHTML = '<a role="button" href="#" title="Północ u góry" aria-label="Ustaw północ u góry"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2l5 10H7z" fill="#c62828"/><path d="M12 22l5-10H7z" fill="currentColor" opacity=".4"/></svg></a>';
+  L.DomEvent.disableClickPropagation(d);
+  d.firstChild.onclick = e => { e.preventDefault(); map.setBearing(0); };
+  return d; } }))({ position: waski.matches ? 'bottomright' : 'topleft' }).addTo(map);
+map.on('rotate', () => { const b = map.getBearing(), d = polnoc.getContainer();
+  d.hidden = Math.abs(((b + 180) % 360) - 180) < .5; d.querySelector('svg').style.transform = `rotate(${b}deg)`; });
 // pozycja w adresie: #zoom/szer/dl — do wysyłania linków do konkretnego miejsca
 const h = location.hash.slice(1).split('/').map(Number);
 if (h.length === 3 && h.every(isFinite)) map.setView([h[1], h[2]], h[0]); else map.setView([51.838, 21.418], 14);
@@ -296,11 +307,12 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   function odswiezNazwy() {
     const z = Math.round(map.getZoom()); if (z < 15) return;
     if (z !== ramkiZ) { ulL.clearLayers(); ramki = {}; ramkiZ = z; }
-    const pb = map.getPixelBounds();
     // na wąskim ekranie górę mapy zasłania panel z wyszukiwarką
     const zasl = innerWidth <= 720 ? Math.max(0, document.getElementById('top').getBoundingClientRect().bottom - map.getContainer().getBoundingClientRect().top) : 0;
-    const r = { x0: pb.min.x + 8, x1: pb.max.x - 8, y0: pb.min.y + 8 + zasl, y1: pb.max.y - 8 };
-    const wR = q => q.x >= r.x0 && q.x <= r.x1 && q.y >= r.y0 && q.y <= r.y1;
+    // obrócona mapa: kadr w pikselach powiększenia z to prostokąt opisany na obróconym ekranie, a „w kadrze” sprawdzamy na ekranie
+    const W = map.getSize(), rogi = [[0, zasl], [W.x, zasl], [0, W.y], [W.x, W.y]].map(c => map.project(map.containerPointToLatLng(c), z));
+    const r = { x0: Math.min(...rogi.map(q => q.x)), x1: Math.max(...rogi.map(q => q.x)), y0: Math.min(...rogi.map(q => q.y)), y1: Math.max(...rogi.map(q => q.y)) };
+    const wR = q => { const c = map.latLngToContainerPoint(map.unproject(q, z)); return c.x >= 8 && c.x <= W.x - 8 && c.y >= 8 + zasl && c.y <= W.y - 8; };
     const wsz = linieNa(z), postawione = [], seg = [], widoczne = {};
     Object.entries(ramki).forEach(([n, k]) => { if (k.os.every(wR)) postawione.push(...k.os); else { ulL.removeLayer(k.m); delete ramki[n]; } });
     wsz.forEach(l => {
@@ -331,11 +343,18 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       });
       if (!naj || naj.naRamce) return; // brak wolnego miejsca w tym kadrze
       postawione.push(...naj.os);
-      let st = naj.kat * 180 / Math.PI; if (st > 90) st -= 180; else if (st <= -90) st += 180; // nigdy do góry nogami
-      ramki[n] = { os: naj.os, m: L.marker(map.unproject(naj.c, z), { interactive: false, icon: L.divIcon({ className: '',
-        html: `<span class="ulica" style="transform:translate(-50%,-50%) rotate(${st.toFixed(1)}deg)">${esc(n)}</span>`, iconSize: null, iconAnchor: [0, 0] }) }).addTo(ulL) };
+      ramki[n] = { os: naj.os, kat: naj.kat * 180 / Math.PI, m: L.marker(map.unproject(naj.c, z), { interactive: false, rotateWithView: true, icon: L.divIcon({ className: '',
+        html: `<span class="ulica">${esc(n)}</span>`, iconSize: null, iconAnchor: [0, 0] }) }).addTo(ulL) };
     });
+    obrocNazwy();
   }
+  // nazwa obraca się z mapą, ale nigdy nie stoi do góry nogami
+  const obrocNazwy = () => { const b = map.getBearing();
+    Object.values(ramki).forEach(k => { const e = k.m.getElement(); if (!e) return;
+      const ek = ((k.kat + b) % 360 + 540) % 360 - 180, st = Math.abs(ek) > 90 ? k.kat + 180 : k.kat;
+      e.firstChild.style.transform = `translate(-50%,-50%) rotate(${st.toFixed(1)}deg)`; }); };
+  let obrT;
+  map.on('rotate', () => { obrocNazwy(); clearTimeout(obrT); obrT = setTimeout(odswiezNazwy, 250); });
   map.on('moveend', odswiezNazwy);
   map.whenReady(odswiezNazwy);
   zalezne(ulL, 15);
@@ -357,7 +376,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     pointToLayer: (f, ll) => L.marker(ll, { icon: ikona('ikony/hydrant_do_weryfikacji.svg', 22) }),
     onEachFeature: (f, l) => l.bindPopup('<b>Hydrant z mapy sieci wodociągowej</b><br>Niesprawdzony w terenie — nie wiadomo, czy istnieje i działa.') }), false);
 
-  const strL = L.geoJSON(str, { pointToLayer: (f, ll) => L.marker(ll, { icon: L.divIcon({ className: '',
+  const strL = L.geoJSON(str, { pointToLayer: (f, ll) => L.marker(ll, { rotateWithView: true, icon: L.divIcon({ className: '',
       html: `<img src="ikony/strzalka_spadek_${f.properties.k}.svg" style="width:18px;transform:rotate(${f.properties.a}deg)">`, iconSize: [18, 30], iconAnchor: [9, 15] }) }),
     onEachFeature: (f, l) => l.bindPopup(`<b>Stromy podjazd ${Math.round(f.properties.s)}%</b><br>${esc(f.properties.n || 'droga bez nazwy')}, komórka ${f.properties.c}<br>długość ok. ${f.properties.l} m, grot wskazuje pod górę`) });
   zalezne(strL, 15);
@@ -476,7 +495,11 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     zglosMarker = L.circleMarker(ll, { radius: 10, color: '#c62828', weight: 3, fillOpacity: .15 }).addTo(map)
       .bindPopup(f, { maxWidth: 300, closeOnClick: false, autoClose: false, autoPanPaddingTopLeft: [10, 125] }).openPopup();
   };
-  map.on('click', e => { if (document.body.classList.contains('tryb-zglos')) zglosW(e.latlng); });
+  // zgłoszenie: miejsce wskazuje pinezka na środku mapy; stuknięcie w mapę przesuwa to miejsce pod pinezkę
+  map.on('click', e => { if (document.body.classList.contains('tryb-zglos')) map.panTo(e.latlng); });
+  map.on('movestart', () => document.body.classList.add('przesuw'));
+  map.on('moveend', () => document.body.classList.remove('przesuw'));
+  document.getElementById('zglos-ok').onclick = () => zglosW(map.getCenter());
 
   // położenie użytkownika: niebieska kropka z okręgiem dokładności; zostaje w przeglądarce
   // ponytail: śledzenie trwa do zamknięcia strony; wyłącznik dodać, jeśli ktoś zgłosi zużycie baterii
@@ -489,7 +512,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     L.DomEvent.disableClickPropagation(d);
     d.firstChild.onclick = e => { e.preventDefault(); gdzieJestem(ll => map.setView(ll, Math.max(map.getZoom(), 17))); };
     return d; } }))();
-  const ustawLok = () => lok.setPosition(waski.matches ? 'bottomright' : 'topleft');
+  const ustawLok = () => { const r = waski.matches ? 'bottomright' : 'topleft'; polnoc.setPosition(r); lok.setPosition(r); };
   lok.addTo(map); ustawLok(); waski.addEventListener('change', ustawLok);
   // potem(ll) dostaje położenie tylko wtedy, gdy leży ono na mapie
   const gdzieJestem = potem => {
@@ -508,7 +531,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   });
   map.on('locationerror', e => { if (!poUstaleniu) return; poUstaleniu = null;
     powiedz(e.code === 1 ? 'Brak zgody na lokalizację. Włącz ją dla tej strony w ustawieniach przeglądarki.' : 'Nie udało się ustalić położenia. Spróbuj ponownie.'); });
-  document.getElementById('zglos-tu').onclick = () => gdzieJestem(ll => { map.setView(ll, Math.max(map.getZoom(), 17)); zglosW(ll); });
+  document.getElementById('zglos-tu').onclick = () => gdzieJestem(ll => map.setView(ll, Math.max(map.getZoom(), 17)));
 
   fetch('data/indeks.json').then(r => r.json()).then(ind => {
     const el = document.getElementById('indeks-lista'); let lit = '';
@@ -538,7 +561,7 @@ const info = document.getElementById('info');
 const ustawInfo = otw => { info.classList.toggle('otwarty', otw); document.body.classList.toggle('info-otwarte', otw); };
 document.getElementById('btn-info').onclick = () => ustawInfo(!info.classList.contains('otwarty'));
 document.getElementById('zamknij-info').onclick = () => ustawInfo(false);
-document.getElementById('btn-zglos').onclick = () => { ustawInfo(false); document.body.classList.add('tryb-zglos'); };
+document.getElementById('btn-zglos').onclick = () => { ustawInfo(false); map.closePopup(); document.body.classList.add('tryb-zglos'); };
 document.getElementById('zglos-anuluj').onclick = e => { e.preventDefault(); document.body.classList.remove('tryb-zglos'); };
 // przy pierwszej wizycie pokaż „O mapie”
 let pierwszaWizyta = false;
