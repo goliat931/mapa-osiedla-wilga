@@ -492,8 +492,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     return best[1] ? [best[1], Math.round(best[0] * map.distance(map.unproject([0, 0], 18), map.unproject([1, 0], 18)))] : null; };
   let zglosMarker;
   const UWAGI_URL = 'https://script.google.com/macros/s/AKfycbx5_boeKa5TW8bYz6l0BVVLcDrarPWOq-bw0F1mqtb853NetDbo1quVrEEqta77Y_FK_Q/exec';
-  const TYPY_UWAG = ['Droga nieprzejezdna lub trudny dojazd', 'Droga przejezdna, a na mapie oznaczona inaczej', 'Hydrant lub zbiornik wody',
-    'Numer domu lub adres', 'Nazwa ulicy', 'Brakująca droga lub skrót', 'Inne'];
+  const TYPY_UWAG = ['Droga nieprzejezdna lub trudny dojazd', 'Droga przejezdna, a na mapie oznaczona inaczej', 'Wąski przejazd lub przeszkoda (brama, szlaban, gałęzie, mostek)',
+    'Trudno trafić / brak oznakowania', 'Hydrant lub zbiornik wody', 'Numer domu lub adres', 'Nazwa ulicy', 'Brakująca droga lub skrót', 'Inne'];
   // zdjęcie z telefonu zmniejszone do 1600 px (JPEG), żeby wysyłka działała też przy słabym zasięgu
   const zmniejsz = plik => new Promise((ok, zle) => { const img = new Image();
     img.onload = () => { const k = Math.min(1, 1600 / Math.max(img.width, img.height)), c = document.createElement('canvas');
