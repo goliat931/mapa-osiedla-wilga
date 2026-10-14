@@ -263,7 +263,9 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   // numer działki z Krajowej Integracji Ewidencji Gruntów (GUGiK), dopisywany do dymka; bez sieci po prostu go nie ma
   const dzialkaW = ll => fetch(`https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?SERVICE=WMS&REQUEST=GetFeatureInfo&VERSION=1.3.0&LAYERS=dzialki&QUERY_LAYERS=dzialki&CRS=EPSG:4326&BBOX=${ll.lat - 1e-4},${ll.lng - 1e-4},${ll.lat + 1e-4},${ll.lng + 1e-4}&WIDTH=101&HEIGHT=101&I=50&J=50&INFO_FORMAT=text/xml`)
     .then(r => r.text()).then(t => { const a = n => (t.match(new RegExp(`Name="${n}">([^<]*)<`)) || [])[1];
-      return a('Numer działki') ? `Działka nr <b>${esc(a('Numer działki'))}</b>, obręb ${esc(a('Identyfikator działki').split('.')[1])}` : ''; }).catch(() => '');
+      // nazwa obrębu tylko poza osiedlem (obręb 0010): numery działek powtarzają się w sąsiednich obrębach
+      const ob = (a('Identyfikator działki') || '').split('.')[1] === '0010' ? '' : (a('Nazwa obrębu') || '').toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase());
+      return a('Numer działki') ? `Działka nr <b>${esc(a('Numer działki'))}</b>${ob ? ` (${esc(ob)})` : ''}` : ''; }).catch(() => '');
   const dymek = (ll, tresc) => { const pp = L.popup().setLatLng(ll).setContent(tresc || '…').openOn(map);
     dzialkaW(ll).then(d => d ? pp.setContent((tresc ? tresc + '<br>' : '') + `<small>${d}</small>`) : !tresc && map.closePopup(pp)); };
   const budL = L.geoJSON(bud, { style: { color: '#8a7650', weight: .6, fillColor: '#dccb9b', fillOpacity: 1 } }).on('click', e => {
@@ -376,16 +378,17 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       });
       if (!naj || naj.naRamce) return; // brak wolnego miejsca w tym kadrze
       postawione.push(...naj.os);
-      ramki[n] = { os: naj.os, kat: naj.kat * 180 / Math.PI, m: L.marker(map.unproject(naj.c, z), { interactive: false, rotateWithView: true, icon: L.divIcon({ className: '',
-        html: `<span class="ulica">${esc(n)}</span>`, iconSize: null, iconAnchor: [0, 0] }) }).addTo(ulL) };
+      const kat = naj.kat * 180 / Math.PI;
+      ramki[n] = { os: naj.os, kat, m: L.marker(map.unproject(naj.c, z), { interactive: false, rotateWithView: true, icon: L.divIcon({ className: '',
+        html: `<span class="ulica" style="transform:${obrot(kat)}">${esc(n)}</span>`, iconSize: null, iconAnchor: [0, 0] }) }).addTo(ulL) };
     });
     obrocNazwy();
   }
   // nazwa obraca się z mapą, ale nigdy nie stoi do góry nogami
-  const obrocNazwy = () => { const b = map.getBearing();
-    Object.values(ramki).forEach(k => { const e = k.m.getElement(); if (!e) return;
-      const ek = ((k.kat + b) % 360 + 540) % 360 - 180, st = Math.abs(ek) > 90 ? k.kat + 180 : k.kat;
-      e.firstChild.style.transform = `translate(-50%,-50%) rotate(${st.toFixed(1)}deg)`; }); };
+  // kąt jest też wpisany w ramkę przy tworzeniu, bo warstwa nazw bywa dodawana do mapy dopiero po ich ułożeniu
+  const obrot = kat => { const ek = ((kat + map.getBearing()) % 360 + 540) % 360 - 180;
+    return `translate(-50%,-50%) rotate(${(Math.abs(ek) > 90 ? kat + 180 : kat).toFixed(1)}deg)`; };
+  const obrocNazwy = () => Object.values(ramki).forEach(k => { const e = k.m.getElement(); if (e) e.firstChild.style.transform = obrot(k.kat); });
   let obrT;
   map.on('rotate', () => { obrocNazwy(); clearTimeout(obrT); obrT = setTimeout(odswiezNazwy, 250); });
   map.on('moveend', odswiezNazwy);
@@ -570,13 +573,13 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
 
   // działki (eksport.py, warstwa dzialki): wyszukiwarka po numerze i zakładka indeksu; zakładkę budujemy przy pierwszym otwarciu
   fetch('data/dzialki.json').then(r => r.json()).then(({ obreby, d }) => {
-    const wpisy = d.map(([n, o, k, x, y]) => ({ t: n, r: 3, o: `działka, ${obreby[o]} (obręb ${o})`, k: bez(n), dz: { ll: L.latLng(y, x), kom: k } }));
+    const wpisy = d.map(([n, o, k, x, y]) => ({ t: n, r: 3, o: o === '0010' ? 'działka' : `działka, ${obreby[o]}`, k: bez(n), dz: { ll: L.latLng(y, x), kom: k, ob: o } }));
     baza.push(...wpisy); baza.sort((a, b) => a.r - b.r || a.t.localeCompare(b.t, 'pl', { numeric: true }));
     const el = document.getElementById('indeks-dzialki');
     el.zbuduj = () => { el.zbuduj = null;
       Object.keys(obreby).forEach(o => {
-        const tu = wpisy.filter(w => w.o.endsWith(`${o})`)); if (!tu.length) return;
-        el.insertAdjacentHTML('beforeend', `<div class="lit">${esc(obreby[o])} (obręb ${o})</div><div class="dz">${tu.map(w => `<span><a data-i="${baza.indexOf(w)}">${esc(w.t)}</a> <small>${w.dz.kom}</small></span>`).join('')}</div>`);
+        const tu = wpisy.filter(w => w.dz.ob === o).sort((a, b) => a.t.localeCompare(b.t, 'pl', { numeric: true })); if (!tu.length) return;
+        el.insertAdjacentHTML('beforeend', `<div class="lit">${esc(obreby[o])}</div><div class="dz">${tu.map(w => `<span><a data-i="${baza.indexOf(w)}">${esc(w.t)}</a> <small>${w.dz.kom}</small></span>`).join('')}</div>`);
       });
       el.onclick = e => { const a = e.target.closest('a[data-i]'); if (a) idz(baza[+a.dataset.i]); };
     };
