@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="ikony/app-180.png">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1c1d1f" media="(prefers-color-scheme: dark)">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="lib/leaflet/leaflet.min.css">
 <link rel="stylesheet" href="wilga.css">
 <style>
   :root { --niebieski:#1d4f91; --nad: calc(var(--bar-h) + 10px); }
@@ -20,6 +20,7 @@
   #top { top:var(--nad); left:54px; right:10px; max-width:600px; padding:10px 12px; }
   #top h1 { font-size:17px; margin:0 0 8px; }
   #top .stan { font-size:12px; color:var(--muted); margin-left:6px; font-weight:400; }
+  body.bez-sieci #top .stan::after { content:' · bez połączenia'; }
   #szukaj { width:100%; box-sizing:border-box; font:inherit; font-size:16px; padding:7px 10px; color:var(--text); background:var(--bg); border:1px solid var(--border-strong); border-radius:7px; }
   #szukaj::placeholder { color:var(--muted); }
   #legenda { bottom:22px; left:10px; padding:10px 12px; font-size:13px; max-width:280px; max-height:55vh; overflow:auto; }
@@ -162,6 +163,8 @@
     <p>Pomysł narodził się na zebraniu wiejskim, w dyskusji ze strażakami: w lesie gubi się sygnał GPS, a trafienie pod właściwy adres zajmuje cenne minuty. Dlatego mapa ma przede wszystkim <b>ułatwić służbom ratunkowym dojazd do posesji</b>: pokazuje nazwy ulic i numery domów, przejezdność dróg dla wozów strażackich, hydranty, zbiorniki wody i strome podjazdy.</p>
     <p>To wersja robocza, uzupełniana na bieżąco. Przejezdność dróg i stromizny są wstępne i weryfikowane razem z jednostkami OSP.</p>
     <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś uwagę</b>, przesuń mapę tak, żeby pinezka wskazała miejsce, i kliknij <b>Zgłoś tutaj</b>: nie trzeba się logować, można dołączyć zdjęcie z terenu albo zrzut ekranu. Każdą uwagę sprawdzamy, zanim zmienimy mapę.</p>
+    <p>Raz otwarta mapa działa potem także bez zasięgu: ulice, numery, drogi i hydranty są zapisane w telefonie. Bez połączenia nie wczytuje się tylko podkład (OSM, ortofotomapa) i nie da się wysłać uwagi.</p>
+    <p>Wersja do druku: <a href="atlas-a3.pdf" target="_blank" rel="noopener">atlas A3 w PDF</a> (8 arkuszy, ok. 9 MB) z legendą i indeksem ulic.</p>
     <p>Mapę obracasz dwoma palcami (na komputerze: Shift + kółko myszy). Przycisk ze strzałką ustawia północ z powrotem u góry.</p>
     <p>Przycisk z celownikiem pokazuje Twoje położenie niebieską kropką. Położenie zostaje w Twoim urządzeniu; nigdzie go nie wysyłamy, chyba że sam wskażesz je w zgłoszeniu uwagi.</p>
   </div></div>
@@ -187,8 +190,8 @@
   <div class="uwaga">Mapa dla służb ratunkowych — wersja robocza. Przejezdność i stromizny są wstępne, weryfikowane z OSP. Kliknij drogę lub punkt, żeby zobaczyć szczegóły.</div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet-rotate@0.2.8/dist/leaflet-rotate-src.js"></script>
+<script src="lib/leaflet/leaflet.min.js"></script>
+<script src="lib/leaflet-rotate/leaflet-rotate.js"></script>
 <script>
 // obracanie: leaflet-rotate (dwa palce, Shift + kółko); przycisk „północ” pojawia się po obróceniu
 const map = L.map('map', { zoomControl: true, minZoom: 12, maxZoom: 20, rotate: true, touchRotate: true, rotateControl: false });
@@ -222,6 +225,10 @@ const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '
 const get = n => fetch('data/' + n + '.geojson').then(r => r.json());
 
 fetch('data/stan.json').then(r => r.json()).then(s => document.getElementById('stan').textContent = 'stan na ' + s.stan_na).catch(() => {});
+// kopia mapy w telefonie (sw.js): bez połączenia działa wszystko poza podkładami i zgłaszaniem uwag
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+const bezSieci = () => document.body.classList.toggle('bez-sieci', !navigator.onLine);
+addEventListener('online', bezSieci); addEventListener('offline', bezSieci); bezSieci();
 
 const warstwy = {};
 const ctl = L.control.layers({ 'OpenStreetMap': osm, 'Ortofotomapa': orto, 'Cieniowanie terenu': cien }, {}, { collapsed: true }).addTo(map);
