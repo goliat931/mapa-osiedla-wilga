@@ -193,7 +193,7 @@
   <div class="lw"><i style="border-color:#f5c400"></i>tylko lekki wóz / do sprawdzenia</div>
   <div class="lw"><i style="border-color:#e3141b;border-top-style:dashed"></i>nieprzejezdna, dojście pieszo</div>
   <h2>Woda dla straży</h2>
-  <div class="lw"><img src="ikony/hydrant.svg" alt="">hydrant</div>
+  <div class="lw"><img src="ikony/hydrant.svg" alt="">hydrant sprawdzony w terenie (działanie niesprawdzone)</div>
   <div class="lw"><img src="ikony/hydrant_do_weryfikacji.svg" alt="">hydrant z mapy sieci — niesprawdzony</div>
   <div class="lw"><img src="ikony/zbiornik.svg" alt="">zbiornik wodny</div>
   <h2>Stromy podjazd (grot = pod górę)</h2>
@@ -412,7 +412,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   const ikona = (src, s = 24) => L.icon({ iconUrl: src, iconSize: [s, s], iconAnchor: [s / 2, s / 2], popupAnchor: [0, -s / 2] });
   const hydPewne = L.geoJSON(hyd, { filter: f => f.properties.t !== 'do_weryfikacji',
     pointToLayer: (f, ll) => L.marker(ll, { icon: ikona(f.properties.t === 'zbiornik_wodny' ? 'ikony/zbiornik.svg' : 'ikony/hydrant.svg') }),
-    onEachFeature: (f, l) => l.bindPopup(f.properties.t === 'zbiornik_wodny' ? '<b>Zbiornik wodny</b>' : '<b>Hydrant</b> (potwierdzony)') });
+    onEachFeature: (f, l) => l.bindPopup(f.properties.t === 'zbiornik_wodny' ? '<b>Zbiornik wodny</b>' : '<b>Hydrant</b><br>Sprawdzony w terenie (stoi). Nie sprawdzano, czy działa.') });
   dodaj('Hydranty i zbiorniki', hydPewne);
   dodaj('Hydranty do sprawdzenia (z mapy sieci)', L.geoJSON(hyd, { filter: f => f.properties.t === 'do_weryfikacji',
     pointToLayer: (f, ll) => L.marker(ll, { icon: ikona('ikony/hydrant_do_weryfikacji.svg', 22) }),
