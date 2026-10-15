@@ -105,6 +105,10 @@
   .zglos-popup select, .zglos-popup textarea, .zglos-popup input { display:block; width:100%; box-sizing:border-box; margin-top:3px; font:inherit; font-size:16px; font-weight:400; }
   .zglos-popup select, .zglos-popup textarea, .zglos-popup input:not([type=file]) { padding:5px 7px; border:1px solid #9aa0a6; border-radius:7px; }
   .zglos-popup input[type=file] { font-size:13px; }
+  /* aparat tylko na telefonie; zwykły wybór pliku zostaje */
+  .zglos-popup .aparat { display:none; margin-top:6px; padding:7px 12px; width:max-content; border:1px solid var(--wilga); border-radius:7px; color:var(--wilga); font-size:14px; cursor:pointer; }
+  .zglos-popup .aparat input { position:absolute; left:-9999px; }
+  @media (pointer:coarse) { .zglos-popup .aparat { display:block; } }
   .zglos-popup .pulapka { position:absolute; left:-9999px; }
   .zglos-popup button { margin-top:10px; padding:7px 12px; border:0; cursor:pointer; background:var(--wilga); color:#fff; border-radius:7px; font:inherit; font-weight:600; }
   .zglos-popup button:hover { background:var(--wilga-hover); }
@@ -141,6 +145,7 @@
     #btn-indeks, #btn-zglos { padding:6px 8px; }
     #info, #zglos-pasek { top:calc(var(--bar-h) + 104px); left:10px; }
     #zglos-pasek { right:10px; transform:none; width:auto; max-width:none; }
+    #zglos-pasek span { flex-basis:calc(100% - 36px); } /* tekst w pierwszym wierszu, trzy przyciski razem pod nim */
   }
 </style>
 </head>
@@ -510,17 +515,22 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       <label>Czego dotyczy<select name="typ">${TYPY_UWAG.map(t => `<option>${esc(t)}</option>`).join('')}</select></label>
       <label>Opis<textarea name="opis" rows="4" maxlength="2000" required placeholder="Co jest nie tak i jak jest w rzeczywistości?"></textarea></label>
       <label>Zdjęcie lub zrzut ekranu (nieobowiązkowo)<input type="file" name="plik" accept="image/*"></label>
+      <label class="aparat">📷 Zrób zdjęcie<input type="file" name="aparat" accept="image/*" capture="environment"></label>
       <label>Imię lub kontakt, jeśli możemy dopytać (nieobowiązkowo)<input name="podpis" maxlength="200" autocomplete="off"></label>
       <input class="pulapka" name="www" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button>Wyślij uwagę</button>
       <p class="drobne" role="status">Uwagi nie są publikowane; trafiają do autora mapy.</p>`;
+    // zdjęcie z aparatu albo z pliku: liczy się wybrane ostatnio
+    f.plik.onchange = () => { f.aparat.value = ''; f.querySelector('.aparat').firstChild.textContent = '📷 Zrób zdjęcie'; };
+    f.aparat.onchange = () => { if (f.aparat.files[0]) { f.plik.value = ''; f.querySelector('.aparat').firstChild.textContent = '📷 Zdjęcie dodane, zrób inne'; } };
+    const zdj = () => f.aparat.files[0] || f.plik.files[0];
     f.onsubmit = async ev => {
       ev.preventDefault();
       const stan = f.querySelector('[role=status]'), btn = f.querySelector('button');
       btn.disabled = true; btn.textContent = 'Wysyłanie…'; stan.className = 'drobne';
-      stan.textContent = f.plik.files[0] ? 'Wysyłanie ze zdjęciem może potrwać kilkanaście sekund.' : '';
+      stan.textContent = zdj() ? 'Wysyłanie ze zdjęciem może potrwać kilkanaście sekund.' : '';
       try {
-        const plik = f.plik.files[0];
+        const plik = zdj();
         const r = await fetch(UWAGI_URL, { method: 'POST', body: JSON.stringify({ typ: f.typ.value, opis: f.opis.value, podpis: f.podpis.value,
           www: f.www.value, miejsce, link, zdjecie: plik ? await zmniejsz(plik) : '' }) }).then(r => r.json());
         if (!r.ok) throw new Error(r.blad);
