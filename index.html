@@ -20,7 +20,9 @@
   #top { top:var(--nad); left:10px; right:10px; max-width:600px; padding:10px 12px; }
   #top h1 { font-size:17px; margin:0 0 8px; }
   #top .stan { font-size:12px; color:var(--muted); margin-left:6px; font-weight:400; }
-  body.bez-sieci #top .stan::after { content:' · bez połączenia'; }
+  #top #licznik { margin-left:0; white-space:nowrap; }
+  #top #licznik:not(:empty)::before { content:'· '; }
+  body.bez-sieci #top #stan::after { content:' · bez połączenia'; }
   #szukaj { width:100%; box-sizing:border-box; font:inherit; font-size:16px; padding:7px 10px; color:var(--text); background:var(--bg); border:1px solid var(--border-strong); border-radius:7px; }
   #szukaj::placeholder { color:var(--muted); }
   #legenda { bottom:22px; left:10px; padding:10px 12px; font-size:13px; max-width:280px; max-height:55vh; overflow:auto; }
@@ -140,10 +142,14 @@
   }
   @media (max-width: 600px) {
     #legenda { bottom:10px; max-height:60vh; }
-    #indeks { left:10px; width:auto; top:calc(var(--bar-h) + 104px); }
+    #indeks { left:10px; width:auto; top:calc(var(--bar-h) + 122px); }
     .dl { display:none; }
+    .leaflet-top.leaflet-right { top:112px; }
+    #top #licznik { display:block; margin:2px 0 0; }
+    #top #licznik:not(:empty)::before { content:none; }
+    #info { max-height:calc(100vh - var(--bar-h) - 134px); }
     #btn-indeks, #btn-zglos { padding:6px 8px; }
-    #info, #zglos-pasek { top:calc(var(--bar-h) + 104px); left:10px; }
+    #info, #zglos-pasek { top:calc(var(--bar-h) + 122px); left:10px; }
     #zglos-pasek { right:10px; transform:none; width:auto; max-width:none; }
     #zglos-pasek span { flex-basis:calc(100% - 36px); } /* tekst w pierwszym wierszu, trzy przyciski razem pod nim */
   }
@@ -158,7 +164,7 @@
 </header>
 <div id="map"></div>
 <div id="top" class="panel">
-  <h1>Mapa Osiedla Wilga <span class="stan" id="stan"></span></h1>
+  <h1>Mapa Osiedla Wilga <span class="stan" id="stan"></span> <span class="stan" id="licznik"></span></h1>
   <div class="wiersz">
     <div class="pole"><input id="szukaj" placeholder="Ulica, adres, miejsce" aria-label="Szukaj ulicy, adresu lub miejsca" autocomplete="off" enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls="podp" aria-expanded="false"><button id="szukaj-x" type="button" aria-label="Wyczyść wyszukiwanie" hidden>×</button></div>
     <button id="btn-indeks" class="btn-secondary">Indeks</button>
@@ -497,6 +503,10 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     return best[1] ? [best[1], Math.round(best[0] * map.distance(map.unproject([0, 0], 18), map.unproject([1, 0], 18)))] : null; };
   let zglosMarker;
   const UWAGI_URL = 'https://script.google.com/macros/s/AKfycbx5_boeKa5TW8bYz6l0BVVLcDrarPWOq-bw0F1mqtb853NetDbo1quVrEEqta77Y_FK_Q/exec';
+  // licznik przy „stan na”: same liczby z arkusza uwag; bez sieci po prostu się nie pokazuje
+  const odm = (n, a, b, c) => n === 1 ? a : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? b : c;
+  fetch(UWAGI_URL).then(r => r.json()).then(r => { if (r.liczba) document.getElementById('licznik').textContent =
+    `${r.liczba} ${odm(r.liczba, 'uwaga', 'uwagi', 'uwag')}, ${r.naniesione} ${odm(r.naniesione, 'naniesiona', 'naniesione', 'naniesionych')}`; }).catch(() => {});
   const TYPY_UWAG = ['Droga nieprzejezdna lub trudny dojazd', 'Droga przejezdna, a na mapie oznaczona inaczej', 'Wąski przejazd lub przeszkoda (brama, szlaban, gałęzie, mostek)',
     'Trudno trafić / brak oznakowania', 'Hydrant lub zbiornik wody', 'Numer domu lub adres', 'Nazwa ulicy', 'Brakująca droga lub skrót', 'Inne'];
   // zdjęcie z telefonu zmniejszone do 1600 px (JPEG), żeby wysyłka działała też przy słabym zasięgu
