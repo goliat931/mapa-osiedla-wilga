@@ -54,7 +54,7 @@ dump(prg, 'adresy', lambda f: {'u': f['NAZWA_ULC'], 'n': f['NUMER_PORZ']},
      expr="\"ID_SIMC\"='0694095' AND \"NAZWA_ULC\" != 'Wilgi'")
 
 # adresy, których nie ma w PRG, a potwierdził je mieszkaniec (położenie z OSM): ulica, numer, lon, lat
-POZA_PRG = [('Lipowa', '12', 21.431453, 51.843599)]
+POZA_PRG = [('Lipowa', '12', 21.431453, 51.843599), ('Saperów', '1A', 21.401946, 51.821582)]  # 1A: uwaga nr 35
 with open(f'{OUT}/adresy.geojson', encoding='utf8') as fi:
     adresy = json.load(fi)
 adresy['features'] += [{'type': 'Feature', 'properties': {'u': u, 'n': n},

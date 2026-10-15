@@ -18,3 +18,10 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-15 | Uwaga nr 28 | Nowe miejsce do zawracania przy Sosnowej (E7), wskazane przez Dawida. |
 | 2026-10-15 | Uwaga nr 31, Dawid Karczewski (mieszkaniec) | Hydrant przy Jemiołuszkach (C7) potwierdzony w terenie (wygląda na zniszczony, w QGIS uwaga o niepewnej sprawności); usunięty hydrant z mapy sieci na działce 519/4, którego nie ma w terenie. Dymek i legenda: „sprawdzony w terenie (stoi), nie sprawdzano, czy działa”, bo działania żadnego hydrantu nie sprawdzano. |
 | 2026-10-15 | Uwaga nr 25 | Chrząszcza (C5): usunięty odcinek na zachód od Traktu Słonecznego (w terenie go nie ma); po stronie wschodniej tylko dojazd do działki 1080, bez połączenia z Poziomkową (sprawdzone przez Dawida w terenie). |
+| 2026-10-15 | Uwaga nr 30 | hydrant przy Trakcie Słonecznym (C7) potwierdzony w terenie |
+| 2026-10-15 | Uwaga nr 32 | dodany brakujący hydrant przy Trakcie Słonecznym (C6) |
+| 2026-10-15 | Uwaga nr 29 | usunięty hydrant na działkach prywatnych przy Jodłowej (D6), pozostałość po dawnym ośrodku |
+| 2026-10-15 | Uwaga nr 35 | Ośrodek Wypoczynkowo-Szkoleniowy „Wilga”, Saperów 1A: punkt charakterystyczny i adres (brak w PRG) |
+| 2026-10-15 | Uwaga nr 27 | Chrobotka: wąska; krótki odcinek przy Drozdów nieprzejezdny dla dużego wozu |
+| 2026-10-15 | Uwaga nr 18 | Ostrówek (A2): usunięta nieistniejąca droga; dorysowane dojazdy do 7A i do 11A–11E |
+| 2026-10-15 | Uwaga nr 17 | Pionierów przejezdna dla lekkiego wozu, z wyjątkiem skarpy przy Drodze Księżycowej i odcinka do Miłej (do potwierdzenia w terenie) |
