@@ -17,3 +17,4 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-15 | Uwagi nr 20, 21, 26 | Biedronki i Jemiołuszki (C7): z „nieprzejezdna” na żółtą (wąska, ale przejezdna); potwierdziły to niezależnie dwie osoby i Dawid. |
 | 2026-10-15 | Uwaga nr 28 | Nowe miejsce do zawracania przy Sosnowej (E7), wskazane przez Dawida. |
 | 2026-10-15 | Uwaga nr 31, Dawid Karczewski (mieszkaniec) | Hydrant przy Jemiołuszkach (C7) potwierdzony w terenie (wygląda na zniszczony, w QGIS uwaga o niepewnej sprawności); usunięty hydrant z mapy sieci na działce 519/4, którego nie ma w terenie. Dymek i legenda: „sprawdzony w terenie (stoi), nie sprawdzano, czy działa”, bo działania żadnego hydrantu nie sprawdzano. |
+| 2026-10-15 | Uwaga nr 25 | Chrząszcza (C5): usunięty odcinek na zachód od Traktu Słonecznego (w terenie go nie ma); po stronie wschodniej tylko dojazd do działki 1080, bez połączenia z Poziomkową (sprawdzone przez Dawida w terenie). |
