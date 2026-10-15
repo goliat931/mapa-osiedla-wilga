@@ -25,4 +25,4 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-15 | Uwaga nr 27 | Chrobotka: wąska; krótki odcinek przy Drozdów nieprzejezdny dla dużego wozu |
 | 2026-10-15 | Uwaga nr 18 | Ostrówek (A2): usunięta nieistniejąca droga; dorysowane dojazdy do 7A i do 11A–11E |
 | 2026-10-15 | Uwaga nr 17 | Pionierów przejezdna dla lekkiego wozu, z wyjątkiem skarpy przy Drodze Księżycowej i odcinka do Miłej (do potwierdzenia w terenie) |
-| 2026-10-15 | Dawid Karczewski (mieszkaniec) | Punkty charakterystyczne: Ośrodek Wypoczynkowo-Szkoleniowy MSW (nieczynny), Brzozowa 1, 1A, 1B (D6), oraz Ośrodek Socjoterapeutyczny „Wspólny Dom”, Plac Myśliwski 1 (C7). |
+| 2026-10-15 | Dawid Karczewski (mieszkaniec) | Punkty charakterystyczne: Ośrodek Wypoczynkowy ZZ Pracowników Cywilnych MSWiA (nieczynny), Brzozowa 1, 1A, 1B (D6; wg katalogu firm i.pl), oraz Ośrodek Socjoterapeutyczny „Wspólny Dom”, Plac Myśliwski 1 (C7). |
