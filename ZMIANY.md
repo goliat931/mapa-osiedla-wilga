@@ -26,3 +26,4 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-15 | Uwaga nr 18 | Ostrówek (A2): usunięta nieistniejąca droga; dorysowane dojazdy do 7A i do 11A–11E |
 | 2026-10-15 | Uwaga nr 17 | Pionierów przejezdna dla lekkiego wozu, z wyjątkiem skarpy przy Drodze Księżycowej i odcinka do Miłej (do potwierdzenia w terenie) |
 | 2026-10-15 | Dawid Karczewski (mieszkaniec) | Punkty charakterystyczne: Ośrodek Wypoczynkowy ZZ Pracowników Cywilnych MSWiA (nieczynny), Brzozowa 1, 1A, 1B (D6; wg katalogu firm i.pl), oraz Ośrodek Socjoterapeutyczny „Wspólny Dom”, Plac Myśliwski 1 (C7). |
+| 2026-10-15 | opencaching.pl (skrzynki OP880B, OP2C20) | Brzozowa 1, 1A, 1B to dawny ośrodek MSW (skrzynka „Ośrodek MSW” na działce 1926), nazwa punktu poprawiona. Nowy punkt: opuszczony ośrodek Z.U.D. przy Bolka i Lolka (D5, działka 1920/1). |
