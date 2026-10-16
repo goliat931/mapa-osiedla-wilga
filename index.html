@@ -270,7 +270,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       onEachFeature: (f, l) => f.properties.n && l.bindTooltip(f.properties.n, { sticky: true }) })]));
 
   // kliknięcie budynku pokazuje najbliższy adres (punkty adresowe stoją zwykle na budynku albo tuż obok)
-  const opisAdresu = p => `<b>${esc(p.u)} ${esc(p.n)}</b><br><small>${p.u === 'Skurcza' ? 'miejscowość Skurcza, adres bez ulicy' : 'Osiedle Wilga'}</small>`;
+  const opisAdresu = p => `<b>${esc(p.u)} ${esc(p.n)}</b><br><small>${p.u === 'Skurcza' ? 'miejscowość Skurcza, adres bez ulicy' : p.u === 'Nowy Żabieniec' ? 'miejscowość Nowy Żabieniec, adres bez ulicy' : esc(p.m || 'Osiedle Wilga')}</small>`;
+  const tekstAdresu = p => `${p.u} ${p.n}${p.m ? ` (${p.m})` : ''}`; // miejscowość tylko dla adresów spoza osiedla
   // numer działki z Krajowej Integracji Ewidencji Gruntów (GUGiK), dopisywany do dymka; bez sieci po prostu go nie ma
   const dzialkaW = ll => fetch(`https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?SERVICE=WMS&REQUEST=GetFeatureInfo&VERSION=1.3.0&LAYERS=dzialki&QUERY_LAYERS=dzialki&CRS=EPSG:4326&BBOX=${ll.lat - 1e-4},${ll.lng - 1e-4},${ll.lat + 1e-4},${ll.lng + 1e-4}&WIDTH=101&HEIGHT=101&I=50&J=50&INFO_FORMAT=text/xml`)
     .then(r => r.text()).then(t => { const a = n => (t.match(new RegExp(`Name="${n}">([^<]*)<`)) || [])[1];
@@ -411,7 +412,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     const [x, y] = f.geometry.coordinates;
     L.marker([y, x], { icon: L.divIcon({ className: '', html: `<span class="nr">${esc(f.properties.n)}</span>`, iconSize: null, iconAnchor: [6, 7] }) })
       .bindPopup(opisAdresu(f.properties)).addTo(nrL);
-    indeks[`${f.properties.u} ${f.properties.n}`] = L.latLng(y, x);
+    indeks[tekstAdresu(f.properties)] = L.latLng(y, x);
   });
   zalezne(nrL, 17);
 
@@ -441,7 +442,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   // wyszukiwarka: podpowiada najpierw ulice, potem miejsca, potem adresy; bez polskich znaków też znajduje
   const bez = t => t.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
   const baza = [...Object.keys(ulice).map(t => ({ t, r: 0, o: 'ulica' })), ...miejsca.map(m => ({ t: m.n, r: 1, o: m.o, m })),
-    ...adr.features.map(f => ({ t: `${f.properties.u} ${f.properties.n}`, r: 2, o: 'adres' }))]
+    ...adr.features.map(f => ({ t: tekstAdresu(f.properties), r: 2, o: 'adres' }))]
     .map(w => ({ ...w, k: bez(w.t) })).sort((a, b) => a.r - b.r || a.t.localeCompare(b.t, 'pl', { numeric: true }));
   const sz = document.getElementById('szukaj'), podp = document.getElementById('podp'), szX = document.getElementById('szukaj-x');
   let znacznik, wyniki = [], akt = -1;
@@ -626,7 +627,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       if (l !== lit) { lit = l; el.insertAdjacentHTML('beforeend', `<div class="lit">${esc(l)}</div>`); }
       const d = document.createElement('div'); d.className = 'ul';
       d.innerHTML = `<a>${esc(u)}</a>` + w.map(r => `<div class="kw"><span class="k">${r.k.map(k => `<a data-k="${esc(k)}">${esc(k)}</a>`).join(', ')}</span>${r.nr ? `<span>nr ${esc(r.nr)}</span>` : ''}</div>`).join('');
-      d.querySelector('a').onclick = () => indeks[u] && pokaz(indeks[u]);
+      d.querySelector('a').onclick = () => { const c = indeks[u] || indeks[u.replace(/ \(.*\)$/, '')]; if (c) pokaz(c); };
       doKomorek(d); el.appendChild(d);
     });
   });

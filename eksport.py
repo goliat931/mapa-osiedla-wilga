@@ -73,6 +73,17 @@ for f in prg.getFeatures(QgsFeatureRequest().setFilterExpression("\"ID_SIMC\"='0
         adresy['features'].append({'type': 'Feature', 'properties': {'u': 'Skurcza', 'n': f['NUMER_PORZ']},
                                    'geometry': {'coordinates': [round(p.x(), 6), round(p.y(), 6)], 'type': 'Point'}})
         skurcza.setdefault(kom, []).append(f['NUMER_PORZ'])
+# Nowy Żabieniec w kolumnach G i H siatki (las osiągalny od osiedla, wyjątek jak Skurcza; prośba Dawida 16.10.2026)
+zabieniec = {}
+for f in prg.getFeatures(QgsFeatureRequest().setFilterExpression("\"ID_SIMC\"='0693977'")):
+    kom = next((k for k, g in komorki if k[0] in 'GH' and g.contains(f.geometry())), None)
+    if kom:
+        u = f"{f['NAZWA_ULC']} (Nowy Żabieniec)" if f['NAZWA_ULC'] else 'Nowy Żabieniec'
+        p = tr_w.transform(f.geometry().asPoint())
+        wl = {'u': f['NAZWA_ULC'], 'm': 'Nowy Żabieniec'} if f['NAZWA_ULC'] else {'u': 'Nowy Żabieniec'}
+        adresy['features'].append({'type': 'Feature', 'properties': {**wl, 'n': f['NUMER_PORZ']},
+                                   'geometry': {'coordinates': [round(p.x(), 6), round(p.y(), 6)], 'type': 'Point'}})
+        zabieniec.setdefault(u, {}).setdefault(kom, []).append(f['NUMER_PORZ'])
 with open(f'{OUT}/adresy.geojson', 'w', encoding='utf8') as fo:
     json.dump(adresy, fo, ensure_ascii=False, separators=(',', ':'))
 
@@ -93,6 +104,9 @@ for b in bloki:
 nr_klucz = lambda n: (int(re.match(r'\d+', n).group()), n)
 gdzie = next(i for i, w in enumerate(indeks) if w['u'] > 'Skurcza' and w['u'][0] == 'S')  # indeks jest w polskiej kolejności
 indeks.insert(gdzie, {'u': 'Skurcza (adres bez ulicy)', 'w': [{'k': [k], 'nr': ', '.join(sorted(n, key=nr_klucz))} for k, n in sorted(skurcza.items())]})
+for u, kom in sorted(zabieniec.items()):
+    gdzie = next((i for i, w in enumerate(indeks) if w['u'] > u), len(indeks))  # „Ż” i tak trafia na koniec
+    indeks.insert(gdzie, {'u': u, 'w': [{'k': [k], 'nr': ', '.join(sorted(n, key=nr_klucz))} for k, n in sorted(kom.items())]})
 with open(f'{OUT}/indeks.json', 'w', encoding='utf8') as fo:
     json.dump(indeks, fo, ensure_ascii=False, separators=(',', ':'))
 print('indeks', len(indeks))
