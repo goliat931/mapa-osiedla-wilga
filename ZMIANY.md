@@ -28,3 +28,13 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-15 | Dawid Karczewski (mieszkaniec) | Punkty charakterystyczne: Ośrodek Wypoczynkowy ZZ Pracowników Cywilnych MSWiA (nieczynny), Brzozowa 1, 1A, 1B (D6; wg katalogu firm i.pl), oraz Ośrodek Socjoterapeutyczny „Wspólny Dom”, Plac Myśliwski 1 (C7). |
 | 2026-10-15 | opencaching.pl (skrzynki OP880B, OP2C20) | Brzozowa 1, 1A, 1B to dawny ośrodek MSW (skrzynka „Ośrodek MSW” na działce 1926), nazwa punktu poprawiona. Nowy punkt: opuszczony ośrodek Z.U.D. przy Bolka i Lolka (D5, działka 1920/1). |
 | 2026-10-16 | Uwagi nr 11, 12 | Jodłowa i Al. Słońca (D4/E4): zgłoszenie „nieprzejezdna dla ciężkiego sprzętu” nie potwierdziło się, Dawid przejechał obie ulice bez problemu. Kolory bez zmian (Al. Słońca zielona, Jodłowa żółta, węższa); dopisana weryfikacja w terenie. |
+| 2026-10-16 | Uwaga nr 36 | Babie Lato (C3) na zielono na całej długości; miejsce do zawracania przy skrzyżowaniu z Sikorek. |
+| 2026-10-16 | Uwagi nr 37, 13 | Usunięty nieistniejący odcinek (ok. 115 m) między skrzyżowaniem Rajskiej a Sarenek (C2). |
+| 2026-10-16 | Uwagi nr 38, 39 | Bobrów (D1): łuk wzdłuż posesji usunięty, został dojazd do nr 6; nowy dojazd na północ do polany nad Wilgą (trochę zarośnięty) z miejscem do zawracania i punktem poboru wody z rzeki. |
+| 2026-10-16 | Uwaga nr 40 | Usunięta wschodnia część drogi przez działki prywatne między pętlą Bobrowa a łukiem (D2). |
+| 2026-10-16 | Uwaga nr 41 | Odcinek przy adresach Za Jałowcami 5–30 przemianowany z „Bobrów” na „Za Jałowcami” (zgodnie z PRG). |
+| 2026-10-16 | Uwagi nr 43, 46, 47 | Krasnali za końcem tylko pieszo; Zielony Zaułek na czerwono (za wąsko dla samochodu); dojście piesze Leśnych Ludzi – Przebiśniegów (E3). |
+| 2026-10-16 | Uwagi nr 48, 19 | Dorysowany odcinek Muminków od Przebiśniegów do Garwolinki, przejezdny samochodem (E3). |
+| 2026-10-16 | Uwaga nr 49 | Usunięty zdublowany obrys budynku przy Garwolince 1. |
+| 2026-10-16 | Uwaga nr 50 | Pionierów od Raroga na wschód na czerwono: przechył boczny ok. 10% (G4). |
+| 2026-10-16 | Uwagi nr 52, 53 | Wakacyjna na zielono od zachodu do Spokojnej; miejsca do zawracania przy Szyszkowej i przy Konwaliowej. |
