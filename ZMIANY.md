@@ -38,3 +38,6 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-16 | Uwaga nr 49 | Usunięty zdublowany obrys budynku przy Garwolince 1. |
 | 2026-10-16 | Uwaga nr 50 | Pionierów od Raroga na wschód na czerwono: przechył boczny ok. 10% (G4). |
 | 2026-10-16 | Uwagi nr 52, 53 | Wakacyjna na zielono od zachodu do Spokojnej; miejsca do zawracania przy Szyszkowej i przy Konwaliowej. |
+| 2026-10-16 | Uwaga nr 42 | Usunięta nieistniejąca ulica bez nazwy od Rumcajsa na wschód (E2) wraz ze stromiznami; dodana kręta droga leśna od Rumcajsa do północnego końca Al. Słońca (przebieg wg BDOT10k), żółta, do sprawdzenia. |
+| 2026-10-16 | Uwagi nr 44, 45 | Leśnych Ludzi (E3) kończy się dojazdem do działki; dalej ścieżka wzdłuż podziału działek do końca Krasnali; odcinek do Zielonego Zaułka i zachodni kawałek Zielonego Zaułka tylko quadem lub pieszo (wg BDOT10k i Dawida w terenie). |
+| 2026-10-16 | Uwaga nr 51 | Usunięta Śnieżki między Wakacyjną a Bolka i Lolka (G5/H4), w terenie jej nie ma; dodane ścieżki z końca Wakacyjnej, w tym na północ do końca Pionierów (wg BDOT10k, potwierdzone przez Dawida). |
