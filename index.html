@@ -582,7 +582,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     if (ja) { ja.setLatLng(e.latlng); jaKolo.setLatLng(e.latlng).setRadius(e.accuracy); }
     else {
       jaKolo = L.circle(e.latlng, { radius: e.accuracy, weight: 1, color: '#1a73e8', fillOpacity: .12, interactive: false }).addTo(map);
-      ja = L.circleMarker(e.latlng, { radius: 7, color: '#fff', weight: 2, fillColor: '#1a73e8', fillOpacity: 1, interactive: false }).addTo(map);
+      if (!map.getPane('ja')) map.createPane('ja').style.zIndex = 650; // nad nazwami ulic (znaczniki, 600)
+      ja = L.circleMarker(e.latlng, { radius: 7, color: '#fff', weight: 2, fillColor: '#1a73e8', fillOpacity: 1, interactive: false, pane: 'ja' }).addTo(map);
       lok.getContainer().firstChild.classList.add('jest');
     }
     if (poUstaleniu) { const p = poUstaleniu; poUstaleniu = null; p(e.latlng); }
