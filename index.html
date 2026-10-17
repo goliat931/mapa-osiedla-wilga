@@ -270,7 +270,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       onEachFeature: (f, l) => f.properties.n && l.bindTooltip(f.properties.n, { sticky: true }) })]));
 
   // kliknięcie budynku pokazuje najbliższy adres (punkty adresowe stoją zwykle na budynku albo tuż obok)
-  const opisAdresu = p => `<b>${esc(p.u)} ${esc(p.n)}</b><br><small>${p.u === 'Skurcza' ? 'miejscowość Skurcza, adres bez ulicy' : p.u === 'Nowy Żabieniec' ? 'miejscowość Nowy Żabieniec, adres bez ulicy' : esc(p.m || 'Osiedle Wilga')}</small>`;
+  const opisAdresu = p => `<b>${esc(p.u)} ${esc(p.n)}</b><br><small>${p.u === 'Skurcza' ? 'miejscowość Skurcza, adres bez ulicy' : p.u === 'Nowy Żabieniec' ? 'miejscowość Nowy Żabieniec, adres bez ulicy' : p.u === 'Cyganówka' ? 'miejscowość Cyganówka, po stronie osiedla: <b>dojazd tylko od Garwolinki</b>, nie od DK76' : esc(p.m || 'Osiedle Wilga')}</small>`;
   const tekstAdresu = p => `${p.u} ${p.n}${p.m ? ` (${p.m})` : ''}`; // miejscowość tylko dla adresów spoza osiedla
   // numer działki z Krajowej Integracji Ewidencji Gruntów (GUGiK), dopisywany do dymka; bez sieci po prostu go nie ma
   const dzialkaW = ll => fetch(`https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?SERVICE=WMS&REQUEST=GetFeatureInfo&VERSION=1.3.0&LAYERS=dzialki&QUERY_LAYERS=dzialki&CRS=EPSG:4326&BBOX=${ll.lat - 1e-4},${ll.lng - 1e-4},${ll.lat + 1e-4},${ll.lng + 1e-4}&WIDTH=101&HEIGHT=101&I=50&J=50&INFO_FORMAT=text/xml`)

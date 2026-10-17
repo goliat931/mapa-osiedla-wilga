@@ -54,7 +54,8 @@ dump(prg, 'adresy', lambda f: {'u': f['NAZWA_ULC'], 'n': f['NUMER_PORZ']},
      expr="\"ID_SIMC\"='0694095' AND \"NAZWA_ULC\" != 'Wilgi'")
 
 # adresy, których nie ma w PRG, a potwierdził je mieszkaniec (położenie z OSM): ulica, numer, lon, lat
-POZA_PRG = [('Lipowa', '12', 21.431453, 51.843599), ('Saperów', '1A', 21.401946, 51.821582)]  # 1A: uwaga nr 35
+POZA_PRG = [('Lipowa', '12', 21.431453, 51.843599), ('Saperów', '1A', 21.401946, 51.821582),  # 1A: uwaga nr 35
+            ('Cyganówka', '70', 21.443856, 51.859546)]  # uwaga nr 63: za rzeką od wsi, ok. 200 m na północ od G1, dojazd tylko od Garwolinki; punkt na budynku (PRG leży 90 m dalej w lesie)
 with open(f'{OUT}/adresy.geojson', encoding='utf8') as fi:
     adresy = json.load(fi)
 adresy['features'] += [{'type': 'Feature', 'properties': {'u': u, 'n': n},
@@ -104,6 +105,8 @@ for b in bloki:
 nr_klucz = lambda n: (int(re.match(r'\d+', n).group()), n)
 gdzie = next(i for i, w in enumerate(indeks) if w['u'] > 'Skurcza' and w['u'][0] == 'S')  # indeks jest w polskiej kolejności
 indeks.insert(gdzie, {'u': 'Skurcza (adres bez ulicy)', 'w': [{'k': [k], 'nr': ', '.join(sorted(n, key=nr_klucz))} for k, n in sorted(skurcza.items())]})
+gdzie = next(i for i, w in enumerate(indeks) if w['u'] > 'Cyganówka')
+indeks.insert(gdzie, {'u': 'Cyganówka (adres bez ulicy)', 'w': [{'k': ['G1'], 'nr': '70 (ok. 200 m na północ od G1, dojazd od Garwolinki)'}]})
 for u, kom in sorted(zabieniec.items()):
     gdzie = next((i for i, w in enumerate(indeks) if w['u'] > u), len(indeks))  # „Ż” i tak trafia na koniec
     indeks.insert(gdzie, {'u': u, 'w': [{'k': [k], 'nr': ', '.join(sorted(n, key=nr_klucz))} for k, n in sorted(kom.items())]})
