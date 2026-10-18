@@ -131,6 +131,28 @@ with open(f'{OUT}/dzialki.json', 'w', encoding='utf8') as fo:
     json.dump({'obreby': OBREBY, 'd': dzialki}, fo, ensure_ascii=False, separators=(',', ':'))
 print('dzialki', len(dzialki))
 
+# obręby sąsiednie (granice i nazwy jak na geoportalu) ze scalenia działek; tylko wewnątrz siatki,
+# bo poza nią działek nie mamy i granica byłaby urwana
+rama = QgsGeometry.fromRect(siat.extent())
+wew = QgsGeometry.fromRect(siat.extent().buffered(-5))  # bez krawędzi siatki, żeby nie dublować ramki
+grupy = {}
+for f in dz.getFeatures():
+    if f['NUMER_OBREBU'] != '0010':
+        grupy.setdefault(f['NAZWA_OBREBU'], []).append(f.geometry())
+obreby = []
+for n, gs in sorted(grupy.items()):
+    g = QgsGeometry.unaryUnion(gs).buffer(1, 2).buffer(-1, 2).intersection(rama)  # bufor zamyka szczeliny między działkami
+    if g.area() < 5e4:
+        continue
+    p = tr_d.transform(max(g.asGeometryCollection(), key=lambda c: c.area()).pointOnSurface().asPoint())
+    gr = QgsGeometry(g.constGet().boundary()).intersection(wew).simplify(2)
+    gr.transform(tr_d)
+    obreby.append({'type': 'Feature', 'properties': {'n': n, 'p': [round(p.x(), 5), round(p.y(), 5)]},
+                   'geometry': json.loads(gr.asJson(6))})
+with open(f'{OUT}/obreby.geojson', 'w', encoding='utf8') as fo:
+    json.dump({'type': 'FeatureCollection', 'features': obreby}, fo, ensure_ascii=False, separators=(',', ':'))
+print('obreby', [o['properties']['n'] for o in obreby])
+
 # GPX dla OsmAnd (także w Android Auto): drogi jako ślady w kolorach przejezdności, punkty jako waypointy
 from xml.sax.saxutils import escape as esc
 KOLOR_GPX = {'zielony': '#1e9e4a', 'żółty': '#f5c400', 'czerwony': '#e3141b'}

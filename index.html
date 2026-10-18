@@ -41,6 +41,7 @@
   .ulica { animation:ul-wej .25s ease-out; display:inline-block; background:var(--niebieski); color:#fff; font:600 12px "Bahnschrift","Segoe UI",sans-serif; padding:1px 5px; border-radius:3px; border:1px solid #fff; white-space:nowrap; box-shadow:0 1px 2px rgba(0,0,0,.3); }
   .nr { cursor:pointer; font:700 11px "Bahnschrift","Segoe UI",sans-serif; color:#0b2545; text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff; white-space:nowrap; }
   .kom { font:700 22px "Segoe UI",sans-serif; color:rgba(40,40,40,.28); }
+  .obr { display:block; transform:translate(-50%,-50%); white-space:nowrap; font:600 13px "Segoe UI",sans-serif; letter-spacing:.06em; color:#c62828; text-shadow:0 0 3px #fff,0 0 3px #fff; }
   .poi { width:22px; height:22px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.4); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; }
   .leaflet-div-icon { background:none; border:none; }
   #top .wiersz { display:flex; gap:6px; }
@@ -300,6 +301,12 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     L.marker(c, { interactive: false, icon: L.divIcon({ className: '', html: `<span class="kom">${f.properties.c}</span>`, iconSize: [40, 26], iconAnchor: [20, 13] }) }).addTo(siatL);
   });
   dodaj('Siatka A–H / 1–8', siatL, true);
+  get('obreby').then(ob => {
+    const obL = L.layerGroup([L.geoJSON(ob, { style: { color: '#c62828', weight: 2, opacity: .7, dashArray: '1 5', lineCap: 'round' }, interactive: false })]);
+    ob.features.forEach(f => L.marker([f.properties.p[1], f.properties.p[0]], { interactive: false,
+      icon: L.divIcon({ className: '', html: `<span class="obr">${esc(f.properties.n)}</span>`, iconSize: [0, 0] }) }).addTo(obL));
+    dodaj('Obręby sąsiednie', obL);
+  }).catch(() => {});
 
   dodaj('Drogi', L.geoJSON(drogi, {
     style: f => ({ color: KOLOR[f.properties.k] || '#9aa0a6', weight: f.properties.k === 'zielony' ? 6 : 4, dashArray: f.properties.k === 'czerwony' ? '8 6' : null, lineCap: 'round' }),

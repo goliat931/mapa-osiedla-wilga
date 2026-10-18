@@ -4,7 +4,7 @@
 const KOPIA = 'wilga-mapa-1', CZEKAJ_MS = 4000;
 const PLIKI = ['./', 'wilga.css', 'znak.svg', 'manifest.webmanifest',
   'lib/leaflet/leaflet.min.js', 'lib/leaflet-rotate/leaflet-rotate.js', 'lib/leaflet/leaflet.min.css', 'lib/leaflet/images/layers.png', 'lib/leaflet/images/layers-2x.png',
-  ...['adresy', 'budynki', 'drogi', 'hydranty', 'miejsca', 'siatka', 'stromizny', 'woda_cieki', 'woda_obszary', 'zawracanie'].map(n => `data/${n}.geojson`),
+  ...['adresy', 'budynki', 'drogi', 'hydranty', 'miejsca', 'siatka', 'stromizny', 'woda_cieki', 'woda_obszary', 'zawracanie', 'obreby'].map(n => `data/${n}.geojson`),
   'data/indeks.json', 'data/dzialki.json', 'data/stan.json',
   ...['hydrant', 'hydrant_do_weryfikacji', 'zbiornik', 'swietlica', 'strzalka_spadek_1', 'strzalka_spadek_2', 'strzalka_spadek_3'].map(n => `ikony/${n}.svg`),
   'ikony/app-192.png'];
