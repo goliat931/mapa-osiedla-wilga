@@ -131,5 +131,44 @@ with open(f'{OUT}/dzialki.json', 'w', encoding='utf8') as fo:
     json.dump({'obreby': OBREBY, 'd': dzialki}, fo, ensure_ascii=False, separators=(',', ':'))
 print('dzialki', len(dzialki))
 
+# GPX dla OsmAnd (także w Android Auto): drogi jako ślady w kolorach przejezdności, punkty jako waypointy
+from xml.sax.saxutils import escape as esc
+KOLOR_GPX = {'zielony': '#1e9e4a', 'żółty': '#f5c400', 'czerwony': '#e3141b'}
+OPIS_K = {'zielony': 'przejezdna dla ciężkiego wozu', 'żółty': 'lekki wóz / do sprawdzenia', 'czerwony': 'nieprzejezdna'}
+gpx = ['<?xml version="1.0" encoding="UTF-8"?>',
+       '<gpx version="1.1" creator="mapa-osiedle-wilga.goliat.dev" xmlns="http://www.topografix.com/GPX/1/1" xmlns:osmand="https://osmand.net">',
+       f'<metadata><name>Mapa Osiedla Wilga dla służb ({datetime.date.today().isoformat()})</name></metadata>']
+def wpt(lyr, nazwa, kolor):
+    tr = QgsCoordinateTransform(lyr.crs(), WGS, prj)
+    for f in lyr.getFeatures():
+        if f.geometry().isEmpty():
+            continue
+        p = tr.transform(f.geometry().centroid().asPoint())
+        gpx.append(f'<wpt lat="{p.y():.6f}" lon="{p.x():.6f}"><name>{esc(nazwa(f))}</name>'
+                   f'<extensions><osmand:color>{kolor}</osmand:color></extensions></wpt>')
+wpt(L('hydranty_reczne'), lambda f: {'hydrant': 'Hydrant', 'zbiornik_wodny': 'Zbiornik wodny'}.get(f['typ'], 'Hydrant do weryfikacji'), '#0050d0')
+wpt(L('miejsca_zawracania'), lambda f: 'Miejsce do zawracania', '#7a3db8')
+wpt(L('miejsca_charakterystyczne'), lambda f: f['nazwa'] or '', '#555555')
+for u, n, x, y in POZA_PRG:
+    gpx.append(f'<wpt lat="{y}" lon="{x}"><name>{esc(u)} {n}</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>')
+dr = L('drogi')
+tr = QgsCoordinateTransform(dr.crs(), WGS, prj)
+for f in dr.getFeatures():
+    g = QgsGeometry(f.geometry())
+    if g.isEmpty():
+        continue
+    g.transform(tr)
+    linie = g.asMultiPolyline() if g.isMultipart() else [g.asPolyline()]
+    k = f['kategoria']
+    gpx.append(f'<trk><name>{esc(f["nazwa"] or "droga bez nazwy")}</name><desc>{OPIS_K.get(k, "")}</desc>'
+               f'<extensions><osmand:color>{KOLOR_GPX.get(k, "#9aa0a6")}</osmand:color><osmand:width>bold</osmand:width></extensions>')
+    for lin in linie:
+        gpx.append('<trkseg>' + ''.join(f'<trkpt lat="{p.y():.6f}" lon="{p.x():.6f}"/>' for p in lin) + '</trkseg>')
+    gpx.append('</trk>')
+gpx.append('</gpx>')
+with open('C:/Users/golia/wilga-mapa/web/wilga-osmand.gpx', 'w', encoding='utf8') as fo:
+    fo.write('\n'.join(gpx))
+print('gpx', len(gpx))
+
 with open(f'{OUT}/stan.json', 'w', encoding='utf8') as fo:
     json.dump({'stan_na': datetime.date.today().isoformat()}, fo)
