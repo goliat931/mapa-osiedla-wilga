@@ -61,3 +61,4 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-19 | Uwagi nr 78, 79 | Poziomkowa (D) i cała Al. Huberta (B6–C6) na zielono, sprawdził Dawid. |
 | 2026-10-19 | Uwagi nr 64, 77 | Szlaban Nadleśnictwa Garwolin przy Bobrowie (F2) w miejscach charakterystycznych; miejsce do zawracania przy Gajowej (F5). |
 | 2026-10-19 | Uwagi nr 69, 70, 73, 80 | Adresy: Śnieżki 20 przesunięty na budynek, Śnieżki 3 (tabliczka na bramie) i Czeremchy 1M dodane; nowy budynek bez numeru przy Bolka i Lolka (G5), obrys przybliżony z cieniowania NMT. |
+| 2026-10-19 | Uwagi nr 72, 74 (uzupełnienie) | Limby (H5): dojazd do Bolka i Lolka 52 od Limby, dawne połączenie z Bolka i Lolka na czerwono (przerwane przez posesję nr 54, przebieg wg BDOT10k); Limby (G6): przechył boczny 5–10° w opisie drogi. |
