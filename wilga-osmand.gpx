@@ -2260,4 +2260,7 @@
 <trk><name>droga bez nazwy</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.831499" lon="21.449785"/><trkpt lat="51.831516" lon="21.449858"/><trkpt lat="51.831551" lon="21.449904"/><trkpt lat="51.831604" lon="21.449950"/><trkpt lat="51.831738" lon="21.449972"/><trkpt lat="51.831828" lon="21.449991"/><trkpt lat="51.831924" lon="21.450113"/><trkpt lat="51.831950" lon="21.450187"/><trkpt lat="51.831993" lon="21.450291"/></trkseg>
 </trk>
+<trk><name>Śnieżki</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trkseg><trkpt lat="51.831918" lon="21.445234"/><trkpt lat="51.831495" lon="21.445226"/><trkpt lat="51.831045" lon="21.445245"/><trkpt lat="51.830577" lon="21.445292"/></trkseg>
+</trk>
 </gpx>
