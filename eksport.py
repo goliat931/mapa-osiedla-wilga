@@ -56,6 +56,7 @@ dump(prg, 'adresy', lambda f: {'u': f['NAZWA_ULC'], 'n': f['NUMER_PORZ']},
 # adresy, których nie ma w PRG, a potwierdził je mieszkaniec (położenie z OSM): ulica, numer, lon, lat
 POZA_PRG = [('Lipowa', '12', 21.431453, 51.843599), ('Saperów', '1A', 21.401946, 51.821582),  # 1A: uwaga nr 35
             ('Cyganówka', '70', 21.44509, 51.85953),
+            ('Cyganówka', '183', 21.44386, 51.85955),  # uwaga nr 85: prośba mieszkanki, w PRG brak
             ('Śnieżki', '3', 21.444811, 51.831351),  # uwaga nr 73: tabliczka na bramie (zdjęcie), budynek obok punktu PRG „Śnieżki 4”
             ('Czeremchy', '1M', 21.405706, 51.828551),  # uwaga nr 80
             ('Samanty', '25', 21.423572, 51.829059)]  # uwaga nr 2: zgoda właścicieli, w PRG brak (do wyjaśnienia z Marcinem)
@@ -115,7 +116,7 @@ nr_klucz = lambda n: (int(re.match(r'\d+', n).group()), n)
 gdzie = next(i for i, w in enumerate(indeks) if w['u'] > 'Skurcza' and w['u'][0] == 'S')  # indeks jest w polskiej kolejności
 indeks.insert(gdzie, {'u': 'Skurcza (adres bez ulicy)', 'w': [{'k': [k], 'nr': ', '.join(sorted(n, key=nr_klucz))} for k, n in sorted(skurcza.items())]})
 gdzie = next(i for i, w in enumerate(indeks) if w['u'] > 'Cyganówka')
-indeks.insert(gdzie, {'u': 'Cyganówka (adres bez ulicy)', 'w': [{'k': ['G1'], 'nr': '70 (ok. 200 m na północ od G1, dojazd od Garwolinki)'}]})
+indeks.insert(gdzie, {'u': 'Cyganówka (adres bez ulicy)', 'w': [{'k': ['G1'], 'nr': '70, 183 (ok. 200 m na północ od G1, dojazd od Garwolinki)'}]})
 for u, kom in sorted(zabieniec.items()):
     gdzie = next((i for i, w in enumerate(indeks) if w['u'] > u), len(indeks))  # „Ż” i tak trafia na koniec
     indeks.insert(gdzie, {'u': u, 'w': [{'k': [k], 'nr': ', '.join(sorted(n, key=nr_klucz))} for k, n in sorted(kom.items())]})
