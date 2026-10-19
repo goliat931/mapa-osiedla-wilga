@@ -53,3 +53,4 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-17 | Uwaga nr 15 | Saperów (C7/C8) na zielono od Traktu Słonecznego do Ośrodka Wypoczynkowo-Szkoleniowego „Wilga” (Saperów 1A), potwierdził Dawid. |
 | 2026-10-17 | Uwaga nr 63 (uzupełnienie) | Dwa budynki przy Cyganówce 70: lewy wg BDOT10k, prawy (nr 70) odrysowany z ewidencji budynków na geoportalu; ostatni odcinek dojazdu poprowadzony wzdłuż skarpy do budynku nr 70. |
 | 2026-10-17 | Uwaga nr 63 (potwierdzenie) | Mieszkaniec Cyganówki 70 potwierdził dojazd: z brukowanej drogi leśnej skosem w lewo; opis drogi uzupełniony. |
+| 2026-10-19 | Uwagi nr 57, 58 (cofnięte) | Czerwonego Kapturka (G6) i Limby (H6) wróciły na żółto: zgłoszenia były niepodpisane i bez „Zasadna?” = TAK, naniesione omyłkowo 17.10; czekają na sprawdzenie w terenie. |

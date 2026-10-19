@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" creator="mapa-osiedle-wilga.goliat.dev" xmlns="http://www.topografix.com/GPX/1/1" xmlns:osmand="https://osmand.net">
-<metadata><name>Mapa Osiedla Wilga dla służb (2026-10-18)</name></metadata>
+<metadata><name>Mapa Osiedla Wilga dla służb (2026-10-19)</name></metadata>
 <wpt lat="51.819610" lon="21.410730"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.843022" lon="21.416479"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.841600" lon="21.412535"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
@@ -1076,7 +1076,7 @@
 <trk><name>Limby</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.830708" lon="21.439820"/><trkpt lat="51.830649" lon="21.440087"/><trkpt lat="51.830545" lon="21.440518"/><trkpt lat="51.830384" lon="21.441419"/></trkseg>
 </trk>
-<trk><name>Czerwonego Kapturka</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Czerwonego Kapturka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.830236" lon="21.437641"/><trkpt lat="51.829017" lon="21.440149"/><trkpt lat="51.828758" lon="21.440657"/><trkpt lat="51.828447" lon="21.441477"/><trkpt lat="51.827722" lon="21.443065"/><trkpt lat="51.827293" lon="21.443787"/><trkpt lat="51.826994" lon="21.444503"/></trkseg>
 </trk>
 <trk><name>Czerwonego Kapturka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
@@ -1139,7 +1139,7 @@
 <trk><name>Limby</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.830320" lon="21.441718"/><trkpt lat="51.830081" lon="21.442162"/><trkpt lat="51.829796" lon="21.442704"/><trkpt lat="51.829631" lon="21.443053"/><trkpt lat="51.829310" lon="21.443776"/><trkpt lat="51.828711" lon="21.444447"/><trkpt lat="51.828585" lon="21.444589"/></trkseg>
 </trk>
-<trk><name>Limby</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Limby</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.828585" lon="21.444589"/><trkpt lat="51.828416" lon="21.444778"/><trkpt lat="51.827808" lon="21.445482"/><trkpt lat="51.826708" lon="21.446756"/><trkpt lat="51.826222" lon="21.447225"/><trkpt lat="51.825908" lon="21.447523"/><trkpt lat="51.825832" lon="21.447512"/><trkpt lat="51.825733" lon="21.447448"/><trkpt lat="51.825605" lon="21.447457"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
