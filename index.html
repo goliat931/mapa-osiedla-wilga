@@ -241,7 +241,7 @@ const cien = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/NM
 const KOLOR = { 'zielony': '#1e9e4a', 'żółty': '#f5c400', 'czerwony': '#e3141b' };
 const POI = { gastronomia: ['#e07b00', '🍴', 'restauracja / bar'], osrodek: ['#00796b', '⌂', 'ośrodek'], sklep: ['#6d4c41', '🛒', 'sklep'],
   kaplica: ['#6a1b9a', '✝', 'kaplica'], pomnik: ['#546e7a', '▮', 'pomnik / miejsce pamięci'], swietlica: ['#ad1457', '⌂', 'świetlica'],
-  klub_sportowy: ['#2e7d32', '⚽', 'klub sportowy'], wieza_bts: ['#37474f', '📶', 'wieża BTS'], inne: ['#222', '•', 'inne'] };
+  klub_sportowy: ['#2e7d32', '⚽', 'klub sportowy'], wieza_bts: ['#37474f', '📶', 'wieża BTS'], szlaban: ['#c62828', '⛔', 'szlaban'], inne: ['#222', '•', 'inne'] };
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const get = n => fetch('data/' + n + '.geojson').then(r => r.json());
 

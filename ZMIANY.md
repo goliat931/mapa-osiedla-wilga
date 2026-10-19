@@ -55,3 +55,9 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-17 | Uwaga nr 63 (potwierdzenie) | Mieszkaniec Cyganówki 70 potwierdził dojazd: z brukowanej drogi leśnej skosem w lewo; opis drogi uzupełniony. |
 | 2026-10-19 | Uwagi nr 57, 58 (cofnięte) | Czerwonego Kapturka (G6) i Limby (H6) wróciły na żółto: zgłoszenia były niepodpisane i bez „Zasadna?” = TAK, naniesione omyłkowo 17.10; czekają na sprawdzenie w terenie. |
 | 2026-10-19 | Atlas A3 | Adres mapa-osiedle-wilga.goliat.dev i kod QR do wersji cyfrowej na stronie przeglądowej i na każdym arkuszu. |
+| 2026-10-19 | Uwagi nr 65–68 | Wakacyjna (H4): zamiast uskoku i ścieżki prosta droga jako przedłużenie Wakacyjnej do zakrętu przy górce, dalej droga nad łąkami do drogi przy zboczu (wg BDOT10k), obie na żółto, sprawdzone w terenie; objazd dookoła górki i skrót pod górkę od ścieżki do Wakacyjnej (przebieg wg cieniowania NMT); usunięty skrót, którego w terenie nie ma (nr 67). |
+| 2026-10-19 | Uwagi nr 71, 72 | Śnieżki (H5) od Czterech Wiatrów do Bolka i Lolka na żółto; wschodni odcinek Limby (H5) do Bolka i Lolka usunięty, w terenie go nie ma. |
+| 2026-10-19 | Uwagi nr 75, 76 (i 57, 58) | Czerwonego Kapturka (G6) od Gajowej do Limby na zielono (sprawdził Dawid); Limby na odcinku z uwagi nr 58 zostaje żółta, przejezdna mimo krzaków. |
+| 2026-10-19 | Uwagi nr 78, 79 | Poziomkowa (D) i cała Al. Huberta (B6–C6) na zielono, sprawdził Dawid. |
+| 2026-10-19 | Uwagi nr 64, 77 | Szlaban Nadleśnictwa Garwolin przy Bobrowie (F2) w miejscach charakterystycznych; miejsce do zawracania przy Gajowej (F5). |
+| 2026-10-19 | Uwagi nr 69, 70, 73, 80 | Adresy: Śnieżki 20 przesunięty na budynek, Śnieżki 3 (tabliczka na bramie) i Czeremchy 1M dodane; nowy budynek bez numeru przy Bolka i Lolka (G5), obrys przybliżony z cieniowania NMT. |

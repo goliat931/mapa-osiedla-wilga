@@ -99,6 +99,7 @@
 <wpt lat="51.836327" lon="21.435206"><name>Miejsce do zawracania</name><extensions><osmand:color>#7a3db8</osmand:color></extensions></wpt>
 <wpt lat="51.835917" lon="21.414114"><name>Miejsce do zawracania</name><extensions><osmand:color>#7a3db8</osmand:color></extensions></wpt>
 <wpt lat="51.844367" lon="21.441828"><name>Miejsce do zawracania</name><extensions><osmand:color>#7a3db8</osmand:color></extensions></wpt>
+<wpt lat="51.831270" lon="21.434980"><name>Miejsce do zawracania</name><extensions><osmand:color>#7a3db8</osmand:color></extensions></wpt>
 <wpt lat="51.842837" lon="21.436594"><name>Kaplica p.w. Św Rafała Kalinowskiego</name><extensions><osmand:color>#555555</osmand:color></extensions></wpt>
 <wpt lat="51.830160" lon="21.409239"><name>Bar Dinoziółek</name><extensions><osmand:color>#555555</osmand:color></extensions></wpt>
 <wpt lat="51.824012" lon="21.394985"><name>Bar u Zosi</name><extensions><osmand:color>#555555</osmand:color></extensions></wpt>
@@ -119,9 +120,12 @@
 <wpt lat="51.824846" lon="21.401647"><name>Ośrodek Socjoterapeutyczny „Wspólny Dom”, Plac Myśliwski 1</name><extensions><osmand:color>#555555</osmand:color></extensions></wpt>
 <wpt lat="51.832093" lon="21.410701"><name>Dawny ośrodek Z.U.D. (opuszczony), Bolka i Lolka</name><extensions><osmand:color>#555555</osmand:color></extensions></wpt>
 <wpt lat="51.843550" lon="21.445540"><name>Kapliczka</name><extensions><osmand:color>#555555</osmand:color></extensions></wpt>
+<wpt lat="51.852500" lon="21.428800"><name>Szlaban Nadleśnictwa Garwolin</name><extensions><osmand:color>#555555</osmand:color></extensions></wpt>
 <wpt lat="51.843599" lon="21.431453"><name>Lipowa 12</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.821582" lon="21.401946"><name>Saperów 1A</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.85953" lon="21.44509"><name>Cyganówka 70</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
+<wpt lat="51.831351" lon="21.444811"><name>Śnieżki 3</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
+<wpt lat="51.828551" lon="21.405706"><name>Czeremchy 1M</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <trk><name>Trakt Słoneczny</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.847011" lon="21.391110"/><trkpt lat="51.846943" lon="21.391213"/><trkpt lat="51.846801" lon="21.391423"/><trkpt lat="51.846714" lon="21.391568"/><trkpt lat="51.846550" lon="21.391895"/><trkpt lat="51.846456" lon="21.392123"/><trkpt lat="51.846203" lon="21.392764"/><trkpt lat="51.846029" lon="21.393247"/></trkseg>
 </trk>
@@ -158,13 +162,13 @@
 <trk><name>Pionierów</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.840474" lon="21.436519"/><trkpt lat="51.840563" lon="21.437889"/><trkpt lat="51.840502" lon="21.438191"/><trkpt lat="51.840457" lon="21.439104"/><trkpt lat="51.840533" lon="21.439747"/><trkpt lat="51.840520" lon="21.441256"/></trkseg>
 </trk>
-<trk><name>Czerwonego Kapturka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Czerwonego Kapturka</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.831482" lon="21.435008"/><trkpt lat="51.831099" lon="21.436013"/></trkseg>
 </trk>
-<trk><name>Czerwonego Kapturka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Czerwonego Kapturka</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.831099" lon="21.436013"/><trkpt lat="51.831066" lon="21.436102"/><trkpt lat="51.830872" lon="21.436381"/><trkpt lat="51.830777" lon="21.436511"/></trkseg>
 </trk>
-<trk><name>Czerwonego Kapturka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Czerwonego Kapturka</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.830777" lon="21.436511"/><trkpt lat="51.830685" lon="21.436637"/><trkpt lat="51.830236" lon="21.437641"/></trkseg>
 </trk>
 <trk><name>Lipowa</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
@@ -176,10 +180,10 @@
 <trk><name>Lipowa</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.842084" lon="21.411658"/><trkpt lat="51.842666" lon="21.412396"/></trkseg>
 </trk>
-<trk><name>Poziomkowa</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Poziomkowa</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.842666" lon="21.412396"/><trkpt lat="51.842069" lon="21.412421"/></trkseg>
 </trk>
-<trk><name>Poziomkowa</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Poziomkowa</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.842069" lon="21.412421"/><trkpt lat="51.840057" lon="21.412505"/><trkpt lat="51.837913" lon="21.412651"/><trkpt lat="51.837561" lon="21.412667"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
@@ -279,9 +283,6 @@
 <trkseg><trkpt lat="51.834816" lon="21.436214"/><trkpt lat="51.834027" lon="21.436258"/><trkpt lat="51.831799" lon="21.436320"/></trkseg>
 </trk>
 <trk><name>Wakacyjna</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.836541" lon="21.445200"/><trkpt lat="51.836536" lon="21.445019"/></trkseg>
-</trk>
-<trk><name>Wakacyjna</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.836536" lon="21.445019"/><trkpt lat="51.836479" lon="21.443273"/><trkpt lat="51.836418" lon="21.441378"/><trkpt lat="51.836380" lon="21.439816"/><trkpt lat="51.836378" lon="21.438229"/><trkpt lat="51.836376" lon="21.436298"/></trkseg>
 </trk>
 <trk><name>Wakacyjna</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
@@ -302,16 +303,16 @@
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.819826" lon="21.415747"/><trkpt lat="51.817389" lon="21.416591"/></trkseg>
 </trk>
-<trk><name>Poziomkowa</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Poziomkowa</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.837561" lon="21.412667"/><trkpt lat="51.836665" lon="21.412704"/></trkseg>
 </trk>
-<trk><name>Poziomkowa</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Poziomkowa</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.836665" lon="21.412704"/><trkpt lat="51.835972" lon="21.412733"/><trkpt lat="51.833643" lon="21.412892"/><trkpt lat="51.831345" lon="21.412921"/><trkpt lat="51.831263" lon="21.412925"/></trkseg>
 </trk>
-<trk><name>Poziomkowa</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Poziomkowa</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.831263" lon="21.412925"/><trkpt lat="51.829865" lon="21.412995"/><trkpt lat="51.828948" lon="21.413038"/><trkpt lat="51.827605" lon="21.413085"/><trkpt lat="51.826300" lon="21.413070"/><trkpt lat="51.825862" lon="21.413096"/></trkseg>
 </trk>
-<trk><name>Poziomkowa</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Poziomkowa</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.825862" lon="21.413096"/><trkpt lat="51.823611" lon="21.413231"/><trkpt lat="51.821275" lon="21.413325"/><trkpt lat="51.820724" lon="21.413328"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
@@ -351,7 +352,7 @@
 <trkseg><trkpt lat="51.826006" lon="21.406093"/><trkpt lat="51.824394" lon="21.406192"/><trkpt lat="51.823461" lon="21.406249"/></trkseg>
 </trk>
 <trk><name>Limby</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.832013" lon="21.450823"/><trkpt lat="51.831762" lon="21.450620"/><trkpt lat="51.831623" lon="21.450419"/><trkpt lat="51.831362" lon="21.448844"/><trkpt lat="51.831296" lon="21.448521"/><trkpt lat="51.831002" lon="21.447094"/><trkpt lat="51.830743" lon="21.446016"/><trkpt lat="51.830618" lon="21.445343"/><trkpt lat="51.830596" lon="21.445228"/></trkseg>
+<trkseg><trkpt lat="51.831517" lon="21.449781"/><trkpt lat="51.831362" lon="21.448844"/><trkpt lat="51.831296" lon="21.448521"/><trkpt lat="51.831002" lon="21.447094"/><trkpt lat="51.830743" lon="21.446016"/><trkpt lat="51.830618" lon="21.445343"/><trkpt lat="51.830596" lon="21.445228"/></trkseg>
 </trk>
 <trk><name>Limby</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.830596" lon="21.445228"/><trkpt lat="51.830493" lon="21.444692"/></trkseg>
@@ -929,10 +930,10 @@
 <trk><name>Czterech Wiatrów</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.833724" lon="21.418731"/><trkpt lat="51.833729" lon="21.418940"/><trkpt lat="51.833738" lon="21.420096"/><trkpt lat="51.833753" lon="21.420890"/></trkseg>
 </trk>
-<trk><name>Al. Huberta</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Al. Huberta</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.826252" lon="21.409047"/><trkpt lat="51.826128" lon="21.406085"/><trkpt lat="51.826120" lon="21.404107"/><trkpt lat="51.826097" lon="21.403046"/><trkpt lat="51.826079" lon="21.402499"/></trkseg>
 </trk>
-<trk><name>Al. Huberta</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Al. Huberta</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.826079" lon="21.402499"/><trkpt lat="51.826066" lon="21.402084"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
@@ -1076,10 +1077,10 @@
 <trk><name>Limby</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.830708" lon="21.439820"/><trkpt lat="51.830649" lon="21.440087"/><trkpt lat="51.830545" lon="21.440518"/><trkpt lat="51.830384" lon="21.441419"/></trkseg>
 </trk>
-<trk><name>Czerwonego Kapturka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Czerwonego Kapturka</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.830236" lon="21.437641"/><trkpt lat="51.829017" lon="21.440149"/><trkpt lat="51.828758" lon="21.440657"/><trkpt lat="51.828447" lon="21.441477"/><trkpt lat="51.827722" lon="21.443065"/><trkpt lat="51.827293" lon="21.443787"/><trkpt lat="51.826994" lon="21.444503"/></trkseg>
 </trk>
-<trk><name>Czerwonego Kapturka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Czerwonego Kapturka</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.826994" lon="21.444503"/><trkpt lat="51.826772" lon="21.445031"/><trkpt lat="51.826492" lon="21.445532"/><trkpt lat="51.825677" lon="21.447320"/><trkpt lat="51.825605" lon="21.447457"/><trkpt lat="51.825474" lon="21.447689"/><trkpt lat="51.825378" lon="21.447812"/><trkpt lat="51.825262" lon="21.447937"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
@@ -1310,10 +1311,10 @@
 <trk><name>Brzozowa</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.826258" lon="21.409620"/><trkpt lat="51.826252" lon="21.409047"/></trkseg>
 </trk>
-<trk><name>Al. Huberta</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Al. Huberta</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.827703" lon="21.392506"/><trkpt lat="51.827600" lon="21.392702"/><trkpt lat="51.827310" lon="21.392973"/><trkpt lat="51.826952" lon="21.393126"/><trkpt lat="51.826459" lon="21.393255"/><trkpt lat="51.826267" lon="21.393278"/></trkseg>
 </trk>
-<trk><name>Al. Huberta</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Al. Huberta</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.826267" lon="21.393278"/><trkpt lat="51.826156" lon="21.393292"/><trkpt lat="51.826046" lon="21.393377"/><trkpt lat="51.825943" lon="21.393540"/></trkseg>
 </trk>
 <trk><name>Koźlarzy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
@@ -1826,10 +1827,10 @@
 <trk><name>Trakt Słoneczny</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.820529" lon="21.409956"/><trkpt lat="51.820477" lon="21.409994"/></trkseg>
 </trk>
-<trk><name>Al. Huberta</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Al. Huberta</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.825943" lon="21.393540"/><trkpt lat="51.825991" lon="21.393841"/><trkpt lat="51.826009" lon="21.394149"/><trkpt lat="51.826011" lon="21.395283"/><trkpt lat="51.826022" lon="21.397762"/><trkpt lat="51.826037" lon="21.400404"/><trkpt lat="51.826035" lon="21.400897"/></trkseg>
 </trk>
-<trk><name>Al. Huberta</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Al. Huberta</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.826035" lon="21.400897"/><trkpt lat="51.826034" lon="21.401348"/><trkpt lat="51.826066" lon="21.402084"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
@@ -2145,16 +2146,10 @@
 <trkseg><trkpt lat="51.846769" lon="21.422262"/><trkpt lat="51.846812" lon="21.424080"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.836543" lon="21.445194"/><trkpt lat="51.836434" lon="21.445246"/><trkpt lat="51.836436" lon="21.445580"/><trkpt lat="51.836441" lon="21.445755"/><trkpt lat="51.836458" lon="21.445799"/></trkseg>
-</trk>
-<trk><name>droga bez nazwy</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.836458" lon="21.445799"/><trkpt lat="51.836466" lon="21.445843"/><trkpt lat="51.836483" lon="21.445888"/><trkpt lat="51.836501" lon="21.445918"/><trkpt lat="51.836527" lon="21.445934"/><trkpt lat="51.836581" lon="21.445966"/><trkpt lat="51.836652" lon="21.445999"/><trkpt lat="51.836778" lon="21.445991"/><trkpt lat="51.836886" lon="21.445982"/><trkpt lat="51.836931" lon="21.445970"/><trkpt lat="51.837284" lon="21.445888"/></trkseg>
-</trk>
-<trk><name>droga bez nazwy</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.837284" lon="21.445888"/><trkpt lat="51.837387" lon="21.445690"/><trkpt lat="51.837443" lon="21.445591"/><trkpt lat="51.837462" lon="21.445534"/><trkpt lat="51.837481" lon="21.445477"/><trkpt lat="51.837502" lon="21.445362"/><trkpt lat="51.837625" lon="21.444628"/><trkpt lat="51.837695" lon="21.444269"/><trkpt lat="51.837758" lon="21.443866"/><trkpt lat="51.837791" lon="21.443592"/><trkpt lat="51.837814" lon="21.443332"/><trkpt lat="51.837879" lon="21.443248"/><trkpt lat="51.837952" lon="21.443194"/><trkpt lat="51.838033" lon="21.443169"/><trkpt lat="51.838204" lon="21.443179"/><trkpt lat="51.838798" lon="21.443182"/><trkpt lat="51.839411" lon="21.443113"/><trkpt lat="51.839636" lon="21.443082"/><trkpt lat="51.839726" lon="21.443072"/><trkpt lat="51.839789" lon="21.443076"/><trkpt lat="51.839896" lon="21.443125"/><trkpt lat="51.840137" lon="21.443240"/><trkpt lat="51.840271" lon="21.443276"/><trkpt lat="51.840361" lon="21.443295"/><trkpt lat="51.840442" lon="21.443285"/><trkpt lat="51.840478" lon="21.443273"/><trkpt lat="51.840486" lon="21.443331"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.836458" lon="21.445799"/><trkpt lat="51.836407" lon="21.446087"/><trkpt lat="51.836319" lon="21.446445"/><trkpt lat="51.836212" lon="21.446832"/><trkpt lat="51.836172" lon="21.447033"/><trkpt lat="51.836132" lon="21.447234"/><trkpt lat="51.836101" lon="21.447406"/><trkpt lat="51.836080" lon="21.447565"/><trkpt lat="51.836077" lon="21.447681"/><trkpt lat="51.836100" lon="21.447900"/><trkpt lat="51.836147" lon="21.448208"/><trkpt lat="51.836212" lon="21.448531"/><trkpt lat="51.836228" lon="21.448662"/><trkpt lat="51.836249" lon="21.448489"/><trkpt lat="51.836280" lon="21.448316"/><trkpt lat="51.836348" lon="21.448088"/><trkpt lat="51.836482" lon="21.447659"/><trkpt lat="51.836663" lon="21.447219"/><trkpt lat="51.837172" lon="21.446085"/><trkpt lat="51.837284" lon="21.445888"/></trkseg>
+<trkseg><trkpt lat="51.836228" lon="21.448662"/><trkpt lat="51.836249" lon="21.448489"/><trkpt lat="51.836280" lon="21.448316"/><trkpt lat="51.836348" lon="21.448088"/><trkpt lat="51.836482" lon="21.447659"/><trkpt lat="51.836663" lon="21.447219"/><trkpt lat="51.837172" lon="21.446085"/><trkpt lat="51.837284" lon="21.445888"/></trkseg>
 </trk>
 <trk><name>Bobrów</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.852475" lon="21.412052"/><trkpt lat="51.852845" lon="21.412449"/><trkpt lat="51.853038" lon="21.412707"/><trkpt lat="51.853080" lon="21.412811"/><trkpt lat="51.853105" lon="21.412928"/><trkpt lat="51.853148" lon="21.413468"/><trkpt lat="51.853187" lon="21.413746"/><trkpt lat="51.853212" lon="21.413835"/><trkpt lat="51.853273" lon="21.413954"/><trkpt lat="51.853395" lon="21.414149"/><trkpt lat="51.853483" lon="21.414227"/><trkpt lat="51.853527" lon="21.414287"/><trkpt lat="51.853560" lon="21.414449"/><trkpt lat="51.853556" lon="21.414637"/><trkpt lat="51.853516" lon="21.414795"/><trkpt lat="51.853403" lon="21.415080"/><trkpt lat="51.853047" lon="21.415772"/><trkpt lat="51.852981" lon="21.415914"/><trkpt lat="51.852934" lon="21.415984"/><trkpt lat="51.852803" lon="21.416224"/><trkpt lat="51.852720" lon="21.416336"/><trkpt lat="51.852601" lon="21.416431"/><trkpt lat="51.852555" lon="21.416501"/><trkpt lat="51.852461" lon="21.416671"/><trkpt lat="51.852369" lon="21.416796"/><trkpt lat="51.852129" lon="21.417074"/><trkpt lat="51.852000" lon="21.417241"/><trkpt lat="51.851944" lon="21.417355"/><trkpt lat="51.851905" lon="21.417483"/><trkpt lat="51.851875" lon="21.417627"/><trkpt lat="51.851846" lon="21.417713"/><trkpt lat="51.851898" lon="21.417817"/></trkseg>
@@ -2245,5 +2240,20 @@
 </trk>
 <trk><name>Saperów</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.821925" lon="21.402013"/><trkpt lat="51.821897" lon="21.402428"/><trkpt lat="51.821873" lon="21.402633"/></trkseg>
+</trk>
+<trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trkseg><trkpt lat="51.836537" lon="21.445020"/><trkpt lat="51.836228" lon="21.448662"/></trkseg>
+</trk>
+<trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trkseg><trkpt lat="51.836228" lon="21.448662"/><trkpt lat="51.836155" lon="21.449573"/><trkpt lat="51.836103" lon="21.449875"/><trkpt lat="51.836072" lon="21.450077"/><trkpt lat="51.836032" lon="21.450263"/><trkpt lat="51.835682" lon="21.451087"/><trkpt lat="51.835405" lon="21.451885"/><trkpt lat="51.835357" lon="21.452027"/><trkpt lat="51.835318" lon="21.452156"/><trkpt lat="51.835244" lon="21.452268"/></trkseg>
+</trk>
+<trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trkseg><trkpt lat="51.836417" lon="21.446465"/><trkpt lat="51.835833" lon="21.446448"/><trkpt lat="51.835230" lon="21.446444"/><trkpt lat="51.835193" lon="21.446936"/><trkpt lat="51.835242" lon="21.447592"/><trkpt lat="51.835378" lon="21.448006"/><trkpt lat="51.835617" lon="21.448193"/><trkpt lat="51.835927" lon="21.448428"/><trkpt lat="51.836228" lon="21.448662"/></trkseg>
+</trk>
+<trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trkseg><trkpt lat="51.837819" lon="21.443100"/><trkpt lat="51.837668" lon="21.442990"/><trkpt lat="51.837265" lon="21.442895"/><trkpt lat="51.836907" lon="21.442832"/><trkpt lat="51.836539" lon="21.442798"/></trkseg>
+</trk>
+<trk><name>Śnieżki</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trkseg><trkpt lat="51.834203" lon="21.445358"/><trkpt lat="51.831923" lon="21.445234"/></trkseg>
 </trk>
 </gpx>
