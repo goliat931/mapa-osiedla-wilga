@@ -57,7 +57,8 @@ dump(prg, 'adresy', lambda f: {'u': f['NAZWA_ULC'], 'n': f['NUMER_PORZ']},
 POZA_PRG = [('Lipowa', '12', 21.431453, 51.843599), ('Saperów', '1A', 21.401946, 51.821582),  # 1A: uwaga nr 35
             ('Cyganówka', '70', 21.44509, 51.85953),
             ('Śnieżki', '3', 21.444811, 51.831351),  # uwaga nr 73: tabliczka na bramie (zdjęcie), budynek obok punktu PRG „Śnieżki 4”
-            ('Czeremchy', '1M', 21.405706, 51.828551)]  # uwaga nr 80
+            ('Czeremchy', '1M', 21.405706, 51.828551),  # uwaga nr 80
+            ('Samanty', '25', 21.423572, 51.829059)]  # uwaga nr 2: zgoda właścicieli, w PRG brak (do wyjaśnienia z Marcinem)
 # punkty PRG przesunięte na właściwy budynek: (ulica, numer) -> lon, lat
 PRZESUNIETE = {('Śnieżki', '20'): (21.444524, 51.833282)}  # uwaga nr 69: punkt PRG ok. 25 m od budynku  # uwaga nr 63: za rzeką od wsi, ok. 200 m na północ od G1, dojazd tylko od Garwolinki; punkt z PRG (budynek nr 70 w EGiB)
 with open(f'{OUT}/adresy.geojson', encoding='utf8') as fi:

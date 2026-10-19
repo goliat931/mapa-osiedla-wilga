@@ -126,6 +126,7 @@
 <wpt lat="51.85953" lon="21.44509"><name>Cyganówka 70</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.831351" lon="21.444811"><name>Śnieżki 3</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.828551" lon="21.405706"><name>Czeremchy 1M</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
+<wpt lat="51.829059" lon="21.423572"><name>Samanty 25</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <trk><name>Trakt Słoneczny</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.847011" lon="21.391110"/><trkpt lat="51.846943" lon="21.391213"/><trkpt lat="51.846801" lon="21.391423"/><trkpt lat="51.846714" lon="21.391568"/><trkpt lat="51.846550" lon="21.391895"/><trkpt lat="51.846456" lon="21.392123"/><trkpt lat="51.846203" lon="21.392764"/><trkpt lat="51.846029" lon="21.393247"/></trkseg>
 </trk>
