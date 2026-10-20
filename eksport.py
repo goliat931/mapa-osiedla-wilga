@@ -15,6 +15,24 @@ def tag(tags, k):
     return m.group(1) if m else None
 
 
+# do dymka idzie sam opis drogi: bez daty, numerów uwag i tego, kto zgłosił lub sprawdził (pełny wpis zostaje w QGIS)
+WYTNIJ = [r'^\d{4}-\d{2}-\d{2}\s*', r'^zgłoszenie z terenu:\s*',
+          r'\s*\((?:poprawka|Dawid[^)]*|zweryfikowane przez Dawida|mieszkaniec[^)]*|zgłoszenie mieszkańca)\)',
+          r'\b(?:uwag[ai]|zgłoszeni[ea]) nr \d+(?:(?:, | i |–)\d+)*', r'\bpro[śs]ba Dawida\b',
+          r',?\s*(?:sprawdzone|zweryfikowane)?\s*(?:w terenie\s*)?przez Dawida', r',?\s*(?:wskazał|sprawdził|potwierdził) Dawid',
+          r'\s*\((?:jak|też|także)\s*\)', r'\bDawid(?:a)?\b(?=\s*[:(])', r'\(\s*\)', r'^[\s,:;]+']
+
+
+def opis(v):
+    if not v:
+        return v
+    v = v.replace('Dawid przejechał osobówką', 'przejazd osobówką').replace(' na zielono', '')
+    for w in WYTNIJ:
+        v = re.sub(w, '', v, flags=re.I).strip()
+    v = re.sub(r'\s+([,;:)])', r'\1', v).replace('( ', '(')
+    return v[:1].upper() + v[1:]
+
+
 def dump(layer, name, props, expr=None, prec=6):
     tr = QgsCoordinateTransform(layer.crs(), WGS, prj)
     req = QgsFeatureRequest()
@@ -36,7 +54,7 @@ def dump(layer, name, props, expr=None, prec=6):
 L = lambda n: prj.mapLayersByName(n)[0]
 
 dump(L('drogi'), 'drogi', lambda f: {
-    'n': f['nazwa'], 'k': f['kategoria'], 'u': tag(f['other_tags'], 'weryfikacja')})
+    'n': f['nazwa'], 'k': f['kategoria'], 'u': opis(tag(f['other_tags'], 'weryfikacja'))})
 dump(L('hydranty_reczne'), 'hydranty', lambda f: {'t': f['typ'], 'u': f['uwagi']})
 dump(L('stromizny'), 'stromizny', lambda f: {
     'n': f['ulica'], 's': f['spadek_proc'], 'k': f['klasa'], 'a': f['azymut_pod_gore'],

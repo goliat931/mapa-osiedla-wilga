@@ -74,3 +74,5 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-20 | Uwagi nr 86, 93 | Nowe drogi wg cieniowania NMT: kręta droga od Czterech Wiatrów do objazdu górki w stronę Wakacyjnej (H4/H5), żółta; Samanty od Traktu Słonecznego do Poziomkowej wzdłuż skarpy, dojazd do Samanty 1 (D6), zielona, przejezdna na całej długości. |
 | 2026-10-20 | Uwaga nr 87 | Bolka i Lolka 44 (H5) przeniesione na budynek z tabliczką „44 Bolka i Lolka” (zdjęcie), przy którym PRG podaje „Śnieżki 2”. |
 | 2026-10-20 | Uwaga nr 88 | Usunięta nieistniejąca Azaliowa od Bolka i Lolka do Czterech Wiatrów (G5). |
+| 2026-10-20 | Dawid Karczewski (mieszkaniec), NMT | Między Azaliową a Śnieżki (G4/G5): usunięte odcinki wg planu, których w terenie nie ma (z Bażantowej i Raroga na południe od Wakacyjnej oraz ulica od Wakacyjnej do Bolka i Lolka), razem ze strzałkami stromizn; dorysowana prosta droga od Wakacyjnej do Bolka i Lolka i dojazd do Bażantowej 16 od Wakacyjnej (przebieg wg cieniowania NMT). |
+| 2026-10-20 | Dawid Karczewski (mieszkaniec) | Dymek drogi pokazuje sam opis, bez daty, numerów uwag i tego, kto zgłosił lub sprawdził (pełny wpis zostaje w QGIS). |
