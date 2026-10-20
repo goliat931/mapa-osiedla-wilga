@@ -1581,9 +1581,6 @@
 <trkseg><trkpt lat="51.836418" lon="21.441378"/><trkpt lat="51.836073" lon="21.441406"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.836073" lon="21.441406"/><trkpt lat="51.834135" lon="21.441564"/><trkpt lat="51.831873" lon="21.441622"/></trkseg>
-</trk>
-<trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.836479" lon="21.443273"/><trkpt lat="51.836033" lon="21.443300"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
