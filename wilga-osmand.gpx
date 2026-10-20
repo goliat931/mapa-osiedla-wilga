@@ -2255,7 +2255,7 @@
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.837944" lon="21.441417"/><trkpt lat="51.837952" lon="21.443194"/></trkseg>
 </trk>
-<trk><name>droga bez nazwy</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.828991" lon="21.409395"/><trkpt lat="51.828945" lon="21.410804"/><trkpt lat="51.828922" lon="21.412126"/><trkpt lat="51.828949" lon="21.413038"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
