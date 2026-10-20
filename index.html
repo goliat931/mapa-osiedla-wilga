@@ -591,8 +591,9 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     if (ja) { ja.setLatLng(e.latlng); jaKolo.setLatLng(e.latlng).setRadius(e.accuracy); }
     else {
       jaKolo = L.circle(e.latlng, { radius: e.accuracy, weight: 1, color: '#1a73e8', fillOpacity: .12, interactive: false }).addTo(map);
-      if (!map.getPane('ja')) map.createPane('ja').style.zIndex = 650; // nad nazwami ulic (znaczniki, 600)
-      ja = L.circleMarker(e.latlng, { radius: 7, color: '#fff', weight: 2, fillColor: '#1a73e8', fillOpacity: 1, interactive: false, pane: 'ja' }).addTo(map);
+      // znacznik, nie wektor we własnym panelu: leaflet-rotate nie przelicza takich paneli, więc kropka uciekała od okręgu
+      ja = L.marker(e.latlng, { interactive: false, keyboard: false, zIndexOffset: 1000, icon: L.divIcon({ className: '', iconSize: [18, 18],
+        html: '<div style="width:14px;height:14px;border:2px solid #fff;border-radius:50%;background:#1a73e8;box-shadow:0 0 3px #0006"></div>' }) }).addTo(map);
       lok.getContainer().firstChild.classList.add('jest');
     }
     if (poUstaleniu) { const p = poUstaleniu; poUstaleniu = null; p(e.latlng); }
