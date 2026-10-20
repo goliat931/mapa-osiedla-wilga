@@ -76,3 +76,4 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-20 | Uwaga nr 88 | Usunięta nieistniejąca Azaliowa od Bolka i Lolka do Czterech Wiatrów (G5). |
 | 2026-10-20 | Dawid Karczewski (mieszkaniec), NMT | Między Azaliową a Śnieżki (G4/G5): usunięte odcinki wg planu, których w terenie nie ma (z Bażantowej i Raroga na południe od Wakacyjnej oraz ulica od Wakacyjnej do Bolka i Lolka), razem ze strzałkami stromizn; dorysowana prosta droga od Wakacyjnej do Bolka i Lolka i dojazd do Bażantowej 16 od Wakacyjnej (przebieg wg cieniowania NMT). |
 | 2026-10-20 | Dawid Karczewski (mieszkaniec) | Dymek drogi pokazuje sam opis, bez daty, numerów uwag i tego, kto zgłosił lub sprawdził (pełny wpis zostaje w QGIS). |
+| 2026-10-20 | Uwaga nr 72 (uzupełnienie) | Usunięte dawne połączenie Limby z Bolka i Lolka przy nr 54 (H5): ogrodzone działki, nie ma przejścia nawet pieszo. |
