@@ -61,7 +61,8 @@ POZA_PRG = [('Lipowa', '12', 21.431453, 51.843599), ('Saperów', '1A', 21.401946
             ('Czeremchy', '1M', 21.405706, 51.828551),  # uwaga nr 80
             ('Samanty', '25', 21.423572, 51.829059)]  # uwaga nr 2: zgoda właścicieli, w PRG brak (do wyjaśnienia z Marcinem)
 # punkty PRG przesunięte na właściwy budynek: (ulica, numer) -> lon, lat
-PRZESUNIETE = {('Śnieżki', '20'): (21.444524, 51.833282)}  # uwaga nr 69: punkt PRG ok. 25 m od budynku  # uwaga nr 63: za rzeką od wsi, ok. 200 m na północ od G1, dojazd tylko od Garwolinki; punkt z PRG (budynek nr 70 w EGiB)
+PRZESUNIETE = {('Śnieżki', '20'): (21.444524, 51.833282),  # uwaga nr 69: punkt PRG ok. 25 m od budynku
+               ('Bolka i Lolka', '44'): (21.444937, 51.831742)}  # uwaga nr 87: tabliczka „44 Bolka i Lolka” (zdjęcie) na budynku przy punkcie PRG „Śnieżki 2”  # uwaga nr 63: za rzeką od wsi, ok. 200 m na północ od G1, dojazd tylko od Garwolinki; punkt z PRG (budynek nr 70 w EGiB)
 with open(f'{OUT}/adresy.geojson', encoding='utf8') as fi:
     adresy = json.load(fi)
 for a in adresy['features']:

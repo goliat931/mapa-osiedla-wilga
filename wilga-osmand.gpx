@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" creator="mapa-osiedle-wilga.goliat.dev" xmlns="http://www.topografix.com/GPX/1/1" xmlns:osmand="https://osmand.net">
-<metadata><name>Mapa Osiedla Wilga dla służb (2026-10-19)</name></metadata>
+<metadata><name>Mapa Osiedla Wilga dla służb (2026-10-20)</name></metadata>
 <wpt lat="51.819610" lon="21.410730"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.843022" lon="21.416479"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.841600" lon="21.412535"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
@@ -140,7 +140,7 @@
 <trk><name>Trakt Słoneczny</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.842255" lon="21.403319"/><trkpt lat="51.841656" lon="21.404834"/><trkpt lat="51.841433" lon="21.405405"/><trkpt lat="51.841138" lon="21.406163"/><trkpt lat="51.840655" lon="21.407457"/><trkpt lat="51.840621" lon="21.407550"/><trkpt lat="51.840300" lon="21.408171"/><trkpt lat="51.839962" lon="21.408605"/><trkpt lat="51.839876" lon="21.408700"/><trkpt lat="51.839771" lon="21.408784"/></trkseg>
 </trk>
-<trk><name>Wiewiórek</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Wiewiórek</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.829865" lon="21.412995"/><trkpt lat="51.829789" lon="21.409808"/></trkseg>
 </trk>
 <trk><name>Wiewiórek</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
@@ -791,7 +791,7 @@
 <trk><name>Koszałka Opałka</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.831217" lon="21.403900"/><trkpt lat="51.828864" lon="21.403953"/></trkseg>
 </trk>
-<trk><name>Koszałka Opałka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>Koszałka Opałka</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.826046" lon="21.404109"/><trkpt lat="51.823451" lon="21.404160"/></trkseg>
 </trk>
 <trk><name>Jodłowa</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
@@ -1343,12 +1343,6 @@
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.823461" lon="21.406249"/><trkpt lat="51.822473" lon="21.406185"/><trkpt lat="51.821133" lon="21.406246"/><trkpt lat="51.820965" lon="21.406278"/></trkseg>
 </trk>
-<trk><name>Szczygła</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.829332" lon="21.397802"/><trkpt lat="51.829006" lon="21.397175"/></trkseg>
-</trk>
-<trk><name>Szczygła</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.830147" lon="21.400531"/><trkpt lat="51.830060" lon="21.399843"/><trkpt lat="51.829883" lon="21.399124"/><trkpt lat="51.829622" lon="21.398521"/><trkpt lat="51.829332" lon="21.397802"/></trkseg>
-</trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.833459" lon="21.398036"/><trkpt lat="51.832000" lon="21.399150"/></trkseg>
 </trk>
@@ -1577,11 +1571,8 @@
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.836378" lon="21.438229"/><trkpt lat="51.836138" lon="21.438243"/></trkseg>
 </trk>
-<trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>droga bez nazwy</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.836138" lon="21.438243"/><trkpt lat="51.834070" lon="21.438370"/><trkpt lat="51.831808" lon="21.438432"/></trkseg>
-</trk>
-<trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.831841" lon="21.440066"/><trkpt lat="51.834102" lon="21.439978"/><trkpt lat="51.836105" lon="21.439835"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.836105" lon="21.439835"/><trkpt lat="51.836380" lon="21.439816"/></trkseg>
@@ -2281,5 +2272,11 @@
 </trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.837944" lon="21.441417"/><trkpt lat="51.837952" lon="21.443194"/></trkseg>
+</trk>
+<trk><name>droga bez nazwy</name><desc>przejezdna dla ciężkiego wozu</desc><extensions><osmand:color>#1e9e4a</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trkseg><trkpt lat="51.828991" lon="21.409395"/><trkpt lat="51.828945" lon="21.410804"/><trkpt lat="51.828922" lon="21.412126"/><trkpt lat="51.828949" lon="21.413038"/></trkseg>
+</trk>
+<trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trkseg><trkpt lat="51.834205" lon="21.445459"/><trkpt lat="51.834512" lon="21.445514"/><trkpt lat="51.834795" lon="21.445555"/><trkpt lat="51.834968" lon="21.445640"/><trkpt lat="51.835069" lon="21.445797"/><trkpt lat="51.835140" lon="21.446043"/><trkpt lat="51.835186" lon="21.446422"/><trkpt lat="51.835194" lon="21.446950"/></trkseg>
 </trk>
 </gpx>
