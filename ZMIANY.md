@@ -78,4 +78,4 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-20 | Dawid Karczewski (mieszkaniec) | Dymek drogi pokazuje sam opis, bez daty, numerów uwag i tego, kto zgłosił lub sprawdził (pełny wpis zostaje w QGIS). |
 | 2026-10-20 | Uwaga nr 72 (uzupełnienie) | Usunięte dawne połączenie Limby z Bolka i Lolka przy nr 54 (H5): ogrodzone działki, nie ma przejścia nawet pieszo. |
 | 2026-10-20 | Uwaga nr 93 (poprawka Dawida) | Samanty od Traktu Słonecznego do Poziomkowej (D6) z zielonego na żółte. |
-| 2026-10-21 | Dawid Karczewski (mieszkaniec) | Usunięta Macierzanki od Jemiołuszki do Saperów (C7): przejazd przez teren stadniny i ośrodka, droga spacerowa i dla koni, którą w terenie prowadzi skosem po dawnej szerokiej drodze do Traktu Słonecznego. |
+| 2026-10-21 | Uwaga nr 1 | Usunięta Macierzanki od Jemiołuszki do Saperów (C7): przejazd przez teren stadniny i ośrodka, droga spacerowa i dla koni, którą w terenie prowadzi skosem po dawnej szerokiej drodze do Traktu Słonecznego. |
