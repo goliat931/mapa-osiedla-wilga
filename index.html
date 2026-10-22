@@ -20,9 +20,16 @@
   #top { top:var(--nad); left:10px; right:10px; max-width:600px; padding:10px 12px; }
   #top h1 { font-size:17px; margin:0 0 8px; }
   #top .stan { font-size:12px; color:var(--muted); margin-left:6px; font-weight:400; }
-  #top #licznik { margin-left:0; white-space:nowrap; }
-  #top #licznik:not(:empty)::before { content:'· '; }
-  body.bez-sieci #top #stan::after { content:' · bez połączenia'; }
+  /* bez zasięgu: wyraźna plakietka zamiast dopisku w tytule */
+  #offline { display:none; margin:8px 0 0; padding:6px 10px; border-radius:7px; background:#fff4d6; color:#5c3d00; border:1px solid #e0b44c; font-size:14px; font-weight:600; line-height:1.35; }
+  body.bez-sieci #offline { display:block; }
+  @media (prefers-color-scheme: dark) { #offline { background:#3a2e12; color:#ffe2a3; border-color:#7a5a1c; } }
+  /* pierwsza wizyta: krótkie powitanie zamiast pełnego „O mapie” */
+  #powitanie { left:10px; right:10px; bottom:22px; max-width:420px; margin:0 auto; z-index:1001; padding:12px 14px; font-size:15px; line-height:1.4; }
+  #powitanie[hidden] { display:none; }
+  #powitanie p { margin:0 0 10px; }
+  #powitanie .przyciski { display:flex; gap:8px; justify-content:flex-end; }
+  #powitanie button { min-height:40px; padding:0 14px; font-size:14px; }
   #szukaj { width:100%; box-sizing:border-box; font:inherit; font-size:16px; padding:7px 10px; color:var(--text); background:var(--bg); border:1px solid var(--border-strong); border-radius:7px; }
   #szukaj::placeholder { color:var(--muted); }
   #legenda { bottom:22px; left:10px; padding:10px 12px; font-size:13px; max-width:280px; max-height:55vh; overflow:auto; }
@@ -155,14 +162,24 @@
   @media (max-width: 720px) {
     .leaflet-top.leaflet-right { top:94px; }
     body.tryb-zglos .leaflet-top.leaflet-right { display:none; }
+    body.bez-sieci .leaflet-top.leaflet-right { top:150px; } /* pod plakietką „Bez zasięgu” */
+  }
+  @media (pointer: coarse) {
+    .leaflet-touch .leaflet-bar a { width:44px; height:44px; line-height:44px; }
+    #szukaj, #btn-indeks, #btn-zglos, #btn-info { min-height:44px; }
+    #btn-info { min-width:44px; }
+    .wilga-brand { min-height:44px; }
+    #szukaj-x { min-width:44px; min-height:44px; }
+    .leaflet-container a.leaflet-popup-close-button { width:40px; height:40px; font:24px/40px Tahoma, Verdana, sans-serif; }
+    #pokaz-leg, #zamknij-leg { min-height:44px; }
   }
   @media (max-width: 600px) {
+    :root { --bar-h:46px; }
     #legenda { bottom:10px; max-height:60vh; }
     #indeks { left:10px; width:auto; top:calc(var(--bar-h) + 122px); }
     .dl { display:none; }
     .leaflet-top.leaflet-right { top:112px; }
-    #top #licznik { display:block; margin:2px 0 0; }
-    #top #licznik:not(:empty)::before { content:none; }
+    body.bez-sieci .leaflet-top.leaflet-right { top:200px; }
     #info { max-height:calc(100vh - var(--bar-h) - 134px); }
     #btn-indeks, #btn-zglos { padding:6px 8px; }
     #info, #zglos-pasek { top:calc(var(--bar-h) + 122px); left:10px; }
@@ -179,7 +196,7 @@
   </nav>
 </header>
 <div id="top" class="panel">
-  <h1>Mapa Osiedla Wilga <span class="stan" id="stan"></span> <span class="stan" id="licznik"></span></h1>
+  <h1>Mapa Osiedla Wilga <span class="stan" id="stan"></span></h1>
   <div class="wiersz">
     <div class="pole"><input id="szukaj" placeholder="Ulica, adres, miejsce" aria-label="Szukaj ulicy, adresu lub miejsca" autocomplete="off" enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls="podp" aria-expanded="false"><button id="szukaj-x" type="button" aria-label="Wyczyść wyszukiwanie" hidden>×</button></div>
     <button id="btn-indeks" class="btn-secondary">Indeks</button>
@@ -187,6 +204,7 @@
     <button id="btn-info" class="btn-secondary" title="O mapie" aria-label="O mapie"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:block"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
   </div>
   <ul id="podp" role="listbox" aria-label="Podpowiedzi" hidden></ul>
+  <p id="offline" role="status">Bez zasięgu: mapa z pamięci telefonu. Ulice, numery, drogi i hydranty działają; podkład i zgłaszanie uwag wrócą z zasięgiem.</p>
 </div>
 <div id="indeks" class="panel"><header><h2>Indeks</h2><button id="zamknij-indeks" aria-label="Zamknij">×</button></header>
   <div class="zakladki" role="tablist"><button role="tab" data-z="indeks-lista" aria-selected="true">Ulice i adresy</button><button role="tab" data-z="indeks-miejsca" aria-selected="false">Miejsca</button><button role="tab" data-z="indeks-dzialki" aria-selected="false">Działki</button></div>
@@ -197,6 +215,7 @@
     <p>Pomysł narodził się na zebraniu wiejskim, w dyskusji ze strażakami: w lesie gubi się sygnał GPS, a trafienie pod właściwy adres zajmuje cenne minuty. Dlatego mapa ma przede wszystkim <b>ułatwić służbom ratunkowym dojazd do posesji</b>: pokazuje nazwy ulic i numery domów, przejezdność dróg dla wozów strażackich, hydranty, zbiorniki wody i strome podjazdy.</p>
     <p>To wersja robocza, uzupełniana na bieżąco. Przejezdność dróg i stromizny są wstępne i weryfikowane razem z jednostkami OSP.</p>
     <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś uwagę</b>, przesuń mapę tak, żeby pinezka wskazała miejsce, i kliknij <b>Zgłoś tutaj</b>: nie trzeba się logować, można dołączyć zdjęcie z terenu albo zrzut ekranu. Każdą uwagę sprawdzamy, zanim zmienimy mapę.</p>
+    <p id="licznik"></p>
     <p>Raz otwarta mapa działa potem także bez zasięgu: ulice, numery, drogi i hydranty są zapisane w telefonie. Bez połączenia nie wczytuje się tylko podkład (OSM, ortofotomapa) i nie da się wysłać uwagi.</p>
     <p>Wersja do druku: <a href="atlas-a3.pdf" target="_blank" rel="noopener">atlas A3 w PDF</a> (8 arkuszy, ok. 9 MB) z legendą i indeksem ulic.</p>
     <p>Do nawigacji: <a href="wilga-osmand.gpx" download>plik GPX</a> (drogi w kolorach przejezdności, hydranty, miejsca do zawracania) do otwarcia w OsmAnd; widać go też w Android Auto.</p>
@@ -207,6 +226,7 @@
 <div id="komunikat" class="panel" role="status" hidden></div>
 <p id="ogloszenie" class="sr" aria-live="polite"></p>
 <div id="zglos-wskaz" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg></div>
+<div id="powitanie" class="panel" role="dialog" aria-label="Witaj" hidden><p><b>Mapa dla służb ratunkowych i mieszkańców.</b> Wpisz adres w polu u góry. Kolory dróg objaśnia legenda.</p><div class="przyciski"><button id="powitanie-info" class="btn-secondary" type="button">O mapie</button><button id="powitanie-ok" class="btn-primary" type="button">Rozumiem</button></div></div>
 <div id="skrot" class="panel" hidden><span></span><button id="skrot-dodaj" class="btn-primary" type="button" hidden>Dodaj</button><button id="skrot-x" type="button" aria-label="Zamknij">×</button></div>
 <button id="pokaz-leg" class="btn-secondary"><span class="mini" aria-hidden="true"><i style="border-color:#1e9e4a"></i><i style="border-color:#f5c400"></i><i style="border-color:#e3141b;border-top-style:dashed"></i></span>Legenda</button>
 <div id="legenda" class="panel">
@@ -555,10 +575,9 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     return best[1] && { ...best[1], m: Math.round(best[0] * map.distance(map.unproject([0, 0], 18), map.unproject([1, 0], 18))) }; };
   let zglosMarker;
   const UWAGI_URL = 'https://script.google.com/macros/s/AKfycbx5_boeKa5TW8bYz6l0BVVLcDrarPWOq-bw0F1mqtb853NetDbo1quVrEEqta77Y_FK_Q/exec';
-  // licznik przy „stan na”: same liczby z arkusza uwag; bez sieci po prostu się nie pokazuje
-  const odm = (n, a, b, c) => n === 1 ? a : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? b : c;
+  // licznik uwag w „O mapie”: same liczby z arkusza uwag; bez sieci po prostu się nie pokazuje
   fetch(UWAGI_URL).then(r => r.json()).then(r => { if (r.liczba) document.getElementById('licznik').textContent =
-    `${r.liczba} ${odm(r.liczba, 'uwaga', 'uwagi', 'uwag')}, ${r.naniesione} ${odm(r.naniesione, 'naniesiona', 'naniesione', 'naniesionych')}`; }).catch(() => {});
+    `Zgłoszone uwagi: ${r.liczba}, naniesione na mapę: ${r.naniesione}.`; }).catch(() => {});
   const TYPY_UWAG = ['Droga nieprzejezdna lub trudny dojazd', 'Droga przejezdna, a na mapie oznaczona inaczej', 'Wąski przejazd lub przeszkoda (brama, szlaban, gałęzie, mostek)',
     'Trudno trafić / brak oznakowania', 'Hydrant lub zbiornik wody', 'Numer domu lub adres', 'Nazwa ulicy', 'Brakująca droga lub skrót', 'Inne'];
   // zdjęcie z telefonu zmniejszone do 1600 px (JPEG), żeby wysyłka działała też przy słabym zasięgu
@@ -599,7 +618,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
         f.innerHTML = `<p><b>Dziękujemy!</b> Uwaga${r.nr ? ' nr ' + esc(r.nr) : ''} została zapisana.</p><p>Sprawdzimy ją, zanim zmienimy mapę.</p>`;
       } catch (err) {
         btn.disabled = false; btn.textContent = 'Wyślij uwagę'; stan.className = 'blad';
-        stan.textContent = (err && err.message && !/fetch|JSON|token/i.test(err.message) ? err.message + ' ' : 'Nie udało się wysłać uwagi. ') + 'Spróbuj ponownie.';
+        stan.textContent = !navigator.onLine ? 'Brak zasięgu, uwaga nie została wysłana. Tekst zostaje w formularzu: wyślij, gdy wróci zasięg.'
+          : (err && err.message && !/fetch|JSON|token/i.test(err.message) ? err.message + ' ' : 'Nie udało się wysłać uwagi. ') + 'Spróbuj ponownie.';
       }
     };
     if (zglosMarker) map.removeLayer(zglosMarker);
@@ -704,7 +724,11 @@ addEventListener('keydown', e => {
 });
 // przy pierwszej wizycie pokaż „O mapie”
 let pierwszaWizyta = false;
-try { if (!localStorage.getItem('wilga-info')) { pierwszaWizyta = true; ustawInfo(true); localStorage.setItem('wilga-info', '1'); } } catch (e) {}
+try { if (!localStorage.getItem('wilga-info')) { pierwszaWizyta = true; localStorage.setItem('wilga-info', '1'); } } catch (e) {}
+const powitanie = document.getElementById('powitanie');
+if (pierwszaWizyta) powitanie.hidden = false;
+document.getElementById('powitanie-ok').onclick = () => { powitanie.hidden = true; document.getElementById('szukaj').focus(); };
+document.getElementById('powitanie-info').onclick = () => { powitanie.hidden = true; ustawInfo(true); };
 // propozycja skrótu na ekranie głównym: tylko telefon i tablet, nie przy pierwszej wizycie; zamknięta nie wraca
 (() => {
   const el = document.getElementById('skrot'), txt = el.querySelector('span'), btn = document.getElementById('skrot-dodaj');
