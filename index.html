@@ -30,6 +30,7 @@
   #legenda h2:first-child { margin-top:0; }
   .lw { display:flex; align-items:center; gap:8px; margin:3px 0; }
   .lw i { flex:0 0 26px; display:inline-block; height:0; border-top:5px solid; border-radius:3px; }
+  .lw i.obw { box-shadow:0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,.3); }
   .lw img { width:20px; height:20px; flex:0 0 26px; object-fit:contain; }
   .uwaga { font-size:12px; color:var(--muted); margin-top:8px; line-height:1.4; }
   #legenda { display:none; }
@@ -204,8 +205,8 @@
 <div id="legenda" class="panel">
   <button id="zamknij-leg" aria-label="Zamknij legendę">×</button>
   <h2>Drogi — przejezdność</h2>
-  <div class="lw"><i style="border-color:#1e9e4a"></i>przejezdna dla ciężkiego wozu OSP</div>
-  <div class="lw"><i style="border-color:#f5c400"></i>tylko lekki wóz / do sprawdzenia</div>
+  <div class="lw"><i class="obw" style="border-color:#1e9e4a"></i>przejezdna dla ciężkiego wozu OSP</div>
+  <div class="lw"><i style="border-color:#f5c400"></i>przejazd dla lekkiego wozu</div>
   <div class="lw"><i style="border-color:#e3141b;border-top-style:dashed"></i>nieprzejezdna, dojście pieszo</div>
   <h2>Woda dla straży</h2>
   <div class="lw"><img src="ikony/hydrant.svg" alt="">hydrant sprawdzony w terenie (działanie niesprawdzone)</div>
@@ -247,7 +248,8 @@ const cien = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/NM
   layers: 'Raster', format: 'image/png', maxZoom: 20, attribution: 'NMT &copy; GUGiK' });
 
 const KOLOR = { 'zielony': '#1e9e4a', 'żółty': '#f5c400', 'czerwony': '#e3141b' };
-const OPIS_DROGI = { 'zielony': 'przejezdna dla ciężkiego wozu', 'żółty': 'lekki wóz / do sprawdzenia', 'czerwony': 'nieprzejezdna' };
+// żółty to też kolor domyślny dla dróg jeszcze niesprawdzonych; czy droga jest sprawdzona, wiemy my (QGIS), nie mapa
+const OPIS_DROGI = { 'zielony': 'przejezdna dla ciężkiego wozu OSP', 'żółty': 'przejazd dla lekkiego wozu', 'czerwony': 'nieprzejezdna, dojście pieszo' };
 const POI = { gastronomia: ['#e07b00', '🍴', 'restauracja / bar'], osrodek: ['#00796b', '⌂', 'ośrodek'], sklep: ['#6d4c41', '🛒', 'sklep'],
   kaplica: ['#6a1b9a', '✝', 'kaplica'], pomnik: ['#546e7a', '▮', 'pomnik / miejsce pamięci'], swietlica: ['#ad1457', '⌂', 'świetlica'],
   klub_sportowy: ['#2e7d32', '⚽', 'klub sportowy'], wieza_bts: ['#37474f', '📶', 'wieża BTS'], szlaban: ['#c62828', '⛔', 'szlaban'], inne: ['#222', '•', 'inne'] };
@@ -317,12 +319,13 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     dodaj('Obręby sąsiednie', obL);
   }).catch(() => {});
 
-  dodaj('Drogi', L.geoJSON(drogi, {
+  const obwodka = L.geoJSON(drogi, { filter: f => f.properties.k === 'zielony', interactive: false, style: { color: '#fff', weight: 10, lineCap: 'round', opacity: .95 } });
+  dodaj('Drogi', L.layerGroup([obwodka, L.geoJSON(drogi, {
     style: f => ({ color: KOLOR[f.properties.k] || '#9aa0a6', weight: f.properties.k === 'zielony' ? 6 : 4, dashArray: f.properties.k === 'czerwony' ? '8 6' : null, lineCap: 'round' }),
     onEachFeature: (f, l) => {
       const p = f.properties, opis = OPIS_DROGI[p.k] || '';
       l.bindPopup(`<b>${esc(p.n || 'droga bez nazwy')}</b><br>${opis}${p.u ? '<br><small>' + esc(p.u) + '</small>' : ''}`);
-    } }));
+    } })]));
 
   // nazwy ulic: ramka wzdłuż ulicy, z dala od skrzyżowań i od innych ramek, zawsze na fragmencie widocznym na ekranie.
   // Ramka ma stały rozmiar na ekranie, więc układ liczymy w pikselach danego powiększenia.
