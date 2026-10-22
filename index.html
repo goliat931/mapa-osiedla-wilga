@@ -31,6 +31,13 @@
   .lw { display:flex; align-items:center; gap:8px; margin:3px 0; }
   .lw i { flex:0 0 26px; display:inline-block; height:0; border-top:5px solid; border-radius:3px; }
   .lw i.obw { box-shadow:0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,.3); }
+  .lw .zn { flex:0 0 26px; display:flex; justify-content:center; }
+  .lw .zn .poi { width:18px; height:18px; font-size:10px; }
+  .lw .zn .zaw { width:12px; height:12px; border-radius:50%; background:#4f7fc4; border:2px solid #1d3f73; }
+  /* telefon: przycisk legendy pokazuje od razu trzy kolory dróg */
+  #pokaz-leg { display:flex; align-items:center; gap:8px; }
+  #pokaz-leg .mini { display:flex; flex-direction:column; gap:3px; }
+  #pokaz-leg .mini i { display:block; width:18px; border-top:3px solid; border-radius:2px; }
   .lw img { width:20px; height:20px; flex:0 0 26px; object-fit:contain; }
   .uwaga { font-size:12px; color:var(--muted); margin-top:8px; line-height:1.4; }
   #legenda { display:none; }
@@ -201,7 +208,7 @@
 <p id="ogloszenie" class="sr" aria-live="polite"></p>
 <div id="zglos-wskaz" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg></div>
 <div id="skrot" class="panel" hidden><span></span><button id="skrot-dodaj" class="btn-primary" type="button" hidden>Dodaj</button><button id="skrot-x" type="button" aria-label="Zamknij">×</button></div>
-<button id="pokaz-leg" class="btn-secondary">Legenda</button>
+<button id="pokaz-leg" class="btn-secondary"><span class="mini" aria-hidden="true"><i style="border-color:#1e9e4a"></i><i style="border-color:#f5c400"></i><i style="border-color:#e3141b;border-top-style:dashed"></i></span>Legenda</button>
 <div id="legenda" class="panel">
   <button id="zamknij-leg" aria-label="Zamknij legendę">×</button>
   <h2>Drogi — przejezdność</h2>
@@ -216,6 +223,12 @@
   <div class="lw"><img src="ikony/strzalka_spadek_1.svg" alt="">6–10%</div>
   <div class="lw"><img src="ikony/strzalka_spadek_2.svg" alt="">10–15%</div>
   <div class="lw"><img src="ikony/strzalka_spadek_3.svg" alt="">ponad 15%</div>
+  <h2>Dojazd i orientacja</h2>
+  <div class="lw"><span class="zn"><b class="zaw"></b></span>miejsce do zawracania</div>
+  <div class="lw"><span class="zn"><b class="poi" style="background:#c62828">⛔</b></span>szlaban</div>
+  <div class="lw"><span class="zn"><b class="poi" style="background:#00796b">⌂</b></span>ośrodek, sklep, kaplica i inne miejsca (kliknij, żeby zobaczyć nazwę)</div>
+  <div class="lw"><i style="border-color:#333;border-top-width:1px;border-top-style:dashed"></i>komórka siatki, np. C4 (jak w atlasie A3)</div>
+  <div class="lw"><i style="border-color:#c62828;border-top-width:2px;border-top-style:dotted"></i>granica sąsiedniego obrębu</div>
   <div class="uwaga">Mapa dla służb ratunkowych — wersja robocza. Przejezdność i stromizny są wstępne, weryfikowane z OSP. Kliknij drogę lub punkt, żeby zobaczyć szczegóły.</div>
 </div>
 
