@@ -39,11 +39,18 @@
   body:has(#legenda.otwarta) #pokaz-leg, body.info-otwarte #pokaz-leg { display:none; }
   @keyframes ul-wej { from { opacity:0; } }
   .ulica { animation:ul-wej .25s ease-out; display:inline-block; background:var(--niebieski); color:#fff; font:600 12px "Bahnschrift","Segoe UI",sans-serif; padding:1px 5px; border-radius:3px; border:1px solid #fff; white-space:nowrap; box-shadow:0 1px 2px rgba(0,0,0,.3); }
-  .nr { cursor:pointer; font:700 11px "Bahnschrift","Segoe UI",sans-serif; color:#0b2545; text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff; white-space:nowrap; }
+  .nr { cursor:pointer; font:700 13px "Bahnschrift","Segoe UI",sans-serif; color:#0b2545; text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff; white-space:nowrap; }
   .kom { font:700 22px "Segoe UI",sans-serif; color:rgba(40,40,40,.28); }
   .obr { display:block; transform:translate(-50%,-50%); white-space:nowrap; font:600 13px "Segoe UI",sans-serif; letter-spacing:.06em; color:#c62828; text-shadow:0 0 3px #fff,0 0 3px #fff; }
   .poi { width:22px; height:22px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.4); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; }
   .leaflet-div-icon { background:none; border:none; }
+  /* wynik wyszukiwania: pinezka nad wszystkim i karta z adresem, komórką i najbliższą drogą */
+  .wynik-pin svg { display:block; width:40px; height:40px; filter:drop-shadow(0 2px 3px rgba(0,0,0,.45)); }
+  .karta-wyniku > b { font-size:16px; }
+  .karta-wyniku .k { display:inline-block; margin-top:4px; padding:1px 7px; border-radius:5px; background:var(--surface-2); font-weight:700; }
+  .karta-wyniku .dr { display:flex; align-items:center; gap:6px; margin-top:4px; }
+  .karta-wyniku .dr i { flex:none; width:22px; height:0; border-top:5px solid; border-radius:3px; }
+  .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
   #top .wiersz { display:flex; gap:6px; }
   #top .wiersz .pole { flex:1; min-width:0; position:relative; }
   #szukaj { padding-right:34px; }
@@ -191,6 +198,7 @@
   </div></div>
 <div id="zglos-pasek" class="panel" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg><span>Przesuń mapę tak, żeby czerwona pinezka wskazała miejsce, którego dotyczy uwaga</span><button id="zglos-ok" type="button">Zgłoś tutaj</button><button id="zglos-tu" type="button">Moje położenie</button><button id="zglos-anuluj" type="button">Anuluj</button></div>
 <div id="komunikat" class="panel" role="status" hidden></div>
+<p id="ogloszenie" class="sr" aria-live="polite"></p>
 <div id="zglos-wskaz" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg></div>
 <div id="skrot" class="panel" hidden><span></span><button id="skrot-dodaj" class="btn-primary" type="button" hidden>Dodaj</button><button id="skrot-x" type="button" aria-label="Zamknij">×</button></div>
 <button id="pokaz-leg" class="btn-secondary">Legenda</button>
@@ -239,6 +247,7 @@ const cien = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/NM
   layers: 'Raster', format: 'image/png', maxZoom: 20, attribution: 'NMT &copy; GUGiK' });
 
 const KOLOR = { 'zielony': '#1e9e4a', 'żółty': '#f5c400', 'czerwony': '#e3141b' };
+const OPIS_DROGI = { 'zielony': 'przejezdna dla ciężkiego wozu', 'żółty': 'lekki wóz / do sprawdzenia', 'czerwony': 'nieprzejezdna' };
 const POI = { gastronomia: ['#e07b00', '🍴', 'restauracja / bar'], osrodek: ['#00796b', '⌂', 'ośrodek'], sklep: ['#6d4c41', '🛒', 'sklep'],
   kaplica: ['#6a1b9a', '✝', 'kaplica'], pomnik: ['#546e7a', '▮', 'pomnik / miejsce pamięci'], swietlica: ['#ad1457', '⌂', 'świetlica'],
   klub_sportowy: ['#2e7d32', '⚽', 'klub sportowy'], wieza_bts: ['#37474f', '📶', 'wieża BTS'], szlaban: ['#c62828', '⛔', 'szlaban'], inne: ['#222', '•', 'inne'] };
@@ -280,8 +289,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       // nazwa obrębu tylko poza osiedlem (obręb 0010): numery działek powtarzają się w sąsiednich obrębach
       const ob = (a('Identyfikator działki') || '').split('.')[1] === '0010' ? '' : (a('Nazwa obrębu') || '').toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase());
       return a('Numer działki') ? `Działka nr <b>${esc(a('Numer działki'))}</b>${ob ? ` (${esc(ob)})` : ''}` : ''; }).catch(() => '');
-  const dymek = (ll, tresc) => { const pp = L.popup().setLatLng(ll).setContent(tresc || '…').openOn(map);
-    dzialkaW(ll).then(d => d ? pp.setContent((tresc ? tresc + '<br>' : '') + `<small>${d}</small>`) : !tresc && map.closePopup(pp)); };
+  const dymek = (ll, tresc, opcje) => { const pp = L.popup(opcje).setLatLng(ll).setContent(tresc || '…').openOn(map);
+    dzialkaW(ll).then(d => d ? pp.setContent((tresc ? tresc + (tresc.endsWith('</div>') ? '' : '<br>') : '') + `<small>${d}</small>`) : !tresc && map.closePopup(pp)); };
   const budL = L.geoJSON(bud, { style: { color: '#8a7650', weight: .6, fillColor: '#dccb9b', fillOpacity: 1 } }).on('click', e => {
     L.DomEvent.stopPropagation(e);
     let naj = [40, null]; // ponytail: przegląd wszystkich ~1200 adresów przy każdym kliknięciu; wystarcza
@@ -311,7 +320,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   dodaj('Drogi', L.geoJSON(drogi, {
     style: f => ({ color: KOLOR[f.properties.k] || '#9aa0a6', weight: f.properties.k === 'zielony' ? 6 : 4, dashArray: f.properties.k === 'czerwony' ? '8 6' : null, lineCap: 'round' }),
     onEachFeature: (f, l) => {
-      const p = f.properties, opis = { 'zielony': 'przejezdna dla ciężkiego wozu', 'żółty': 'lekki wóz / do sprawdzenia', 'czerwony': 'nieprzejezdna' }[p.k] || '';
+      const p = f.properties, opis = OPIS_DROGI[p.k] || '';
       l.bindPopup(`<b>${esc(p.n || 'droga bez nazwy')}</b><br>${opis}${p.u ? '<br><small>' + esc(p.u) + '</small>' : ''}`);
     } }));
 
@@ -448,7 +457,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     onEachFeature: (f, l) => l.bindPopup('<b>Miejsce zawracania</b> (ocena wstępna)') }));
 
   // wyszukiwarka: podpowiada najpierw ulice, potem miejsca, potem adresy; bez polskich znaków też znajduje
-  const bez = t => t.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
+  const bez = t => t.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/([a-z])(\d)/g, '$1 $2').replace(/\s+/g, ' ').trim(); // „lipowa3” = „lipowa 3”
   const baza = [...Object.keys(ulice).map(t => ({ t, r: 0, o: 'ulica' })), ...miejsca.map(m => ({ t: m.n, r: 1, o: m.o, m })),
     ...adr.features.map(f => ({ t: tekstAdresu(f.properties), r: 2, o: 'adres' }))]
     .map(w => ({ ...w, k: bez(w.t) })).sort((a, b) => a.r - b.r || a.t.localeCompare(b.t, 'pl', { numeric: true }));
@@ -461,19 +470,32 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     sz.value = w.t; szX.hidden = false; zamknijPodp(); sz.blur();
     if (znacznik) map.removeLayer(znacznik); znacznik = null;
     if (w.m) return pokazMiejsce(w.m);
-    if (w.dz) { map.setView(w.dz.ll, 18); znacznik = L.circleMarker(w.dz.ll, { radius: 16, color: '#d00', weight: 3, fill: false }).addTo(map); dymek(w.dz.ll);
+    if (w.dz) { map.setView(w.dz.ll, 18); znacznik = pinezka(w.dz.ll); dymek(w.dz.ll, kartaWyniku(w.dz.ll, `Działka ${esc(w.t)}`), NAD_PINEZKA);
+      oglos(`Pokazano działkę ${w.t}, komórka ${wKomorce(w.dz.ll) || 'poza siatką'}`);
       if (window.innerWidth <= 600) document.getElementById('indeks').classList.remove('otwarty'); return; }
     const t = indeks[w.t];
-    if (t instanceof L.LatLngBounds) { map.fitBounds(t, { maxZoom: 17, padding: [40, 40] }); znacznik = L.rectangle(t, { color: '#1d4f91', weight: 2, fill: false, dashArray: '6 4' }).addTo(map); }
-    else { map.setView(t, 18); znacznik = L.circleMarker(t, { radius: 16, color: '#d00', weight: 3, fill: false }).addTo(map); }
+    if (t instanceof L.LatLngBounds) { map.fitBounds(t, { maxZoom: 17, padding: [40, 40] }); znacznik = L.rectangle(t, { color: '#1d4f91', weight: 2, fill: false, dashArray: '6 4' }).addTo(map);
+      oglos(`Pokazano ulicę ${w.t}`); }
+    else { map.setView(t, 18); znacznik = pinezka(t);
+      dymek(t, kartaWyniku(t, esc(w.t)), NAD_PINEZKA); oglos(`Pokazano adres ${w.t}, komórka ${wKomorce(t) || 'poza siatką'}`); }
   };
+  const NAD_PINEZKA = { offset: [0, -32] }; // dymek nad pinezką, nie na niej
+  // pinezka wyniku: zawsze nad budynkami i numerami
+  const pinezka = ll => L.marker(ll, { keyboard: false, interactive: false, zIndexOffset: 2000, icon: L.divIcon({ className: 'wynik-pin', iconSize: [40, 40], iconAnchor: [20, 38],
+    html: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg>' }) }).addTo(map);
+  // karta: co to za miejsce, komórka siatki (jak w atlasie) i najbliższa droga z jej przejezdnością
+  const kartaWyniku = (ll, tytul) => { const kom = wKomorce(ll), d = najblizszaDroga(ll);
+    return `<div class="karta-wyniku"><b>${tytul}</b><br><span class="k">komórka ${esc(kom || '—')}</span>`
+      + (d ? `<div class="dr"><i style="border-color:${KOLOR[d.k] || '#9aa0a6'}"></i><span>${esc(d.n || 'droga bez nazwy')}: ${OPIS_DROGI[d.k] || ''}${d.m > 25 ? `, ok. ${d.m} m` : ''}</span></div>` : '') + '</div>'; };
+  // czytnik ekranu dostaje wynik wyszukiwania na głos
+  const oglos = t => { const o = document.getElementById('ogloszenie'); o.textContent = ''; setTimeout(() => o.textContent = t, 50); };
   const zaznacz = i => { akt = i; [...podp.children].forEach((li, j) => li.setAttribute('aria-selected', j === i)); if (podp.children[i]) podp.children[i].scrollIntoView({ block: 'nearest' }); };
   const podpowiedz = () => {
     const q = bez(sz.value); szX.hidden = !sz.value;
     if (!q) return zamknijPodp();
     // w każdej grupie najpierw nazwy zaczynające się od wpisanego tekstu
     wyniki = [...baza.filter(w => w.k.startsWith(q)), ...baza.filter(w => !w.k.startsWith(q) && w.k.includes(q))].sort((a, b) => a.r - b.r).slice(0, 12);
-    podp.innerHTML = wyniki.length ? wyniki.map((w, i) => `<li role="option" data-i="${i}"><span>${esc(w.t)}</span><small>${esc(w.o)}</small></li>`).join('') : '<li class="brak">Brak wyników</li>';
+    podp.innerHTML = wyniki.length ? wyniki.map((w, i) => `<li role="option" data-i="${i}"><span>${esc(w.t)}</span><small>${esc(w.o)}</small></li>`).join('') : '<li class="brak">Brak wyników. Wpisz samą nazwę ulicy albo otwórz Indeks.</li>';
     podp.hidden = false; sz.setAttribute('aria-expanded', 'true'); akt = -1;
   };
   sz.addEventListener('input', podpowiedz);
@@ -510,6 +532,11 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
         const d = L.LineUtil.pointToSegmentDistance(p, map.project([c[i - 1][1], c[i - 1][0]], 18), map.project([c[i][1], c[i][0]], 18));
         if (d < best[0]) best = [d, f.properties.n]; } }); });
     return best[1] ? [best[1], Math.round(best[0] * map.distance(map.unproject([0, 0], 18), map.unproject([1, 0], 18)))] : null; };
+  const najblizszaDroga = ll => { const p = map.project(ll, 18); let best = [Infinity, null];
+    drogi.features.forEach(f => linie(f).forEach(c => { for (let i = 1; i < c.length; i++) {
+      const d = L.LineUtil.pointToSegmentDistance(p, map.project([c[i - 1][1], c[i - 1][0]], 18), map.project([c[i][1], c[i][0]], 18));
+      if (d < best[0]) best = [d, f.properties]; } }));
+    return best[1] && { ...best[1], m: Math.round(best[0] * map.distance(map.unproject([0, 0], 18), map.unproject([1, 0], 18))) }; };
   let zglosMarker;
   const UWAGI_URL = 'https://script.google.com/macros/s/AKfycbx5_boeKa5TW8bYz6l0BVVLcDrarPWOq-bw0F1mqtb853NetDbo1quVrEEqta77Y_FK_Q/exec';
   // licznik przy „stan na”: same liczby z arkusza uwag; bez sieci po prostu się nie pokazuje
