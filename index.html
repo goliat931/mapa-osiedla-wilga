@@ -242,27 +242,44 @@
       return Math.atan2(b.clientY - a.clientY, b.clientX - a.clientX) * 180 / Math.PI;
     };
 
+    const getTouchDistance = function (touchList) {
+      if (!touchList || touchList.length < 2) return null;
+      const a = touchList[0];
+      const b = touchList[1];
+      return Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
+    };
+
     let gestureState = null;
     const mapContainer = map.getContainer();
 
     mapContainer.addEventListener('touchstart', function (event) {
       if (event.touches.length !== 2) return;
       const startAngle = getTouchAngle(event.touches);
-      if (startAngle === null) return;
+      const startDistance = getTouchDistance(event.touches);
+      if (startAngle === null || startDistance === null) return;
       gestureState = {
         startAngle,
-        startBearing: map.getBearing()
+        startDistance,
+        startBearing: map.getBearing(),
+        startZoom: map.getZoom()
       };
     }, { passive: true });
 
     mapContainer.addEventListener('touchmove', function (event) {
       if (event.touches.length !== 2 || !gestureState) return;
-      const angle = getTouchAngle(event.touches);
-      if (angle === null) return;
 
-      const delta = angle - gestureState.startAngle;
-      if (Math.abs(delta) > 12) {
-        map.setBearing(gestureState.startBearing + delta);
+      const angle = getTouchAngle(event.touches);
+      const distance = getTouchDistance(event.touches);
+      if (angle === null || distance === null) return;
+
+      const angleDelta = angle - gestureState.startAngle;
+      const distanceDelta = distance - gestureState.startDistance;
+
+      // W przypadku gestu 2-palczowego zwykłe zbliżanie/oddalanie ma priorytet.
+      // Obrót jest dopuszczony tylko wtedy, gdy użytkownik wyraźnie obraca kąt,
+      // a nie przy przypadkowym ruchu w trakcie pincha.
+      if (Math.abs(angleDelta) > 18 && Math.abs(distanceDelta) < 28) {
+        map.setBearing(gestureState.startBearing + angleDelta * 1.2);
         gestureState.startAngle = angle;
         gestureState.startBearing = map.getBearing();
       }
