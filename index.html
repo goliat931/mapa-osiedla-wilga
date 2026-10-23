@@ -127,6 +127,17 @@
   #zglos-wskaz i { position:absolute; left:-5px; top:-3px; width:10px; height:6px; border-radius:50%; background:rgba(0,0,0,.45); }
   #zglos-wskaz svg { position:absolute; left:-24px; top:-46px; width:48px; height:48px; filter:drop-shadow(0 2px 3px rgba(0,0,0,.45)); transition:transform .15s; }
   body.przesuw #zglos-wskaz svg { transform:translateY(-10px); }
+  /* telefon: formularz zgłoszenia na pełnym ekranie, przewijany (dymek bywał częściowo poza ekranem) */
+  #zglos-okno { position:fixed; inset:0; z-index:2500; display:flex; flex-direction:column; background:var(--surface); color:var(--text); }
+  #zglos-okno[hidden] { display:none; }
+  #zglos-okno header { flex:none; display:flex; align-items:center; justify-content:space-between; padding:6px 6px 6px 16px; border-bottom:1px solid var(--border); }
+  #zglos-okno h2 { font-size:18px; margin:0; outline:none; }
+  #zglos-okno header button { min-width:48px; min-height:48px; border:0; background:none; color:var(--muted); font-size:30px; line-height:1; cursor:pointer; }
+  #zglos-okno .tresc { flex:1; overflow:auto; padding:12px 16px calc(24px + env(safe-area-inset-bottom)); -webkit-overflow-scrolling:touch; }
+  #zglos-okno .zglos-popup { width:auto; }
+  #zglos-okno .zglos-popup label { font-size:15px; margin-top:14px; }
+  #zglos-okno .zglos-popup textarea { min-height:120px; }
+  #zglos-okno .zglos-popup button { width:100%; min-height:48px; font-size:16px; }
   .zglos-popup p { margin:4px 0; }
   .zglos-popup { width:min(300px, 76vw); }
   .zglos-popup label { display:block; margin:8px 0 0; font-size:13px; font-weight:600; }
@@ -227,6 +238,7 @@
     <p>Przycisk z celownikiem pokazuje Twoje położenie niebieską kropką. Położenie zostaje w Twoim urządzeniu; nigdzie go nie wysyłamy, chyba że sam wskażesz je w zgłoszeniu uwagi.</p>
   </div></div>
 <div id="zglos-pasek" class="panel" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg><span>Przesuń mapę tak, żeby czerwona pinezka wskazała miejsce, którego dotyczy uwaga</span><button id="zglos-ok" type="button">Zgłoś tutaj</button><button id="zglos-tu" type="button">Moje położenie</button><button id="zglos-anuluj" type="button">Anuluj</button></div>
+<div id="zglos-okno" role="dialog" aria-modal="true" aria-labelledby="zglos-okno-tytul" hidden><header><h2 id="zglos-okno-tytul" tabindex="-1">Zgłoś uwagę</h2><button id="zglos-okno-x" type="button" aria-label="Zamknij formularz">×</button></header><div class="tresc"></div></div>
 <div id="komunikat" class="panel" role="status" hidden></div>
 <p id="ogloszenie" class="sr" aria-live="polite"></p>
 <div id="zglos-wskaz" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg></div>
@@ -626,7 +638,9 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
         const r = await fetch(UWAGI_URL, { method: 'POST', body: JSON.stringify({ typ: f.typ.value, opis: f.opis.value, podpis: f.podpis.value,
           www: f.www.value, miejsce, link, zdjecie: plik ? await zmniejsz(plik) : '' }) }).then(r => r.json());
         if (!r.ok) throw new Error(r.blad);
-        f.innerHTML = `<p><b>Dziękujemy!</b> Uwaga${r.nr ? ' nr ' + esc(r.nr) : ''} została zapisana.</p><p>Sprawdzimy ją, zanim zmienimy mapę.</p>`;
+        f.innerHTML = `<p><b>Dziękujemy!</b> Uwaga${r.nr ? ' nr ' + esc(r.nr) : ''} została zapisana.</p><p>Sprawdzimy ją, zanim zmienimy mapę.</p>`
+          + (zglosOkno.contains(f) ? '<button type="button" class="wroc">Wróć do mapy</button>' : '');
+        const wroc = f.querySelector('.wroc'); if (wroc) wroc.onclick = zglosOkno.zamknijOkno;
       } catch (err) {
         btn.disabled = false; btn.textContent = 'Wyślij uwagę'; stan.className = 'blad';
         stan.textContent = !navigator.onLine ? 'Brak zasięgu, uwaga nie została wysłana. Tekst zostaje w formularzu: wyślij, gdy wróci zasięg.'
@@ -634,10 +648,19 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       }
     };
     if (zglosMarker) map.removeLayer(zglosMarker);
-    const m = zglosMarker = L.circleMarker(ll, { radius: 10, color: '#c62828', weight: 3, fillOpacity: .15 }).addTo(map)
-      .bindPopup(f, { maxWidth: 300, closeOnClick: false, autoClose: false, autoPanPaddingTopLeft: [10, 125] }).openPopup();
-    m.on('popupclose', () => { map.removeLayer(m); if (zglosMarker === m) zglosMarker = null; });
+    const m = zglosMarker = L.circleMarker(ll, { radius: 10, color: '#c62828', weight: 3, fillOpacity: .15 }).addTo(map);
+    const usun = () => { map.removeLayer(m); if (zglosMarker === m) zglosMarker = null; };
+    if (matchMedia('(max-width: 600px)').matches) { // telefon: pełny ekran
+      zglosOkno.querySelector('.tresc').replaceChildren(f); zglosOkno.hidden = false; zglosOkno.zamknij = usun;
+      document.getElementById('zglos-okno-tytul').focus(); // bez klawiatury ekranowej na starcie; czytnik zaczyna od tytułu
+    } else {
+      m.bindPopup(f, { maxWidth: 300, closeOnClick: false, autoClose: false, autoPanPaddingTopLeft: [10, 125] }).openPopup();
+      m.on('popupclose', usun);
+    }
   };
+  const zglosOkno = document.getElementById('zglos-okno');
+  zglosOkno.zamknijOkno = () => { zglosOkno.hidden = true; zglosOkno.querySelector('.tresc').replaceChildren(); if (zglosOkno.zamknij) zglosOkno.zamknij(); zglosOkno.zamknij = null; };
+  document.getElementById('zglos-okno-x').onclick = zglosOkno.zamknijOkno;
   // zgłoszenie: miejsce wskazuje pinezka na środku mapy; stuknięcie w mapę przesuwa to miejsce pod pinezkę
   map.on('click', e => { if (document.body.classList.contains('tryb-zglos')) map.panTo(e.latlng); });
   map.on('movestart', () => document.body.classList.add('przesuw'));
@@ -732,6 +755,8 @@ document.getElementById('zglos-anuluj').onclick = e => { e.preventDefault(); doc
 // Esc zamyka to, co otwarte (wyszukiwarka obsługuje Esc sama)
 addEventListener('keydown', e => {
   if (e.key !== 'Escape' || e.target.id === 'szukaj') return;
+  const okno = document.getElementById('zglos-okno');
+  if (!okno.hidden) return okno.zamknijOkno();
   if (document.body.classList.contains('tryb-zglos')) return document.body.classList.remove('tryb-zglos');
   if (info.classList.contains('otwarty')) return ustawInfo(false), document.getElementById('btn-info').focus();
   const ind = document.getElementById('indeks');
