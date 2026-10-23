@@ -364,9 +364,36 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   dodaj('Siatka A–H / 1–8', siatL, true);
   get('obreby').then(ob => {
     const obL = L.layerGroup([L.geoJSON(ob, { style: { color: '#c62828', weight: 2, opacity: .7, dashArray: '1 5', lineCap: 'round' }, interactive: false })]);
-    ob.features.forEach(f => L.marker([f.properties.p[1], f.properties.p[0]], { interactive: false, keyboard: false,
-      icon: L.divIcon({ className: '', html: `<span class="obr">${esc(f.properties.n)}</span>`, iconSize: [0, 0] }) }).addTo(obL));
+    // nazwa sąsiedniej miejscowości stoi na środku widocznego odcinka jej granicy (jak nazwy ulic: przestawia się po przesunięciu mapy)
+    const obrM = ob.features.map(f => L.marker([f.properties.p[1], f.properties.p[0]], { interactive: false, keyboard: false,
+      icon: L.divIcon({ className: '', html: `<span class="obr">${esc(f.properties.n)}</span>`, iconSize: [0, 0] }) }));
+    // kawałki granicy stykające się końcami łączymy w jedną linię (inaczej żaden nie byłby dość długi na nazwę)
+    const sklej = ls => { const out = ls.map(l => l.slice()), rowne = (a, b) => a[0] === b[0] && a[1] === b[1];
+      for (let i = 0; i < out.length; i++) for (let j = 0; j < out.length; j++) {
+        if (i === j || !out[i] || !out[j]) continue;
+        if (rowne(out[i][out[i].length - 1], out[j][0])) { out[i].push(...out[j].slice(1)); out[j] = null; j = -1; }
+      }
+      return out.filter(Boolean); };
+    const granice = ob.features.map(f => sklej(linie(f)));
+    const ustawObreby = () => {
+      if (!map.hasLayer(obL)) return;
+      const z = Math.round(map.getZoom()), W = map.getSize(), M = 75; // M: margines od krawędzi (pół nazwy i przyciski mapy)
+      const zasl = innerWidth <= 720 ? Math.max(0, document.getElementById('top').getBoundingClientRect().bottom - map.getContainer().getBoundingClientRect().top) : 0;
+      const rogi = [[M, zasl + M], [W.x - M, zasl + M], [M, W.y - M], [W.x - M, W.y - M]].map(c => map.project(map.containerPointToLatLng(c), z));
+      const r = { x0: Math.min(...rogi.map(q => q.x)), x1: Math.max(...rogi.map(q => q.x)), y0: Math.min(...rogi.map(q => q.y)), y1: Math.max(...rogi.map(q => q.y)) };
+      ob.features.forEach((f, i) => {
+        let naj = null;
+        granice[i].forEach(l => { if (l.length < 2) return;
+          const pp = l.map(c => map.project([c[1], c[0]], z)), cum = [0];
+          for (let k = 1; k < pp.length; k++) cum.push(cum[k - 1] + Math.hypot(pp[k].x - pp[k - 1].x, pp[k].y - pp[k - 1].y));
+          wKadrze({ p: pp, cum }, r).forEach(([s0, s1]) => { if (!naj || s1 - s0 > naj.d) naj = { d: s1 - s0, pt: naLinii(pp, cum, (s0 + s1) / 2) }; });
+        });
+        if (naj && naj.d > 80) { obrM[i].setLatLng(map.unproject(naj.pt, z)); obL.addLayer(obrM[i]); } else obL.removeLayer(obrM[i]);
+      });
+    };
+    map.on('moveend overlayadd', ustawObreby);
     dodaj('Obręby sąsiednie', obL);
+    ustawObreby();
   }).catch(() => {});
 
   const obwodka = L.geoJSON(drogi, { filter: f => f.properties.k === 'zielony', interactive: false, style: { color: '#fff', weight: 10, lineCap: 'round', opacity: .95 } });
