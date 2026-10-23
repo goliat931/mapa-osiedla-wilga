@@ -125,6 +125,10 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 .leaflet-top.leaflet-left { top: 112px; left: 16px; }
 .leaflet-bottom.leaflet-right { right: 16px; bottom: 16px; }
 
+@media (min-width: 761px) {
+  .leaflet-top.leaflet-right { top: 82px; right: 16px; }
+}
+
 @media (prefers-color-scheme: dark) {
   :root { --glass: rgba(20, 27, 29, .9); --glass-strong: rgba(24, 32, 34, .96); --glass-border: rgba(226, 232, 240, .14); --hud-shadow: 0 8px 24px rgba(0, 0, 0, .3); }
   .map-hud-brand .wilga-brand,
@@ -157,6 +161,7 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
   #pokaz-leg { right: auto; bottom: 12px; left: 10px; min-height: 42px; }
   .selection-card { right: 10px; bottom: 226px; left: 10px; width: auto; max-height: 30vh; padding: 12px; }
   .leaflet-top.leaflet-left { top: 164px; left: 10px; }
+  .leaflet-top.leaflet-right { top: 164px; right: 10px; }
   .leaflet-bottom.leaflet-right { right: 10px; bottom: 10px; }
   #zglos-pasek { top: 164px; right: 10px; left: 10px; width: auto; transform: none; }
   #powitanie { bottom: 74px; }
