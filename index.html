@@ -199,7 +199,7 @@
 <div id="top" class="panel">
   <h1>Mapa Osiedla Wilga <span class="stan" id="stan"></span></h1>
   <div class="wiersz">
-    <div class="pole"><input id="szukaj" placeholder="Adres lub ulica" aria-label="Szukaj ulicy, adresu lub miejsca" autocomplete="off" enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls="podp" aria-expanded="false"><button id="szukaj-x" type="button" aria-label="Wyczyść wyszukiwanie" hidden>×</button></div>
+    <div class="pole"><input id="szukaj" placeholder="Adres lub ulica" aria-label="Szukaj ulicy, adresu, miejsca albo komórki siatki (np. C4)" autocomplete="off" enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls="podp" aria-expanded="false"><button id="szukaj-x" type="button" aria-label="Wyczyść wyszukiwanie" hidden>×</button></div>
     <button id="btn-indeks" class="btn-secondary">Indeks</button>
     <button id="btn-zglos" class="btn-secondary" title="Zgłoś błąd lub brak na mapie">Zgłoś<span class="dl"> uwagę</span></button>
     <button id="btn-info" class="btn-secondary" title="O mapie" aria-label="O mapie"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:block"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
@@ -507,6 +507,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     sz.value = w.t; szX.hidden = false; zamknijPodp(); sz.blur();
     if (znacznik) map.removeLayer(znacznik); znacznik = null;
     if (w.m) return pokazMiejsce(w.m);
+    if (w.kom) { pokaz(komorki[w.kom]); return oglos(`Pokazano komórkę ${w.kom}`); }
     if (w.dz) { map.setView(w.dz.ll, 18); znacznik = pinezka(w.dz.ll); dymek(w.dz.ll, kartaWyniku(w.dz.ll, `Działka ${esc(w.t)}`), NAD_PINEZKA);
       oglos(`Pokazano działkę ${w.t}, komórka ${wKomorce(w.dz.ll) || 'poza siatką'}`);
       if (window.innerWidth <= 600) document.getElementById('indeks').classList.remove('otwarty'); return; }
@@ -532,6 +533,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     if (!q) return zamknijPodp();
     // w każdej grupie najpierw nazwy zaczynające się od wpisanego tekstu
     wyniki = [...baza.filter(w => w.k.startsWith(q)), ...baza.filter(w => !w.k.startsWith(q) && w.k.includes(q))].sort((a, b) => a.r - b.r).slice(0, 12);
+    const kod = q.replace(/ /g, '').toUpperCase(); // komórka siatki jak w atlasie: „C4”
+    if (siat.features.some(f => f.properties.c === kod)) wyniki.unshift({ t: kod, o: 'komórka siatki', kom: kod });
     podp.innerHTML = wyniki.length ? wyniki.map((w, i) => `<li role="option" data-i="${i}"><span>${esc(w.t)}</span><small>${esc(w.o)}</small></li>`).join('') : '<li class="brak">Brak wyników. Wpisz samą nazwę ulicy albo otwórz Indeks.</li>';
     podp.hidden = false; sz.setAttribute('aria-expanded', 'true'); akt = -1;
   };
