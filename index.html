@@ -65,6 +65,9 @@
   .karta-wyniku .k { display:inline-block; margin-top:4px; padding:1px 7px; border-radius:5px; background:var(--surface-2); font-weight:700; }
   .karta-wyniku .dr { display:flex; align-items:center; gap:6px; margin-top:4px; }
   .karta-wyniku .dr i { flex:none; width:22px; height:0; border-top:5px solid; border-radius:3px; }
+  .karta-wyniku .kopiuj { display:block; margin-top:8px; min-height:36px; padding:0 12px; border:1px solid var(--border-strong); border-radius:7px; background:var(--surface); color:var(--text); font:600 14px var(--font); cursor:pointer; }
+  .karta-wyniku .kopiuj:hover { background:var(--surface-2); }
+  @media (pointer: coarse) { .karta-wyniku .kopiuj { min-height:44px; } }
   .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
   #top .wiersz { display:flex; gap:6px; }
   #top .wiersz .pole { flex:1; min-width:0; position:relative; }
@@ -331,7 +334,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     L.DomEvent.stopPropagation(e);
     let naj = [40, null]; // ponytail: przegląd wszystkich ~1200 adresów przy każdym kliknięciu; wystarcza
     adr.features.forEach(f => { const d = map.distance(e.latlng, [f.geometry.coordinates[1], f.geometry.coordinates[0]]); if (d < naj[0]) naj = [d, f]; });
-    dymek(e.latlng, naj[1] ? opisAdresu(naj[1].properties) : 'Brak adresu w rejestrze dla tego budynku');
+    dymek(e.latlng, naj[1] ? kartaWyniku(L.latLng(naj[1].geometry.coordinates[1], naj[1].geometry.coordinates[0]), opisAdresu(naj[1].properties), tekstAdresu(naj[1].properties))
+      : 'Brak adresu w rejestrze dla tego budynku');
   });
   // kliknięcie w puste miejsce przy dużym przybliżeniu: numer działki
   map.on('click', e => { if (map.getZoom() >= 17 && !document.body.classList.contains('tryb-zglos') && !e.originalEvent.target.closest('.leaflet-interactive')) dymek(e.latlng); });
@@ -465,7 +469,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   adr.features.forEach(f => {
     const [x, y] = f.geometry.coordinates;
     L.marker([y, x], { keyboard: false, icon: L.divIcon({ className: '', html: `<span class="nr">${esc(f.properties.n)}</span>`, iconSize: null, iconAnchor: [6, 7] }) })
-      .bindPopup(opisAdresu(f.properties)).addTo(nrL);
+      .bindPopup(() => kartaWyniku(L.latLng(y, x), opisAdresu(f.properties), tekstAdresu(f.properties))).addTo(nrL);
     indeks[tekstAdresu(f.properties)] = L.latLng(y, x);
   });
   zalezne(nrL, 17);
@@ -508,23 +512,26 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     if (znacznik) map.removeLayer(znacznik); znacznik = null;
     if (w.m) return pokazMiejsce(w.m);
     if (w.kom) { pokaz(komorki[w.kom]); return oglos(`Pokazano komórkę ${w.kom}`); }
-    if (w.dz) { map.setView(w.dz.ll, 18); znacznik = pinezka(w.dz.ll); dymek(w.dz.ll, kartaWyniku(w.dz.ll, `Działka ${esc(w.t)}`), NAD_PINEZKA);
+    if (w.dz) { map.setView(w.dz.ll, 18); znacznik = pinezka(w.dz.ll); dymek(w.dz.ll, kartaWyniku(w.dz.ll, `<b>Działka ${esc(w.t)}</b>`, `Działka ${w.t}`), NAD_PINEZKA);
       oglos(`Pokazano działkę ${w.t}, komórka ${wKomorce(w.dz.ll) || 'poza siatką'}`);
       if (window.innerWidth <= 600) document.getElementById('indeks').classList.remove('otwarty'); return; }
     const t = indeks[w.t];
     if (t instanceof L.LatLngBounds) { map.fitBounds(t, { maxZoom: 17, padding: [40, 40] }); znacznik = L.rectangle(t, { color: '#1d4f91', weight: 2, fill: false, dashArray: '6 4' }).addTo(map);
       oglos(`Pokazano ulicę ${w.t}`); }
     else { map.setView(t, 18); znacznik = pinezka(t);
-      dymek(t, kartaWyniku(t, esc(w.t)), NAD_PINEZKA); oglos(`Pokazano adres ${w.t}, komórka ${wKomorce(t) || 'poza siatką'}`); }
+      dymek(t, kartaWyniku(t, `<b>${esc(w.t)}</b>`, w.t), NAD_PINEZKA); oglos(`Pokazano adres ${w.t}, komórka ${wKomorce(t) || 'poza siatką'}`); }
   };
   const NAD_PINEZKA = { offset: [0, -32] }; // dymek nad pinezką, nie na niej
   // pinezka wyniku: zawsze nad budynkami i numerami
   const pinezka = ll => L.marker(ll, { keyboard: false, interactive: false, zIndexOffset: 2000, icon: L.divIcon({ className: 'wynik-pin', iconSize: [40, 40], iconAnchor: [20, 38],
     html: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg>' }) }).addTo(map);
   // karta: co to za miejsce, komórka siatki (jak w atlasie) i najbliższa droga z jej przejezdnością
-  const kartaWyniku = (ll, tytul) => { const kom = wKomorce(ll), d = najblizszaDroga(ll);
-    return `<div class="karta-wyniku"><b>${tytul}</b><br><span class="k">komórka ${esc(kom || '—')}</span>`
-      + (d ? `<div class="dr"><i style="border-color:${KOLOR[d.k] || '#9aa0a6'}"></i><span>${esc(d.n || 'droga bez nazwy')}: ${OPIS_DROGI[d.k] || ''}${d.m > 25 ? `, ok. ${d.m} m` : ''}</span></div>` : '') + '</div>'; };
+  const kartaWyniku = (ll, tytulHtml, tytul) => { const kom = wKomorce(ll), d = najblizszaDroga(ll);
+    // tekst dla dyspozytora: wklejany do SMS-a lub komunikatora, z linkiem otwierającym mapę z punktem
+    const kopia = `${tytul}, komórka ${kom || '—'}, GPS ${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}\n${location.origin}${location.pathname}?pin#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
+    return `<div class="karta-wyniku">${tytulHtml}<br><span class="k">komórka ${esc(kom || '—')}</span>`
+      + (d ? `<div class="dr"><i style="border-color:${KOLOR[d.k] || '#9aa0a6'}"></i><span>${esc(d.n || 'droga bez nazwy')}: ${OPIS_DROGI[d.k] || ''}${d.m > 25 ? `, ok. ${d.m} m` : ''}</span></div>` : '')
+      + `<button type="button" class="kopiuj" data-kopia="${esc(kopia)}">Kopiuj położenie</button></div>`; };
   // czytnik ekranu dostaje wynik wyszukiwania na głos
   const oglos = t => { const o = document.getElementById('ogloszenie'); o.textContent = ''; setTimeout(() => o.textContent = t, 50); };
   const zaznacz = i => { akt = i; [...podp.children].forEach((li, j) => li.setAttribute('aria-selected', j === i)); if (podp.children[i]) podp.children[i].scrollIntoView({ block: 'nearest' }); };
@@ -641,6 +648,12 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   // ponytail: śledzenie trwa do zamknięcia strony; wyłącznik dodać, jeśli ktoś zgłosi zużycie baterii
   const komEl = document.getElementById('komunikat'); let komT;
   const powiedz = t => { komEl.textContent = t; komEl.hidden = false; clearTimeout(komT); komT = setTimeout(() => komEl.hidden = true, 6000); };
+  map.getContainer().addEventListener('click', e => { const b = e.target.closest('.kopiuj'); if (!b) return;
+    const t = b.dataset.kopia;
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject())
+      .then(() => { b.textContent = 'Skopiowano'; powiedz('Położenie skopiowane: wklej je w SMS-ie lub komunikatorze.'); })
+      .catch(() => { powiedz(t); }); // bez dostępu do schowka: tekst do przepisania lub zaznaczenia
+  });
   let ja, jaKolo, poUstaleniu;
   const lok = new (L.Control.extend({ onAdd() {
     const d = L.DomUtil.create('div', 'leaflet-bar lok');
