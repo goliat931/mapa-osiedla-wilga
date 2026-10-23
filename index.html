@@ -1,386 +1,307 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mapa Osiedla Wilga</title>
-<meta name="description" content="Robocza mapa Osiedla Wilga: ulice, adresy, przejezdność dróg, hydranty i stromizny.">
-<link rel="icon" href="znak.svg" type="image/svg+xml">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="ikony/app-180.png">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1c1d1f" media="(prefers-color-scheme: dark)">
-<link rel="stylesheet" href="lib/leaflet/leaflet.min.css">
-<link rel="stylesheet" href="wilga.css">
-<style>
-  :root { --niebieski:#1d4f91; --nad: calc(var(--bar-h) + 10px); }
-  html, body { margin:0; height:100%; font-family: var(--font); color:var(--text); background:var(--bg); }
-  #map { position:absolute; inset:var(--bar-h) 0 0 0; z-index:0; background:var(--surface-2); } /* z-index: kontrolki i dymki mapy nie wchodzą na panele */
-  .panel { position:absolute; z-index:1000; background:var(--surface); color:var(--text); border:1px solid var(--edge); border-radius:10px; box-shadow:var(--shadow); }
-  #top { top:var(--nad); left:10px; right:10px; max-width:600px; padding:10px 12px; }
-  #top h1 { font-size:18px; margin:0 0 8px; }
-  #top .stan { font-size:12px; color:var(--muted); margin-left:6px; font-weight:400; }
-  /* bez zasięgu: wyraźna plakietka zamiast dopisku w tytule */
-  #offline { display:none; margin:8px 0 0; padding:6px 10px; border-radius:7px; background:#fff4d6; color:#5c3d00; border:1px solid #e0b44c; font-size:14px; font-weight:600; line-height:1.35; }
-  body.bez-sieci #offline { display:block; }
-  @media (prefers-color-scheme: dark) { #offline { background:#3a2e12; color:#ffe2a3; border-color:#7a5a1c; } }
-  /* pierwsza wizyta: krótkie powitanie zamiast pełnego „O mapie” */
-  #powitanie { left:10px; right:10px; bottom:22px; max-width:420px; margin:0 auto; z-index:1001; padding:12px 14px; font-size:15px; line-height:1.4; }
-  #powitanie[hidden] { display:none; }
-  #powitanie p { margin:0 0 10px; }
-  #powitanie .przyciski { display:flex; gap:8px; justify-content:flex-end; }
-  #powitanie button { min-height:40px; padding:0 14px; font-size:14px; }
-  #szukaj { width:100%; box-sizing:border-box; font:inherit; font-size:16px; padding:7px 10px; color:var(--text); background:var(--bg); border:1px solid var(--border-strong); border-radius:7px; }
-  #szukaj::placeholder { color:var(--muted); }
-  #legenda { bottom:22px; left:10px; padding:10px 12px; font-size:13px; max-width:280px; max-height:55vh; overflow:auto; }
-  #legenda h2 { font-size:13px; margin:10px 0 4px; }
-  #legenda h2:first-child { margin-top:0; }
-  .lw { display:flex; align-items:center; gap:8px; margin:3px 0; }
-  .lw i { flex:0 0 26px; display:inline-block; height:0; border-top:5px solid; border-radius:3px; }
-  .lw i.obw { box-shadow:0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,.3); }
-  .lw .zn { flex:0 0 26px; display:flex; justify-content:center; }
-  .lw .zn .poi { width:18px; height:18px; font-size:10px; }
-  .zaw-ikona { width:24px; height:24px; box-sizing:border-box; border-radius:50%; background:#2f63ad; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; }
-  .zaw-ikona svg { width:15px; height:15px; display:block; }
-  .lw .zn .zaw-ikona { width:20px; height:20px; }
-  .lw .zn .zaw-ikona svg { width:12px; height:12px; }
-  /* telefon: przycisk legendy pokazuje od razu trzy kolory dróg */
-  #pokaz-leg { display:flex; align-items:center; gap:8px; }
-  #pokaz-leg .mini { display:flex; flex-direction:column; gap:3px; }
-  #pokaz-leg .mini i { display:block; width:18px; border-top:3px solid; border-radius:2px; }
-  .lw img { width:20px; height:20px; flex:0 0 26px; object-fit:contain; }
-  .uwaga { font-size:12px; color:var(--muted); margin-top:8px; line-height:1.4; }
-  #legenda { display:none; }
-  #legenda.otwarta { display:block; }
-  #zamknij-leg { position:sticky; top:0; float:right; margin:-4px -6px 0 8px; border:0; background:var(--surface); color:var(--muted); font-size:26px; line-height:1; padding:2px 8px; border-radius:6px; cursor:pointer; }
-  #pokaz-leg { position:absolute; z-index:1000; bottom:22px; left:10px; padding:8px 12px; font-size:14px; border-radius:8px; box-shadow:var(--shadow); }
-  body:has(#legenda.otwarta) #pokaz-leg, body.info-otwarte #pokaz-leg { display:none; }
-  @keyframes ul-wej { from { opacity:0; } }
-  .ulica { animation:ul-wej .25s ease-out; display:inline-block; background:var(--niebieski); color:#fff; font:600 12px "Bahnschrift","Segoe UI",sans-serif; padding:1px 5px; border-radius:3px; border:1px solid rgba(255,255,255,.6); box-shadow:0 1px 2px rgba(0,0,0,.2); }
-  .nr { cursor:pointer; font:700 13px "Bahnschrift","Segoe UI",sans-serif; color:#0b2545; text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff; white-space:nowrap; }
-  .kom { font:700 22px "Segoe UI",sans-serif; color:rgba(30,30,30,.5); text-shadow:0 0 3px rgba(255,255,255,.7); }
-  .obr { position:absolute; left:0; top:0; transform:translate(-50%,-50%); white-space:nowrap; font:600 13px "Segoe UI",sans-serif; letter-spacing:.06em; color:#c62828; text-shadow:0 0 3px #fff,0 0 3px #fff; }
-  .poi { width:22px; height:22px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.4); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; }
-  .leaflet-div-icon { background:none; border:none; }
-  /* wynik wyszukiwania: pinezka nad wszystkim i karta z adresem, komórką i najbliższą drogą */
-  .wynik-pin svg { display:block; width:40px; height:40px; filter:drop-shadow(0 2px 3px rgba(0,0,0,.45)); }
-  .karta-wyniku > b { font-size:16px; }
-  .karta-wyniku .k { display:inline-block; margin-top:4px; padding:1px 7px; border-radius:5px; background:var(--surface-2); font-weight:700; }
-  .karta-wyniku .dr { display:flex; align-items:center; gap:6px; margin-top:4px; }
-  .karta-wyniku .dr i { flex:none; width:22px; height:0; border-top:5px solid; border-radius:3px; }
-  .karta-wyniku .kopiuj { display:block; margin-top:8px; min-height:36px; padding:0 12px; border:1px solid var(--border-strong); border-radius:7px; background:var(--surface); color:var(--text); font:inherit; font-weight:600; cursor:pointer; }
-  .karta-wyniku .kopiuj:hover { background:var(--surface-2); }
-  @media (pointer: coarse) { .karta-wyniku .kopiuj { min-height:44px; } }
-  .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
-  #top .wiersz { display:flex; gap:6px; }
-  #top .wiersz .pole { flex:1; min-width:0; position:relative; }
-  #szukaj { padding-right:34px; }
-  #szukaj-x { position:absolute; right:2px; top:50%; transform:translateY(-50%); border:0; background:none; color:var(--muted); font-size:22px; line-height:1; padding:4px 9px; cursor:pointer; border-radius:6px; }
-  #szukaj-x:hover { color:var(--text); }
-  #podp { list-style:none; margin:8px 0 0; padding:4px 0 0; max-height:45vh; overflow:auto; border-top:1px solid var(--border); }
-  #podp li { display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:9px 6px; font-size:15px; cursor:pointer; border-radius:6px; }
-  #podp li small { color:var(--muted); white-space:nowrap; }
-  #podp li[aria-selected=true], #podp li:hover { background:var(--surface-2); }
-  #podp li.brak { color:var(--muted); cursor:default; background:none; }
-  #skrot { left:10px; right:10px; bottom:22px; max-width:420px; margin:0 auto; z-index:1001; padding:10px 8px 10px 14px; display:flex; align-items:center; gap:10px; font-size:14px; line-height:1.3; }
-  #skrot[hidden] { display:none; }
-  #skrot span { flex:1; }
-  #skrot-dodaj { flex:none; font-size:14px; padding:6px 12px; }
-  #skrot-x { flex:none; border:0; background:none; color:var(--muted); font-size:24px; line-height:1; padding:2px 8px; cursor:pointer; }
-  #btn-indeks, #btn-info, #btn-zglos { font-size:14px; padding:6px 11px; white-space:nowrap; }
-  #indeks { top:var(--nad); right:10px; bottom:22px; width:330px; display:none; flex-direction:column; }
-  #indeks.otwarty { display:flex; }
-  #indeks header { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-bottom:1px solid var(--border); }
-  #indeks header h2 { font-size:16px; margin:0; }
-  #indeks header button, #info header button { border:0; background:none; color:var(--muted); font-size:22px; cursor:pointer; line-height:1; border-radius:6px; padding:2px 6px; }
-  #indeks header button:hover, #info header button:hover { color:var(--text); background:var(--surface-2); }
-  #indeks .lista { overflow:auto; padding:4px 12px 12px; font-size:14px; }
-  #indeks .lit { font-weight:600; font-size:12px; letter-spacing:.06em; color:var(--muted); margin:14px 0 4px; padding-bottom:2px; border-bottom:1px solid var(--border); cursor:default; user-select:none; }
-  #indeks .ul { margin:5px 0; }
-  #indeks .ul > a { font-weight:600; color:var(--text); text-decoration:none; cursor:pointer; }
-  #indeks .ul > a:hover { color:var(--link); text-decoration:underline; }
-  #indeks .kw { display:flex; gap:6px; margin-left:10px; color:var(--muted); font-size:13px; }
-  #indeks .kw a { color:var(--link); font-weight:600; cursor:pointer; }
-  #indeks .kw .k { min-width:64px; }
-  #indeks .zakladki { display:flex; border-bottom:1px solid var(--border); }
-  #indeks .zakladki button { flex:1; border:0; border-bottom:2px solid transparent; background:none; padding:8px 4px; font:inherit; font-size:14px; color:var(--muted); cursor:pointer; }
-  #indeks .zakladki button[aria-selected=true] { color:var(--text); font-weight:600; border-bottom-color:var(--wilga); }
-  #indeks .dz { display:grid; grid-template-columns:repeat(auto-fill, minmax(84px, 1fr)); gap:3px 8px; font-size:13px; }
-  #indeks .dz a { color:var(--link); font-weight:600; cursor:pointer; }
-  #indeks .dz small { color:var(--muted); }
-  #info { top:calc(var(--bar-h) + 76px); left:10px; right:10px; max-width:460px; display:none; max-height:calc(100vh - var(--bar-h) - 100px); overflow:auto; }
-  body.info-otwarte #legenda { display:none; }
-  #zglos-pasek { top:calc(var(--bar-h) + 76px); left:50%; transform:translateX(-50%); padding:10px 12px 10px 14px; font-size:16px; font-weight:600; display:none; align-items:center; gap:10px; background:var(--wilga); color:#fff; border-color:var(--wilga); width:max-content; max-width:calc(100vw - 20px); box-sizing:border-box; }
-  body.tryb-zglos #zglos-pasek { display:flex; flex-wrap:wrap; justify-content:flex-end; }
-  #zglos-pasek span { min-width:180px; }
-  .lok a { display:flex; align-items:center; justify-content:center; cursor:pointer; }
-  .lok a.jest { color:#1a73e8; }
-  #komunikat { left:50%; bottom:76px; transform:translateX(-50%); z-index:1002; padding:10px 14px; font-size:14px; width:max-content; max-width:calc(100vw - 20px); box-sizing:border-box; }
-  #zglos-pasek svg { flex:none; width:26px; height:26px; }
-  #zglos-pasek span { flex:1; line-height:1.35; }
-  #zglos-pasek button { flex:none; font:inherit; font-size:14px; padding:5px 10px; color:#fff; background:none; border:1px solid rgba(255,255,255,.7); border-radius:7px; cursor:pointer; }
-  #zglos-pasek button:hover { background:rgba(255,255,255,.15); }
-  #zglos-pasek #zglos-ok { background:#fff; color:var(--wilga); border-color:#fff; font-weight:700; font-size:15px; }
-  .polnoc a { display:flex; align-items:center; justify-content:center; cursor:pointer; }
-  /* podpowiedź na środku mapy: pinezka i „stuknięcie”; nie przechwytuje kliknięć */
-  #zglos-wskaz { position:absolute; z-index:900; left:50%; top:calc(50% + var(--bar-h) / 2); width:0; height:0; pointer-events:none; display:none; }
-  body.tryb-zglos #zglos-wskaz { display:block; }
-  /* pinezka stoi na środku mapy; przesuwa się mapa pod nią. Kropka = dokładne miejsce */
-  #zglos-wskaz i { position:absolute; left:-5px; top:-3px; width:10px; height:6px; border-radius:50%; background:rgba(0,0,0,.45); }
-  #zglos-wskaz svg { position:absolute; left:-24px; top:-46px; width:48px; height:48px; filter:drop-shadow(0 2px 3px rgba(0,0,0,.45)); transition:transform .15s; }
-  body.przesuw #zglos-wskaz svg { transform:translateY(-10px); }
-  /* telefon: formularz zgłoszenia na pełnym ekranie, przewijany (dymek bywał częściowo poza ekranem) */
-  #zglos-okno { position:fixed; inset:0; z-index:2500; display:flex; flex-direction:column; background:var(--surface); color:var(--text); }
-  #zglos-okno[hidden] { display:none; }
-  #zglos-okno header { flex:none; display:flex; align-items:center; justify-content:space-between; padding:6px 6px 6px 16px; border-bottom:1px solid var(--border); }
-  #zglos-okno h2 { font-size:18px; margin:0; outline:none; }
-  #zglos-okno header button { min-width:48px; min-height:48px; border:0; background:none; color:var(--muted); font-size:30px; line-height:1; cursor:pointer; }
-  #zglos-okno .tresc { flex:1; overflow:auto; padding:12px 16px calc(24px + env(safe-area-inset-bottom)); -webkit-overflow-scrolling:touch; }
-  #zglos-okno .zglos-popup { width:auto; }
-  #zglos-okno .zglos-popup label { font-size:15px; margin-top:14px; }
-  #zglos-okno .zglos-popup textarea { min-height:120px; }
-  #zglos-okno .zglos-popup button { width:100%; min-height:48px; font-size:16px; }
-  .zglos-popup p { margin:4px 0; }
-  .zglos-popup { width:min(300px, 76vw); }
-  .zglos-popup label { display:block; margin:8px 0 0; font-size:13px; font-weight:600; }
-  .zglos-popup select, .zglos-popup textarea, .zglos-popup input { display:block; width:100%; box-sizing:border-box; margin-top:3px; font:inherit; font-size:16px; font-weight:400; }
-  .zglos-popup select, .zglos-popup textarea, .zglos-popup input:not([type=file]) { padding:5px 7px; border:1px solid #9aa0a6; border-radius:7px; }
-  .zglos-popup input[type=file] { font-size:13px; }
-  /* aparat tylko na telefonie; zwykły wybór pliku zostaje */
-  .zglos-popup .aparat { display:none; margin-top:6px; padding:7px 12px; width:max-content; border:1px solid var(--wilga); border-radius:7px; color:var(--wilga); font-size:14px; cursor:pointer; }
-  .zglos-popup .aparat input { position:absolute; left:-9999px; }
-  @media (pointer:coarse) { .zglos-popup .aparat { display:block; } }
-  .zglos-popup .pulapka { position:absolute; left:-9999px; }
-  .zglos-popup button { margin-top:10px; padding:7px 12px; border:0; cursor:pointer; background:var(--wilga); color:#fff; border-radius:7px; font:inherit; font-weight:600; }
-  .zglos-popup button:hover { background:var(--wilga-hover); }
-  .zglos-popup button:disabled { opacity:.75; cursor:progress; }
-  .zglos-popup button:disabled::before { content:''; display:inline-block; width:14px; height:14px; margin-right:8px; vertical-align:-3px; box-sizing:border-box;
-    border:2px solid rgba(255,255,255,.45); border-top-color:#fff; border-radius:50%; animation:zglos-krec .8s linear infinite; }
-  @keyframes zglos-krec { to { transform:rotate(360deg); } }
-  .zglos-popup .drobne { font-size:12px; color:#5f6368; }
-  .zglos-popup .blad { color:#b3261e; font-weight:600; }
-  #info.otwarty { display:block; }
-  #info header { display:flex; justify-content:space-between; align-items:center; padding:10px 12px 0; }
-  #info header h2 { font-size:16px; margin:0; }
-  #info .tresc { padding:4px 12px 12px; font-size:14px; line-height:1.5; }
-  /* Leaflet w barwach motywu */
-  .leaflet-container { font-family:var(--font); }
-  .leaflet-bar a, .leaflet-control-layers { background:var(--surface); color:var(--text); border-color:var(--border); }
-  .leaflet-bar a:hover { background:var(--surface-2); color:var(--text); }
-  .leaflet-popup-content-wrapper, .leaflet-popup-tip { background:var(--surface); color:var(--text); }
-  .leaflet-popup-content a { color:var(--link); }
-  .leaflet-container a.leaflet-popup-close-button { color:var(--muted); }
-  .leaflet-container .leaflet-control-attribution { background:color-mix(in srgb, var(--surface) 82%, transparent); color:var(--muted); }
-  .leaflet-control-attribution a { color:var(--link); }
-  .leaflet-tooltip { background:var(--surface); color:var(--text); border-color:var(--border); }
-  @media (prefers-color-scheme: dark) { .leaflet-control-layers-toggle { filter:invert(1) hue-rotate(180deg); }
-    .leaflet-tile-pane { filter:brightness(.72) contrast(1.08); } /* w nocy podkład nie oślepia; drogi i znaczniki zostają jaskrawe */ }
-  /* wąski ekran: panel #top sięga prawej krawędzi, więc przełącznik warstw schodzi pod niego */
-  @media (max-width: 720px) {
-    .leaflet-top.leaflet-right { top:94px; }
-    body.tryb-zglos .leaflet-top.leaflet-right { display:none; }
-    body.bez-sieci .leaflet-top.leaflet-right { top:150px; } /* pod plakietką „Bez zasięgu” */
-  }
-  @media (pointer: coarse) {
-    .leaflet-touch .leaflet-bar a { width:44px; height:44px; line-height:44px; }
-    #szukaj, #btn-indeks, #btn-zglos, #btn-info { min-height:44px; }
-    #btn-info { min-width:44px; }
-    .wilga-brand { min-height:44px; }
-    #szukaj-x { min-width:44px; min-height:44px; }
-    .leaflet-container a.leaflet-popup-close-button { width:40px; height:40px; font:24px/40px Tahoma, Verdana, sans-serif; }
-    #pokaz-leg, #zamknij-leg { min-height:44px; }
-  }
-  @media (max-width: 600px) {
-    :root { --bar-h:46px; }
-    #legenda { bottom:10px; max-height:60vh; }
-    #indeks { left:10px; width:auto; top:calc(var(--bar-h) + 122px); }
-    .dl { display:none; }
-    .leaflet-top.leaflet-right { top:112px; }
-    body.bez-sieci .leaflet-top.leaflet-right { top:200px; }
-    #info { max-height:calc(100vh - var(--bar-h) - 134px); }
-    #btn-indeks, #btn-zglos { padding:6px 8px; }
-    #info, #zglos-pasek { top:calc(var(--bar-h) + 122px); left:10px; }
-    #zglos-pasek { right:10px; transform:none; width:auto; max-width:none; }
-    #zglos-pasek span { flex-basis:calc(100% - 36px); } /* tekst w pierwszym wierszu, trzy przyciski razem pod nim */
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Mapa Osiedla Wilga</title>
+  <meta name="description" content="Mapa Osiedla Wilga — ulice, adresy, przejezdność dróg, hydranty i stromizny.">
+  <link rel="icon" href="znak.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="ikony/app-180.png">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1c1d1f" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="lib/leaflet/leaflet.min.css">
+  <style>
+    :root {
+      --bg: #f3f5f7;
+      --surface: rgba(255,255,255,0.9);
+      --surface-strong: #ffffff;
+      --text: #111827;
+      --muted: #4b5563;
+      --line: rgba(17,24,39,0.12);
+      --green: #15803d;
+      --yellow: #eab308;
+      --red: #dc2626;
+      --shadow: 0 8px 26px rgba(15, 23, 42, 0.12);
+      --bar-height: 58px;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overscroll-behavior: none;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    .wilga-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--bar-height);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 12px 0 14px;
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+      z-index: 1000;
+    }
+
+    .wilga-brand {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .wilga-brand svg {
+      display: block;
+      width: 34px;
+      height: 22px;
+      color: var(--green);
+      flex: 0 0 auto;
+    }
+
+    .wilga-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .wilga-nav a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      background: rgba(255,255,255,0.4);
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .wilga-nav a.active {
+      color: var(--green);
+      background: rgba(21, 128, 61, 0.08);
+      border-color: rgba(21, 128, 61, 0.16);
+    }
+
+    #map {
+      position: fixed;
+      inset: var(--bar-height) 0 0 0;
+      width: 100vw;
+      height: calc(100vh - var(--bar-height));
+      background: #dfe8ee;
+      z-index: 0;
+      touch-action: none;
+    }
+
+    .leaflet-container {
+      background: #dfe8ee;
+      font-family: inherit;
+    }
+
+    .leaflet-control-zoom {
+      border: none !important;
+      box-shadow: var(--shadow) !important;
+      overflow: hidden;
+      border-radius: 12px !important;
+    }
+
+    .leaflet-control-zoom a {
+      width: 42px !important;
+      height: 42px !important;
+      line-height: 42px !important;
+      color: var(--text) !important;
+      font-size: 22px !important;
+      background: rgba(255,255,255,0.9) !important;
+    }
+
+    .north-button {
+      margin-top: 8px !important;
+    }
+
+    .north-button a {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 42px !important;
+      height: 42px !important;
+      line-height: 42px !important;
+      border-radius: 12px !important;
+      background: rgba(255,255,255,0.9) !important;
+      color: var(--text) !important;
+      font-size: 20px !important;
+      text-decoration: none !important;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(17, 24, 39, 0.06);
+    }
+
+    .leaflet-control-attribution {
+      background: rgba(255,255,255,0.72) !important;
+      backdrop-filter: blur(8px);
+      border-radius: 8px 0 0 0;
+      padding: 2px 6px !important;
+    }
+
+    @media (max-width: 560px) {
+      .wilga-bar {
+        gap: 8px;
+        padding: 0 10px 0 12px;
+      }
+
+      .wilga-brand span {
+        display: none;
+      }
+
+      .wilga-nav a {
+        padding: 0 10px;
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
-<header class="wilga-bar">
-  <a class="wilga-brand" href="https://wilga.goliat.dev/" aria-label="Osiedle Wilga, strona główna"><svg class="wilga-znak" viewBox="-6 -6 208 128" fill="none" stroke="currentColor" stroke-width="12"><path d="M14 94 85 12 115 48 194 12v36l-81 82z" stroke-linejoin="round"/><path d="M18 92h100l-58 21z" stroke-linejoin="round"/></svg><span>Wilga</span></a>
-  <nav class="wilga-nav" aria-label="Projekty Osiedla Wilga">
-    <a href="https://mapa-osiedle-wilga.goliat.dev/" aria-current="page">Mapa</a>
-  </nav>
-</header>
-<div id="top" class="panel">
-  <h1>Mapa Osiedla Wilga <span class="stan" id="stan"></span></h1>
-  <div class="wiersz">
-    <div class="pole"><input id="szukaj" placeholder="Adres lub ulica" aria-label="Szukaj ulicy, adresu, miejsca albo komórki siatki (np. C4)" autocomplete="off" enterkeyhint="search" role="combobox" aria-expanded="false"></div>
-    <button id="btn-indeks" class="btn-secondary">Indeks</button>
-    <button id="btn-zglos" class="btn-secondary" title="Zgłoś błąd lub brak na mapie">Zgłoś<span class="dl"> uwagę</span></button>
-    <button id="btn-info" class="btn-secondary" title="O mapie" aria-label="O mapie"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-5"></path><path d="M12 8h.01"></path></svg></button>
-  </div>
-  <ul id="podp" role="listbox" aria-label="Podpowiedzi" hidden></ul>
-  <p id="offline" role="status">Bez zasięgu: mapa z pamięci telefonu. Ulice, numery, drogi i hydranty działają; podkład i zgłaszanie uwag wrócą z zasięgiem.</p>
-</div>
-<div id="indeks" class="panel"><header><h2>Indeks</h2><button id="zamknij-indeks" aria-label="Zamknij">×</button></header>
-  <div class="zakladki" role="tablist"><button role="tab" data-z="indeks-lista" aria-selected="true">Ulice i adresy</button><button role="tab" data-z="indeks-miejsca" aria-selected="false">Miejsca</button><button role="tab" data-z="indeks-dzialki" aria-selected="false">Działki</button></div>
-  <div class="lista" id="indeks-lista" role="tabpanel"></div><div class="lista" id="indeks-miejsca" role="tabpanel" hidden></div><div class="lista" id="indeks-dzialki" role="tabpanel" hidden></div></div>
-<div id="info" class="panel"><header><h2>O mapie</h2><button id="zamknij-info" aria-label="Zamknij">×</button></header>
-  <div class="tresc">
-    <p>Mapa powstała jako oddolna inicjatywa mieszkańca Osiedla Wilga, wsparta przez Sołtysa Osiedla Wilga, Marcina Olkowicza.</p>
-    <p>Pomysł narodził się na zebraniu wiejskim, w dyskusji ze strażakami: w lesie gubi się sygnał GPS, a trafienie pod właściwy adres zajmuje cenne minuty. Dlatego mapa ma przede wszystkim pomagać w realnym dojeździe i szybkiej orientacji.</p>
-    <p>To wersja robocza, uzupełniana na bieżąco. Przejezdność dróg i stromizny są wstępne i weryfikowane razem z jednostkami OSP.</p>
-    <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś uwagę</b>, przesuń mapę tak, żeby pinezka wskazała miejsce, i kliknij <b>Zgłoś tutaj</b>: nie trzeba się logować, można dołączyć zdjęcie.</p>
-    <p id="licznik"></p>
-    <p>Raz otwarta mapa działa potem także bez zasięgu: ulice, numery, drogi i hydranty są zapisane w telefonie. Bez połączenia nie wczytuje się tylko podkład (OSM, ortofotomapa) i nie da się wysłać uwagi.</p>
-    <p>Wersja do druku: <a href="atlas-a3.pdf" target="_blank" rel="noopener">atlas A3 w PDF</a> (8 arkuszy, ok. 9 MB) z legendą i indeksem ulic.</p>
-    <p>Do nawigacji: <a href="wilga-osmand.gpx" download>plik GPX</a> (drogi w kolorach przejezdności, hydranty, miejsca do zawracania) do otwarcia w OsmAnd; widać go też w Android Auto.</p>
-    <p>Mapę obracasz dwoma palcami (na komputerze: Shift + kółko myszy). Przycisk ze strzałką ustawia północ z powrotem u góry.</p>
-    <p>Przycisk z celownikiem pokazuje Twoje położenie niebieską kropką. Położenie zostaje w Twoim urządzeniu; nigdzie go nie wysyłamy, chyba że sam wskażesz je w zgłoszeniu uwagi.</p>
-  </div></div>
-<div id="zglos-pasek" class="panel" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.8c0 5.1 7 12.2 7 12.2z"/><circle cx="12" cy="9" r="2.2" fill="#fff"/></svg><span>Wskaż miejsce na mapie</span><button id="zglos-ok" type="button">Zgłoś tutaj</button><button id="zglos-anuluj" type="button">Anuluj</button></div>
-<div id="zglos-okno" role="dialog" aria-modal="true" aria-labelledby="zglos-okno-tytul" hidden><header><h2 id="zglos-okno-tytul" tabindex="-1">Zgłoś uwagę</h2><button id="zglos-okno-x" type="button" aria-label="Zamknij">×</button></header><div class="tresc"></div></div>
-<div id="komunikat" class="panel" role="status" hidden></div>
-<p id="ogloszenie" class="sr" aria-live="polite"></p>
-<div id="zglos-wskaz" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.8c0 5.1 7 12.2 7 12.2z"/><circle cx="12" cy="9" r="2.2" fill="#fff"/></svg></div>
-<div id="powitanie" class="panel" role="dialog" aria-label="Witaj" hidden><p><b>Mapa dla służb ratunkowych i mieszkańców.</b> Wpisz adres w polu u góry. Kolory dróg objaśnia legenda.</p><div class="przyciski"><button id="powitanie-ok" class="btn-primary" type="button">OK</button><button id="powitanie-info" class="btn-secondary" type="button">O mapie</button></div></div>
-<div id="skrot" class="panel" hidden><span></span><button id="skrot-dodaj" class="btn-primary" type="button" hidden>Dodaj</button><button id="skrot-x" type="button" aria-label="Zamknij">×</button></div>
-<button id="pokaz-leg" class="btn-secondary"><span class="mini" aria-hidden="true"><i style="border-color:#1e9e4a"></i><i style="border-color:#f5c400"></i><i style="border-color:#e3141b;border-top-style:dashed"></i></span>Legenda</button>
-<div id="legenda" class="panel">
-  <button id="zamknij-leg" aria-label="Zamknij legendę">×</button>
-  <h2>Drogi — przejezdność</h2>
-  <div class="lw"><i class="obw" style="border-color:#1e9e4a"></i>przejezdna dla ciężkiego wozu OSP</div>
-  <div class="lw"><i style="border-color:#f5c400"></i>przejazd dla lekkiego wozu</div>
-  <div class="lw"><i style="border-color:#e3141b;border-top-style:dashed"></i>nieprzejezdna, dojście pieszo</div>
-  <h2>Woda dla straży</h2>
-  <div class="lw"><img src="ikony/hydrant.svg" alt="">hydrant sprawdzony w terenie</div>
-  <div class="lw"><img src="ikony/hydrant_do_weryfikacji.svg" alt="">hydrant z mapy sieci — niesprawdzony</div>
-  <div class="lw"><img src="ikony/zbiornik.svg" alt="">zbiornik wodny</div>
-  <h2>Stromy podjazd</h2>
-  <div class="lw"><img src="ikony/strzalka_spadek_1.svg" alt="">6–10%</div>
-  <div class="lw"><img src="ikony/strzalka_spadek_2.svg" alt="">10–15%</div>
-  <div class="lw"><img src="ikony/strzalka_spadek_3.svg" alt="">ponad 15%</div>
-  <div class="uwaga">Mapa dla służb ratunkowych — wersja robocza. Przejezdność i stromizny są wstępne, weryfikowane z OSP. Kliknij drogę lub punkt, żeby zobaczyć szczegóły.</div>
-</div>
+  <header class="wilga-bar" aria-label="Nagłówek mapy">
+    <a class="wilga-brand" href="/" aria-label="Strona główna Osiedla Wilga">
+      <svg viewBox="0 0 210 130" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M14 94L85 12L115 48L194 12V48L113 130L14 94Z" stroke="currentColor" stroke-width="12" stroke-linejoin="round"/>
+        <path d="M18 92H118L60 113L18 92Z" stroke="currentColor" stroke-width="12" stroke-linejoin="round"/>
+      </svg>
+      <span>Wilga</span>
+    </a>
 
-<div id="map" aria-label="Mapa osiedla"></div>
-<script src="lib/leaflet/leaflet.min.js"></script>
-<script src="lib/leaflet-rotate/leaflet-rotate.js"></script>
-<script>
-// Fix na mobile: przy przeciąganiu dwoma palcami nie chcemy przypadkowo obracać mapy,
-// więc obrót dotykowy jest aktywny tylko po wyraźnym obrocie, nie przy zwykłym pinch-zoom.
-const map = L.map('map', { zoomControl: false, minZoom: 12, maxZoom: 20, rotate: true, touchRotate: false, rotateControl: false });
-L.control.zoom({ position: 'bottomright' }).addTo(map);
-const polnoc = new (L.Control.extend({ onAdd() {
-  const d = L.DomUtil.create('div', 'leaflet-bar polnoc'); d.hidden = true;
-  d.innerHTML = '<a role="button" href="#" title="Północ u góry" aria-label="Ustaw północ u góry"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2l5 10H7z" fill="#c62828"/><path d="M12 8v12" stroke="#c62828" stroke-width="2" stroke-linecap="round"/></svg></a>';
-  L.DomEvent.disableClickPropagation(d);
-  d.firstChild.onclick = e => { e.preventDefault(); map.setBearing(0); };
-  return d; } }))({ position: 'bottomright' }).addTo(map);
-map.on('rotate', () => { const b = map.getBearing(), d = polnoc.getContainer();
-  d.hidden = Math.abs(((b + 180) % 360) - 180) < .5; d.querySelector('svg').style.transform = `rotate(${b}deg)`; });
+    <nav class="wilga-nav" aria-label="Nawigacja">
+      <a class="active" href="#">Mapa</a>
+    </nav>
+  </header>
 
-const getTouchAngle = touchList => {
-  if (!touchList || touchList.length < 2) return null;
-  const a = touchList[0], b = touchList[1];
-  return Math.atan2(b.clientY - a.clientY, b.clientX - a.clientX) * 180 / Math.PI;
-};
+  <div id="map" aria-label="Mapa Osiedla Wilga"></div>
 
-let touchRotation = null;
-const mapContainer = map.getContainer();
-mapContainer.addEventListener('touchstart', event => {
-  if (event.touches.length !== 2) return;
-  const startAngle = getTouchAngle(event.touches);
-  if (startAngle === null) return;
-  touchRotation = { startAngle, startBearing: map.getBearing() };
-}, { passive: true });
+  <script src="lib/leaflet/leaflet.min.js"></script>
+  <script src="lib/leaflet-rotate/leaflet-rotate.js"></script>
+  <script>
+    const map = L.map('map', {
+      zoomControl: false,
+      minZoom: 12,
+      maxZoom: 20,
+      rotate: true,
+      touchRotate: false,
+      rotateControl: false,
+      attributionControl: true
+    });
 
-mapContainer.addEventListener('touchmove', event => {
-  if (event.touches.length !== 2 || !touchRotation) return;
-  const angle = getTouchAngle(event.touches);
-  if (angle === null) return;
-  const delta = angle - touchRotation.startAngle;
-  if (Math.abs(delta) > 12) {
-    map.setBearing(touchRotation.startBearing + delta);
-    touchRotation.startAngle = angle;
-    touchRotation.startBearing = map.getBearing();
-  }
-}, { passive: true });
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-mapContainer.addEventListener('touchend', () => { touchRotation = null; }, { passive: true });
+    const northControl = L.control({ position: 'bottomright' });
+    northControl.onAdd = function () {
+      const div = L.DomUtil.create('div', 'leaflet-bar north-button');
+      const link = L.DomUtil.create('a', '', div);
+      link.href = '#';
+      link.title = 'Północ u góry';
+      link.setAttribute('aria-label', 'Północ u góry');
+      link.innerHTML = '⤢';
+      L.DomEvent.disableClickPropagation(div);
+      L.DomEvent.on(link, 'click', function (event) {
+        event.preventDefault();
+        map.setBearing(0);
+      });
+      return div;
+    };
+    northControl.addTo(map);
 
-// pozycja w adresie: #zoom/szer/dl — do wysyłania linków do konkretnego miejsca
-const h = location.hash.slice(1).split('/').map(Number);
-if (h.length === 3 && h.every(isFinite)) map.setView([h[1], h[2]], h[0]); else map.setView([51.838, 21.418], 14);
-// ?pin: link z arkusza uwag; zaznacza punkt na środku
-if (/[?&]pin\b/.test(location.search)) L.circleMarker(map.getCenter(), { radius: 12, color: '#c62828', weight: 3, fillOpacity: .15, interactive: false }).addTo(map);
-map.on('moveend', () => { const c = map.getCenter(); history.replaceState(null, '', `#${map.getZoom()}/${c.lat.toFixed(5)}/${c.lng.toFixed(5)}`); });
-const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 20, maxNativeZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
-const orto = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution', {
-  layers: 'Raster', format: 'image/jpeg', maxZoom: 20, attribution: 'Ortofotomapa &copy; GUGiK' });
-const cien = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/NMT/GRID1/WMS/ShadedRelief', {
-  layers: 'Raster', format: 'image/png', maxZoom: 20, attribution: 'NMT &copy; GUGiK' });
+    const getTouchAngle = function (touchList) {
+      if (!touchList || touchList.length < 2) return null;
+      const a = touchList[0];
+      const b = touchList[1];
+      return Math.atan2(b.clientY - a.clientY, b.clientX - a.clientX) * 180 / Math.PI;
+    };
 
-const KOLOR = { 'zielony': '#1e9e4a', 'żółty': '#f5c400', 'czerwony': '#e3141b' };
-// żółty to też kolor domyślny dla dróg jeszcze niesprawdzonych; czy droga jest sprawdzona, wiemy my (QGIS), nie mapa
-const OPIS_DROGI = { 'zielony': 'przejezdna dla ciężkiego wozu OSP', 'żółty': 'przejazd dla lekkiego wozu', 'czerwony': 'nieprzejezdna, dojście pieszo' };
-const POI = { gastronomia: ['#e07b00', '🍴', 'restauracja / bar'], osrodek: ['#00796b', '⌂', 'ośrodek'], sklep: ['#6d4c41', '🛒', 'sklep'],
-  kaplica: ['#6a1b9a', '✝', 'kaplica'], pomnik: ['#546e7a', '▮', 'pomnik / miejsce pamięci'], swietlica: ['#ad1457', '⌂', 'świetlica'],
-  klub_sportowy: ['#2e7d32', '⚽', 'klub sportowy'], wieza_bts: ['#37474f', '📶', 'wieża BTS'], szlaban: ['#c62828', '⛔', 'szlaban'], inne: ['#222', '•', 'inne'] };
-const esc = s => String(s ?? '').replace(/[&<>\"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const get = n => fetch('data/' + n + '.geojson').then(r => r.json());
+    let gestureState = null;
+    const mapContainer = map.getContainer();
 
-fetch('data/stan.json').then(r => r.json()).then(s => document.getElementById('stan').textContent = 'stan na ' + s.stan_na).catch(() => {});
-// kopia mapy w telefonie (sw.js): bez połączenia działa wszystko poza podkładami i zgłaszaniem uwag
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-const bezSieci = () => document.body.classList.toggle('bez-sieci', !navigator.onLine);
-addEventListener('online', bezSieci); addEventListener('offline', bezSieci); bezSieci();
+    mapContainer.addEventListener('touchstart', function (event) {
+      if (event.touches.length !== 2) return;
+      const startAngle = getTouchAngle(event.touches);
+      if (startAngle === null) return;
+      gestureState = {
+        startAngle,
+        startBearing: map.getBearing()
+      };
+    }, { passive: true });
 
-const warstwy = {};
-const ctl = L.control.layers({ 'OpenStreetMap': osm, 'Ortofotomapa': orto, 'Cieniowanie terenu': cien }, {}, { collapsed: true }).addTo(map);
-function dodaj(nazwa, lay, wlacz = true) { warstwy[nazwa] = lay; ctl.addOverlay(lay, nazwa); if (wlacz) lay.addTo(map); }
-// warstwy pokazywane dopiero od danego przybliżenia
-const odZoomu = [];
-function zalezne(lay, z) { odZoomu.push([lay, z]); }
-map.on('zoomend overlayadd', () => {
-  for (const [lay, z] of odZoomu) {
-    const want = map.getZoom() >= z && lay._wlaczona !== false;
-    if (want && !map.hasLayer(lay)) map.addLayer(lay); else if (!want && map.hasLayer(lay)) map.removeLayer(lay);
-  }
-});
+    mapContainer.addEventListener('touchmove', function (event) {
+      if (event.touches.length !== 2 || !gestureState) return;
+      const angle = getTouchAngle(event.touches);
+      if (angle === null) return;
 
-Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydranty', 'stromizny', 'miejsca', 'zawracanie', 'siatka'].map(get))
-.then(([wo, wc, bud, drogi, adr, hyd, str, mie, zaw, siat]) => {
-  dodaj('Woda', L.layerGroup([
-    L.geoJSON(wo, { style: { color: '#4f8fc9', weight: 1, fillColor: '#b7dbf4', fillOpacity: 1 }, onEachFeature: (f, l) => f.properties.n && l.bindTooltip(f.properties.n) }),
-    L.geoJSON(wc, { style: f => ({ color: '#2f78c0', weight: f.properties.t === 'river' ? 4 : f.properties.t === 'canal' ? 2.5 : 1.2 }),
-      onEachFeature: (f, l) => f.properties.n && l.bindTooltip(f.properties.n, { sticky: true }) })]));
+      const delta = angle - gestureState.startAngle;
+      if (Math.abs(delta) > 12) {
+        map.setBearing(gestureState.startBearing + delta);
+        gestureState.startAngle = angle;
+        gestureState.startBearing = map.getBearing();
+      }
+    }, { passive: true });
 
-  const opisAdresu = p => `<b>${esc(p.u)} ${esc(p.n)}</b><br><small>${p.u === 'Skurcza' ? 'miejscowość Skurcza, adres bez ulicy' : p.u === 'Nowy Żabieniec' ? 'miejscowość Nowy Żabieniec, adres poza główną siatką' : p.u === 'Cyganówka' && p.n === '70' ? 'adres poza podstawową siatką, dojazd żółtą trasą od Garwolinki' : 'adres na osiedlu Wilga'}</small>`;
-  const tekstAdresu = p => `${p.u} ${p.n}${p.m ? ` (${p.m})` : ''}`;
-  const dymek = (ll, tresc, opcje) => { const pp = L.popup(opcje).setLatLng(ll).setContent(tresc || '…').openOn(map); };
-  const budL = L.geoJSON(bud, { style: { color: '#8a7650', weight: .6, fillColor: '#dccb9b', fillOpacity: 1 } }).on('click', e => {
-    L.DomEvent.stopPropagation(e);
-    dymek(e.latlng, '<b>Adres</b><br>kliknij na mapie, aby sprawdzić lokalizację');
-  });
-  zalezne(budL, 16);
-  const dzialki = L.tileLayer.wms('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow', {
-    layers: 'dzialki', format: 'image/png', transparent: true, opacity: .35, maxZoom: 20, attribution: 'Działki &copy; GUGiK (KIEG)' });
-  zalezne(dzialki, 17);
+    mapContainer.addEventListener('touchend', function () {
+      gestureState = null;
+    }, { passive: true });
 
-  const siatL = L.layerGroup([L.geoJSON(siat, { style: { color: '#333', weight: 1, dashArray: '4 4', fill: false }, interactive: false })]);
-  dodaj('Siatka A–H / 1–8', siatL, true);
+    const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 20,
+      maxNativeZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-  const obwodka = L.geoJSON(drogi, { filter: f => f.properties.k === 'zielony', interactive: false, style: { color: '#fff', weight: 10, lineCap: 'round', opacity: .95 } });
-  dodaj('Drogi', L.layerGroup([obwodka, L.geoJSON(drogi, {
-    style: f => ({ color: KOLOR[f.properties.k] || '#9aa0a6', weight: f.properties.k === 'zielony' ? 6 : 4, dashArray: f.properties.k === 'czerwony' ? '8 6' : null, lineCap: 'round' }),
-    onEachFeature: (f, l) => {
-      const p = f.properties, opis = OPIS_DROGI[p.k] || '';
-      l.bindPopup(`<b>${esc(p.n || 'droga bez nazwy')}</b><br>${opis}${p.u ? '<br><small>' + esc(p.u) + '</small>' : ''}`);
-    } })]));
-});
-</script>
+    const topographic = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/NMT/GRID1/WMS/ShadedRelief', {
+      layers: 'Raster',
+      format: 'image/png',
+      transparent: true,
+      maxZoom: 20,
+      attribution: 'Geoportal'
+    });
+
+    const ortho = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution', {
+      layers: 'Raster',
+      format: 'image/jpeg',
+      maxZoom: 20,
+      attribution: 'Ortofotomapa'
+    });
+
+    const baseLayers = {
+      'OpenStreetMap': osm,
+      'Ortofotomapa': orto,
+      'Teren': topographic
+    };
+
+    L.control.layers(baseLayers, {}, { collapsed: true, position: 'topleft' }).addTo(map);
+
+    map.setView([51.8384, 21.4176], 14);
+  </script>
 </body>
 </html>
