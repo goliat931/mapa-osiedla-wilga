@@ -40,7 +40,10 @@
   .lw i.obw { box-shadow:0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,.3); }
   .lw .zn { flex:0 0 26px; display:flex; justify-content:center; }
   .lw .zn .poi { width:18px; height:18px; font-size:10px; }
-  .lw .zn .zaw { width:12px; height:12px; border-radius:50%; background:#4f7fc4; border:2px solid #1d3f73; }
+  .zaw-ikona { width:24px; height:24px; box-sizing:border-box; border-radius:50%; background:#2f63ad; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; }
+  .zaw-ikona svg { width:15px; height:15px; display:block; }
+  .lw .zn .zaw-ikona { width:20px; height:20px; }
+  .lw .zn .zaw-ikona svg { width:12px; height:12px; }
   /* telefon: przycisk legendy pokazuje od razu trzy kolory dróg */
   #pokaz-leg { display:flex; align-items:center; gap:8px; }
   #pokaz-leg .mini { display:flex; flex-direction:column; gap:3px; }
@@ -260,7 +263,7 @@
   <div class="lw"><img src="ikony/strzalka_spadek_2.svg" alt="">10–15%</div>
   <div class="lw"><img src="ikony/strzalka_spadek_3.svg" alt="">ponad 15%</div>
   <h2>Dojazd i orientacja</h2>
-  <div class="lw"><span class="zn"><b class="zaw"></b></span>miejsce do zawracania</div>
+  <div class="lw"><span class="zn"><b class="zaw-ikona"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 0 1-12.8 5.3M4.5 12a7.5 7.5 0 0 1 12.8-5.3" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M18.6 2.8v4.9h-4.9M5.4 21.2v-4.9h4.9" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></b></span>miejsce do zawracania</div>
   <div class="lw"><span class="zn"><b class="poi" style="background:#c62828">⛔</b></span>szlaban</div>
   <div class="lw"><span class="zn"><b class="poi" style="background:#00796b">⌂</b></span>ośrodek, sklep, kaplica i inne miejsca (kliknij, żeby zobaczyć nazwę)</div>
   <div class="lw"><i style="border-color:#333;border-top-width:1px;border-top-style:dashed"></i>komórka siatki, np. C4 (jak w atlasie A3)</div>
@@ -553,7 +556,9 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     onEachFeature: (f, l) => { const o = (POI[f.properties.t] || POI.inne)[2]; miejsca.push({ n: f.properties.n, o, l });
       l.bindPopup(`<b>${esc(f.properties.n)}</b><br>${o}`); } });
   dodaj('Miejsca charakterystyczne', mieL);
-  dodaj('Miejsca zawracania', L.geoJSON(zaw, { pointToLayer: (f, ll) => L.circleMarker(ll, { radius: 8, color: '#1d3f73', fillColor: '#4f7fc4', fillOpacity: 1, weight: 2 }),
+  // miejsce zawracania: niebieska plakietka z dwiema strzałkami w kółko
+  const ZAWROC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 0 1-12.8 5.3M4.5 12a7.5 7.5 0 0 1 12.8-5.3" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M18.6 2.8v4.9h-4.9M5.4 21.2v-4.9h4.9" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  dodaj('Miejsca zawracania', L.geoJSON(zaw, { pointToLayer: (f, ll) => L.marker(ll, { icon: L.divIcon({ className: '', html: `<div class="zaw-ikona">${ZAWROC}</div>`, iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }) }),
     onEachFeature: (f, l) => l.bindPopup('<b>Miejsce zawracania</b> (ocena wstępna)') }));
 
   // wyszukiwarka: podpowiada najpierw ulice, potem miejsca, potem adresy; bez polskich znaków też znajduje
