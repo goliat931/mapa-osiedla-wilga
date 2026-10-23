@@ -562,7 +562,9 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     onEachFeature: (f, l) => l.bindPopup('<b>Miejsce zawracania</b> (ocena wstępna)') }));
 
   // wyszukiwarka: podpowiada najpierw ulice, potem miejsca, potem adresy; bez polskich znaków też znajduje
-  const bez = t => t.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/([a-z])(\d)/g, '$1 $2').replace(/\s+/g, ' ').trim(); // „lipowa3” = „lipowa 3”
+  const bez = t => t.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/([a-z])(\d)/g, '$1 $2')
+    .replace(/\./g, ' ').replace(/\baleja\b/g, 'al').replace(/\bplac\b/g, 'pl').replace(/^\s*(ul|ulica)\s+/, '') // „Aleja Huberta” = „Al. Huberta”, „ul. Lipowa” = „Lipowa”
+    .replace(/\s+/g, ' ').trim(); // „lipowa3” = „lipowa 3”
   const baza = [...Object.keys(ulice).map(t => ({ t, r: 0, o: 'ulica' })), ...miejsca.map(m => ({ t: m.n, r: 1, o: m.o, m })),
     ...adr.features.map(f => ({ t: tekstAdresu(f.properties), r: 2, o: 'adres' }))]
     .map(w => ({ ...w, k: bez(w.t) })).sort((a, b) => a.r - b.r || a.t.localeCompare(b.t, 'pl', { numeric: true }));
