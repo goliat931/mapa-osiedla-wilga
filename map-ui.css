@@ -1,0 +1,178 @@
+:root {
+  --pine: #134e4a;
+  --pine-hover: #0d3d3a;
+  --road-heavy: #16a34a;
+  --road-light: #eab308;
+  --road-blocked: #dc2626;
+  --water: #0284c7;
+  --glass: rgba(255, 255, 255, .92);
+  --glass-strong: rgba(255, 255, 255, .97);
+  --glass-border: rgba(15, 23, 42, .1);
+  --hud-shadow: 0 8px 24px rgba(15, 23, 42, .14);
+}
+
+html,
+body { width: 100%; height: 100%; overflow: hidden; }
+body { font-family: "Plus Jakarta Sans", "Aptos", "Segoe UI Variable", system-ui, sans-serif; }
+html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; background: #dce8e7; }
+
+.map-hud,
+#map-tools,
+.selection-card,
+#indeks,
+#info,
+#legenda,
+#zglos-pasek,
+#powitanie,
+#skrot {
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  background: var(--glass);
+  box-shadow: var(--hud-shadow);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+#top.map-hud,
+#map-tools,
+.selection-card,
+#indeks,
+#info,
+#legenda,
+#pokaz-leg { box-sizing: border-box; }
+
+.map-hud,
+#map-tools,
+.selection-card { animation: hud-arrive .22s ease-out both; }
+@keyframes hud-arrive { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+#top.map-hud { position: fixed; z-index: 1200; top: 16px; left: 16px; right: auto; width: min(560px, calc(100vw - 32px)); max-width: none; padding: 10px; }
+.map-hud-brand { display: flex; min-height: 32px; align-items: center; justify-content: space-between; gap: 12px; padding: 0 4px 8px; }
+.map-hud-brand .wilga-brand { gap: 8px; color: var(--pine); font-size: 14px; }
+.map-hud-brand .wilga-znak { width: 32px; height: 22px; object-fit: contain; }
+.map-hud-brand .stan { margin: 0; color: #52615f; font-size: 11px; text-align: right; }
+#top .wiersz { display: grid; grid-template-columns: minmax(0, 1fr) auto auto 44px; gap: 6px; }
+#top .wiersz .pole { min-width: 0; }
+#top #szukaj { height: 44px; padding: 0 38px 0 14px; border: 1px solid rgba(19, 78, 74, .2); border-radius: 8px; background: var(--glass-strong); font-size: 15px; }
+#top #szukaj::placeholder { color: #657572; }
+#top #szukaj:focus-visible { border-color: var(--pine); outline-color: var(--pine); }
+#top #szukaj-x { right: 3px; width: 38px; height: 38px; padding: 0; }
+#top #btn-indeks,
+#top #btn-zglos,
+#top #btn-info { min-height: 44px; padding: 0 12px; border-radius: 8px; font-size: 13px; font-weight: 650; }
+#top #btn-zglos { border-color: var(--pine); background: var(--pine); color: #fff; }
+#top #btn-zglos:hover { background: var(--pine-hover); }
+#top #btn-info { display: grid; width: 44px; place-items: center; padding: 0; }
+#top #podp { position: relative; z-index: 2; max-height: min(42vh, 360px); margin: 8px 0 0; padding: 4px; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--glass-strong); box-shadow: 0 8px 20px rgba(15, 23, 42, .12); }
+#top #podp li { min-height: 40px; align-items: center; padding: 7px 10px; }
+#top #podp li[aria-selected="true"],
+#top #podp li:hover { background: rgba(19, 78, 74, .09); }
+#offline { border-radius: 8px; }
+
+#map-tools { position: fixed; z-index: 1100; top: 16px; right: 16px; display: flex; min-height: 48px; align-items: center; gap: 6px; padding: 5px; }
+#map-tools a { display: inline-flex; min-height: 36px; align-items: center; justify-content: center; padding: 0 10px; border: 1px solid transparent; border-radius: 7px; color: #263b39; font-size: 12px; font-weight: 650; text-decoration: none; white-space: nowrap; }
+#map-tools a:hover { border-color: var(--glass-border); background: rgba(19, 78, 74, .08); }
+.pwa-status { display: inline-flex; min-height: 36px; align-items: center; gap: 7px; padding: 0 9px; color: #42534f; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.pwa-status i { width: 8px; height: 8px; flex: none; border-radius: 50%; background: #94a3a2; box-shadow: 0 0 0 3px rgba(148, 163, 162, .15); }
+.pwa-status[data-state="ready"] i { background: #15803d; box-shadow: 0 0 0 3px rgba(21, 128, 61, .14); }
+.pwa-status[data-state="offline"] i { background: #d97706; box-shadow: 0 0 0 3px rgba(217, 119, 6, .16); }
+.pwa-status[data-state="unavailable"] i { background: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, .14); }
+
+#indeks { position: fixed; z-index: 1250; top: 16px; right: 16px; bottom: 16px; width: min(360px, calc(100vw - 32px)); background: var(--glass-strong); }
+#indeks header,
+#info header { position: sticky; top: 0; z-index: 1; background: var(--glass-strong); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+#info { position: fixed; z-index: 1250; top: 82px; left: 16px; max-height: calc(100dvh - 98px); border-radius: 12px; background: var(--glass-strong); }
+#zglos-pasek { z-index: 1300; border-color: var(--pine); background: var(--pine); }
+
+#legenda { position: fixed; z-index: 1150; right: 16px; bottom: 72px; left: auto; width: min(330px, calc(100vw - 32px)); max-width: none; max-height: min(68vh, 560px); border-radius: 12px; background: var(--glass-strong); }
+#pokaz-leg { position: fixed; z-index: 1151; right: 76px; bottom: 16px; left: auto; display: inline-flex; min-height: 44px; align-items: center; gap: 9px; padding: 0 14px; border: 1px solid var(--glass-border); border-radius: 999px; background: var(--glass-strong); color: var(--pine); box-shadow: var(--hud-shadow); font-size: 13px; font-weight: 700; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+#zamknij-leg { border-radius: 7px; }
+.mini i:first-child { border-color: var(--road-heavy) !important; }
+.mini i:nth-child(2) { border-color: var(--road-light) !important; }
+.mini i:nth-child(3) { border-color: var(--road-blocked) !important; }
+.lw .obw { border-color: var(--road-heavy) !important; }
+.lw i[style*="eab308"] { border-color: var(--road-light) !important; }
+.lw i[style*="dc2626"] { border-color: var(--road-blocked) !important; }
+.ulica { background: var(--pine); }
+#legenda > :nth-child(n+10) { display: none; }
+
+.selection-card { position: fixed; z-index: 1100; bottom: 16px; left: 16px; width: min(390px, calc(100vw - 116px)); max-height: 42vh; overflow: auto; padding: 14px; background: var(--glass-strong); }
+.selection-card[hidden] { display: none; }
+.selection-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.selection-sector { color: var(--pine); font-size: 10px; font-weight: 800; line-height: 1.4; }
+.selection-close { width: 32px; height: 32px; flex: none; border: 0; border-radius: 7px; background: transparent; color: #52615f; font-size: 20px; cursor: pointer; }
+.selection-close:hover { background: rgba(19, 78, 74, .08); }
+.selection-address { font-size: 16px; font-weight: 750; line-height: 1.35; }
+.selection-meta { display: grid; gap: 5px; margin-top: 9px; color: #465754; font-size: 12px; line-height: 1.4; }
+.selection-road,
+.selection-water { display: flex; align-items: center; gap: 7px; }
+.selection-road i { width: 22px; height: 0; flex: none; border-top: 4px solid var(--road-light); border-radius: 2px; }
+.selection-water b { color: var(--water); }
+.selection-report { width: 100%; min-height: 42px; margin-top: 11px; padding: 0 12px; border: 1px solid var(--pine); border-radius: 8px; background: var(--pine); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.selection-report:hover { background: var(--pine-hover); }
+
+.leaflet-container { font-family: inherit; }
+.leaflet-bar,
+.leaflet-control-layers,
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip { border-color: var(--glass-border) !important; border-radius: 8px; background: var(--glass-strong) !important; box-shadow: 0 4px 16px rgba(15, 23, 42, .12); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.leaflet-bar a,
+.leaflet-control-layers { color: var(--pine); }
+.leaflet-bar a:hover { background: rgba(19, 78, 74, .08); color: var(--pine); }
+.leaflet-popup-content-wrapper { border-radius: 10px; }
+.leaflet-popup-content { margin: 12px 14px; }
+.leaflet-control-attribution { border-radius: 7px 0 0; }
+.leaflet-top.leaflet-left { top: 112px; left: 16px; }
+.leaflet-bottom.leaflet-right { right: 16px; bottom: 16px; }
+
+@media (prefers-color-scheme: dark) {
+  :root { --glass: rgba(20, 27, 29, .9); --glass-strong: rgba(24, 32, 34, .96); --glass-border: rgba(226, 232, 240, .14); --hud-shadow: 0 8px 24px rgba(0, 0, 0, .3); }
+  .map-hud-brand .wilga-brand,
+  #map-tools a,
+  .pwa-status,
+  .selection-meta,
+  .selection-close { color: #e3eeec; }
+  .map-hud-brand .stan { color: #aabbb7; }
+  #top #szukaj { color: #e8efed; }
+  #top #szukaj::placeholder { color: #aabbb7; }
+  #map-tools a:hover,
+  .selection-close:hover { background: rgba(135, 190, 184, .12); }
+}
+
+@media (max-width: 760px) {
+  #top.map-hud { top: 10px; left: 10px; width: calc(100vw - 20px); padding: 8px; }
+  .map-hud-brand { min-height: 28px; padding-bottom: 6px; }
+  #top .wiersz { grid-template-columns: minmax(0, 1fr) auto auto 42px; gap: 4px; }
+  #top #szukaj { height: 42px; padding-left: 10px; font-size: 14px; }
+  #top #btn-indeks,
+  #top #btn-zglos,
+  #top #btn-info { min-height: 42px; padding: 0 8px; font-size: 12px; }
+  #top #btn-info { width: 42px; }
+  #map-tools { top: 112px; right: 10px; bottom: auto; left: 10px; min-height: 42px; justify-content: flex-end; gap: 2px; padding: 3px; }
+  #map-tools a { min-height: 34px; padding: 0 8px; font-size: 11px; }
+  .pwa-status { min-height: 34px; margin-right: auto; padding: 0 7px; font-size: 10px; }
+  #indeks { top: 10px; right: 10px; bottom: 10px; left: 10px; width: auto; }
+  #info { top: 120px; left: 10px; width: min(460px, calc(100vw - 20px)); max-height: calc(100dvh - 140px); }
+  #legenda { right: 10px; bottom: 170px; max-height: 45vh; }
+  #pokaz-leg { right: auto; bottom: 12px; left: 10px; min-height: 42px; }
+  .selection-card { right: 10px; bottom: 226px; left: 10px; width: auto; max-height: 30vh; padding: 12px; }
+  .leaflet-top.leaflet-left { top: 164px; left: 10px; }
+  .leaflet-bottom.leaflet-right { right: 10px; bottom: 10px; }
+  #zglos-pasek { top: 164px; right: 10px; left: 10px; width: auto; transform: none; }
+  #powitanie { bottom: 74px; }
+}
+
+@media (max-width: 390px) {
+  .map-hud-brand .stan { max-width: 44%; }
+  #top .wiersz { grid-template-columns: minmax(0, 1fr) auto auto 40px; }
+  #top #btn-indeks,
+  #top #btn-zglos { padding: 0 6px; }
+  #top #btn-info { width: 40px; }
+  #map-tools a { padding: 0 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-hud,
+  #map-tools,
+  .selection-card { animation: none; }
+}

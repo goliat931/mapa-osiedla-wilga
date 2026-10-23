@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mapa Osiedla Wilga</title>
 <meta name="description" content="Robocza mapa Osiedla Wilga: ulice, adresy, przejezdność dróg, hydranty i stromizny.">
 <link rel="icon" href="znak.svg" type="image/svg+xml">
@@ -205,16 +205,15 @@
     #zglos-pasek span { flex-basis:calc(100% - 36px); } /* tekst w pierwszym wierszu, trzy przyciski razem pod nim */
   }
 </style>
+<link rel="stylesheet" href="map-ui.css">
 </head>
 <body>
-<header class="wilga-bar">
-  <a class="wilga-brand" href="https://wilga.goliat.dev/" aria-label="Osiedle Wilga, strona główna"><svg class="wilga-znak" viewBox="-6 -6 208 128" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="square" aria-hidden="true"><path d="M4 74 61 44 124 72M19 72v39h135M109 72v36M154 4v107M136 24l18 10M120 48l34 21M154 42l18-8M154 76l37-15"/></svg><span>Osiedle Wilga</span></a>
-  <nav class="wilga-nav" aria-label="Projekty Osiedla Wilga">
-    <a href="https://mapa-osiedle-wilga.goliat.dev/" aria-current="page">Mapa</a>
-  </nav>
-</header>
-<div id="top" class="panel">
-  <h1>Mapa Osiedla Wilga <span class="stan" id="stan"></span></h1>
+<div id="top" class="panel map-hud">
+  <div class="map-hud-brand">
+    <a class="wilga-brand" href="https://wilga.goliat.dev/" aria-label="Osiedle Wilga, strona główna"><img class="wilga-znak" src="znak.svg" alt=""><span>Osiedle Wilga</span></a>
+    <span class="stan" id="stan"></span>
+  </div>
+  <h1 class="sr">Mapa Osiedla Wilga</h1>
   <div class="wiersz">
     <div class="pole"><input id="szukaj" placeholder="Adres lub ulica" aria-label="Szukaj ulicy, adresu, miejsca albo komórki siatki (np. C4)" autocomplete="off" enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls="podp" aria-expanded="false"><button id="szukaj-x" type="button" aria-label="Wyczyść wyszukiwanie" hidden>×</button></div>
     <button id="btn-indeks" class="btn-secondary">Indeks</button>
@@ -224,6 +223,11 @@
   <ul id="podp" role="listbox" aria-label="Podpowiedzi" hidden></ul>
   <p id="offline" role="status">Bez zasięgu: mapa z pamięci telefonu. Ulice, numery, drogi i hydranty działają; podkład i zgłaszanie uwag wrócą z zasięgiem.</p>
 </div>
+<nav id="map-tools" aria-label="Status i pliki mapy">
+  <span id="pwa-status" class="pwa-status" data-state="checking" role="status"><i aria-hidden="true"></i><span>Sprawdzam kopię offline</span></span>
+  <a href="atlas-a3.pdf" target="_blank" rel="noopener">Atlas A3</a>
+  <a href="wilga-osmand.gpx" download>GPX OsmAnd</a>
+</nav>
 <div id="indeks" class="panel"><header><h2>Indeks</h2><button id="zamknij-indeks" aria-label="Zamknij">×</button></header>
   <div class="zakladki" role="tablist"><button role="tab" data-z="indeks-lista" aria-selected="true">Ulice i adresy</button><button role="tab" data-z="indeks-miejsca" aria-selected="false">Miejsca</button><button role="tab" data-z="indeks-dzialki" aria-selected="false">Działki</button></div>
   <div class="lista" id="indeks-lista" role="tabpanel"></div><div class="lista" id="indeks-miejsca" role="tabpanel" hidden></div><div class="lista" id="indeks-dzialki" role="tabpanel" hidden></div></div>
@@ -247,13 +251,13 @@
 <div id="zglos-wskaz" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg></div>
 <div id="powitanie" class="panel" role="dialog" aria-label="Witaj" hidden><p><b>Mapa dla służb ratunkowych i mieszkańców.</b> Wpisz adres w polu u góry. Kolory dróg objaśnia legenda.</p><div class="przyciski"><button id="powitanie-info" class="btn-secondary" type="button">O mapie</button><button id="powitanie-ok" class="btn-primary" type="button">Rozumiem</button></div></div>
 <div id="skrot" class="panel" hidden><span></span><button id="skrot-dodaj" class="btn-primary" type="button" hidden>Dodaj</button><button id="skrot-x" type="button" aria-label="Zamknij">×</button></div>
-<button id="pokaz-leg" class="btn-secondary"><span class="mini" aria-hidden="true"><i style="border-color:#1e9e4a"></i><i style="border-color:#f5c400"></i><i style="border-color:#e3141b;border-top-style:dashed"></i></span>Legenda</button>
+<button id="pokaz-leg" class="btn-secondary"><span class="mini" aria-hidden="true"><i style="border-color:#16a34a"></i><i style="border-color:#eab308"></i><i style="border-color:#dc2626;border-top-style:dashed"></i></span>Legenda OSP</button>
 <div id="legenda" class="panel">
   <button id="zamknij-leg" aria-label="Zamknij legendę">×</button>
   <h2>Drogi — przejezdność</h2>
-  <div class="lw"><i class="obw" style="border-color:#1e9e4a"></i>przejezdna dla ciężkiego wozu OSP</div>
-  <div class="lw"><i style="border-color:#f5c400"></i>przejazd dla lekkiego wozu</div>
-  <div class="lw"><i style="border-color:#e3141b;border-top-style:dashed"></i>nieprzejezdna, dojście pieszo</div>
+  <div class="lw"><i class="obw" style="border-color:#16a34a"></i>przejezdna dla ciężkiego wozu OSP</div>
+  <div class="lw"><i style="border-color:#eab308"></i>przejazd dla lekkiego wozu</div>
+  <div class="lw"><i style="border-color:#dc2626;border-top-style:dashed"></i>nieprzejezdna, dojście pieszo</div>
   <h2>Woda dla straży</h2>
   <div class="lw"><img src="ikony/hydrant.svg" alt="">hydrant sprawdzony w terenie (działanie niesprawdzone)</div>
   <div class="lw"><img src="ikony/hydrant_do_weryfikacji.svg" alt="">hydrant z mapy sieci — niesprawdzony</div>
@@ -272,10 +276,17 @@
 </div>
 
 <div id="map" aria-label="Mapa osiedla"></div>
+<section id="selection-card" class="panel selection-card" aria-live="polite" hidden></section>
 <script src="lib/leaflet/leaflet.min.js"></script>
 <script src="lib/leaflet-rotate/leaflet-rotate.js"></script>
 <script>
 // obracanie: leaflet-rotate (dwa palce, Shift + kółko); przycisk „północ” pojawia się po obróceniu
+const urlParams = new URLSearchParams(location.search);
+const pinValues = (urlParams.get('pin') || '').split(',').map(Number);
+const h = location.hash.slice(1).split('/').map(Number);
+const pinPoint = pinValues.length === 2 && pinValues.every(Number.isFinite)
+  && Math.abs(pinValues[0]) <= 90 && Math.abs(pinValues[1]) <= 180 ? pinValues
+  : urlParams.has('pin') && h.length === 3 && h.every(Number.isFinite) ? [h[1], h[2]] : null;
 const map = L.map('map', { zoomControl: false, minZoom: 12, maxZoom: 20, rotate: true, touchRotate: true, rotateControl: false });
 L.control.zoom({ position: 'bottomright' }).addTo(map);
 const polnoc = new (L.Control.extend({ onAdd() {
@@ -287,11 +298,16 @@ const polnoc = new (L.Control.extend({ onAdd() {
 map.on('rotate', () => { const b = map.getBearing(), d = polnoc.getContainer();
   d.hidden = Math.abs(((b + 180) % 360) - 180) < .5; d.querySelector('svg').style.transform = `rotate(${b}deg)`; });
 // pozycja w adresie: #zoom/szer/dl — do wysyłania linków do konkretnego miejsca
-const h = location.hash.slice(1).split('/').map(Number);
-if (h.length === 3 && h.every(isFinite)) map.setView([h[1], h[2]], h[0]); else map.setView([51.838, 21.418], 14);
-// ?pin: link z arkusza uwag; zaznacza punkt na środku
-if (/[?&]pin\b/.test(location.search)) L.circleMarker(map.getCenter(), { radius: 12, color: '#c62828', weight: 3, fillOpacity: .15, interactive: false }).addTo(map);
-map.on('moveend', () => { const c = map.getCenter(); history.replaceState(null, '', `#${map.getZoom()}/${c.lat.toFixed(5)}/${c.lng.toFixed(5)}`); });
+if (pinPoint) map.setView(pinPoint, 17);
+else if (h.length === 3 && h.every(isFinite)) map.setView([h[1], h[2]], h[0]); else map.setView([51.838, 21.418], 14);
+if (pinPoint) {
+  const pinMarker = L.circleMarker(pinPoint, { radius: 12, color: '#dc2626', weight: 3, fillOpacity: .18 })
+    .bindPopup('Punkt ze zgłoszenia').addTo(map);
+  map.whenReady(() => pinMarker.openPopup());
+}
+map.on('moveend', () => { const c = map.getCenter(), url = new URL(location.href);
+  url.hash = `#${map.getZoom()}/${c.lat.toFixed(5)}/${c.lng.toFixed(5)}`;
+  history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`); });
 const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 20, maxNativeZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
 const orto = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution', {
@@ -299,7 +315,7 @@ const orto = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/OR
 const cien = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/NMT/GRID1/WMS/ShadedRelief', {
   layers: 'Raster', format: 'image/png', maxZoom: 20, attribution: 'NMT &copy; GUGiK' });
 
-const KOLOR = { 'zielony': '#1e9e4a', 'żółty': '#f5c400', 'czerwony': '#e3141b' };
+const KOLOR = { 'zielony': '#16a34a', 'żółty': '#eab308', 'czerwony': '#dc2626' };
 // żółty to też kolor domyślny dla dróg jeszcze niesprawdzonych; czy droga jest sprawdzona, wiemy my (QGIS), nie mapa
 const OPIS_DROGI = { 'zielony': 'przejezdna dla ciężkiego wozu OSP', 'żółty': 'przejazd dla lekkiego wozu', 'czerwony': 'nieprzejezdna, dojście pieszo' };
 const POI = { gastronomia: ['#e07b00', '🍴', 'restauracja / bar'], osrodek: ['#00796b', '⌂', 'ośrodek'], sklep: ['#6d4c41', '🛒', 'sklep'],
@@ -310,7 +326,24 @@ const get = n => fetch('data/' + n + '.geojson').then(r => r.json());
 
 fetch('data/stan.json').then(r => r.json()).then(s => document.getElementById('stan').textContent = 'stan na ' + s.stan_na).catch(() => {});
 // kopia mapy w telefonie (sw.js): bez połączenia działa wszystko poza podkładami i zgłaszaniem uwag
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+const pwaStatus = document.getElementById('pwa-status');
+const ustawStatusPwa = state => {
+  pwaStatus.dataset.state = state;
+  pwaStatus.querySelector('span').textContent = state === 'ready' ? 'Offline gotowe'
+    : state === 'offline' ? 'Tryb offline' : state === 'unavailable' ? 'Offline niedostępne' : 'Sprawdzam kopię offline';
+};
+const odswiezStatusPwa = () => {
+  if (!navigator.onLine) return ustawStatusPwa('offline');
+  if (!('serviceWorker' in navigator)) return ustawStatusPwa('unavailable');
+  navigator.serviceWorker.getRegistration().then(reg => ustawStatusPwa(reg?.active ? 'ready' : 'checking'))
+    .catch(() => ustawStatusPwa('unavailable'));
+};
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js')
+  .then(reg => { ustawStatusPwa(reg.active ? 'ready' : 'checking'); reg.addEventListener('updatefound', () => reg.installing?.addEventListener('statechange', odswiezStatusPwa)); })
+  .catch(() => ustawStatusPwa('unavailable'));
+else ustawStatusPwa('unavailable');
+addEventListener('online', odswiezStatusPwa);
+addEventListener('offline', odswiezStatusPwa);
 const bezSieci = () => document.body.classList.toggle('bez-sieci', !navigator.onLine);
 addEventListener('online', bezSieci); addEventListener('offline', bezSieci); bezSieci();
 
@@ -421,7 +454,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
 
   const obwodka = L.geoJSON(drogi, { filter: f => f.properties.k === 'zielony', interactive: false, style: { color: '#fff', weight: 10, lineCap: 'round', opacity: .95 } });
   dodaj('Drogi', L.layerGroup([obwodka, L.geoJSON(drogi, {
-    style: f => ({ color: KOLOR[f.properties.k] || '#9aa0a6', weight: f.properties.k === 'zielony' ? 6 : 4, dashArray: f.properties.k === 'czerwony' ? '8 6' : null, lineCap: 'round' }),
+    style: f => ({ color: KOLOR[f.properties.k] || '#eab308', weight: f.properties.k === 'zielony' ? 6 : 4, dashArray: f.properties.k === 'czerwony' ? '8 6' : null, lineCap: 'round' }),
     onEachFeature: (f, l) => {
       const p = f.properties, opis = OPIS_DROGI[p.k] || '';
       l.bindPopup(`<b>${esc(p.n || 'droga bez nazwy')}</b><br>${opis}${p.u ? '<br><small>' + esc(p.u) + '</small>' : ''}`);
@@ -592,9 +625,27 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   const pinezka = ll => L.marker(ll, { keyboard: false, interactive: false, zIndexOffset: 2000, icon: L.divIcon({ className: 'wynik-pin', iconSize: [40, 40], iconAnchor: [20, 38],
     html: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#c62828" stroke="#fff" stroke-width="1.5" d="M12 22s7-7.1 7-12.2A7 7 0 0 0 5 9.800c0 5.100 7 12.200 7 12.200z"/><circle cx="12" cy="9.800" r="2.600" fill="#fff"/></svg>' }) }).addTo(map);
   // karta: co to za miejsce, komórka siatki (jak w atlasie) i najbliższa droga z jej przejezdnością
-  const kartaWyniku = (ll, tytulHtml, tytul) => { const kom = wKomorce(ll), d = najblizszaDroga(ll);
+  const najblizszyHydrant = ll => {
+    let best = [Infinity, null];
+    hyd.features.forEach(f => {
+      if (f.properties.t === 'zbiornik_wodny') return;
+      const [lng, lat] = f.geometry.coordinates, distance = map.distance(ll, [lat, lng]);
+      if (distance < best[0]) best = [distance, f];
+    });
+    if (!best[1]) return null;
+    const [lng, lat] = best[1].geometry.coordinates;
+    return { meters: Math.round(best[0]), cell: wKomorce(L.latLng(lat, lng)) };
+  };
+  const kartaWyniku = (ll, tytulHtml, tytul) => { const kom = wKomorce(ll), d = najblizszaDroga(ll), hydrant = najblizszyHydrant(ll);
+    const card = document.getElementById('selection-card');
+    card.innerHTML = `<div class="selection-card-head"><span class="selection-sector">SEKTOR ${esc(kom || 'POZA SIATKĄ')} · MAPA WILGA</span><button class="selection-close" type="button" aria-label="Zamknij kartę miejsca">×</button></div>`
+      + `<div class="selection-address">${tytulHtml}</div><div class="selection-meta">`
+      + (d ? `<div class="selection-road"><i style="border-color:${KOLOR[d.k] || '#eab308'}"></i><span>${esc(d.n || 'Droga')}: ${OPIS_DROGI[d.k] || 'przejazd do sprawdzenia'}</span></div>` : '')
+      + (hydrant ? `<div class="selection-water"><b>WODA</b><span>Najbliższy hydrant: ok. ${hydrant.meters} m${hydrant.cell ? ` (${esc(hydrant.cell)})` : ''}</span></div>` : '')
+      + `</div><button class="selection-report" type="button" data-lat="${ll.lat}" data-lng="${ll.lng}">Zgłoś uwagę do punktu</button>`;
+    card.hidden = false;
     // tekst dla dyspozytora: wklejany do SMS-a lub komunikatora, z linkiem otwierającym mapę z punktem
-    const kopia = `${tytul}, komórka ${kom || '—'}, GPS ${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}\n${location.origin}${location.pathname}?pin#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
+    const kopia = `${tytul}, komórka ${kom || '—'}, GPS ${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}\n${location.origin}${location.pathname}?pin=${ll.lat.toFixed(5)},${ll.lng.toFixed(5)}#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
     return `<div class="karta-wyniku">${tytulHtml}<br><span class="k">komórka ${esc(kom || '—')}</span>`
       + (d ? `<div class="dr"><i style="border-color:${KOLOR[d.k] || '#9aa0a6'}"></i><span>${esc(d.n || 'droga bez nazwy')}: ${OPIS_DROGI[d.k] || ''}${d.m > 25 ? `, ok. ${d.m} m` : ''}</span></div>` : '')
       + `<button type="button" class="kopiuj" data-kopia="${esc(kopia)}">Kopiuj położenie</button></div>`; };
@@ -666,7 +717,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   const zglosW = ll => {
     document.body.classList.remove('tryb-zglos');
     const kom = wKomorce(ll), ul = najblizsza(ll);
-    const link = `${location.origin}${location.pathname}?pin#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
+    const link = `${location.origin}${location.pathname}?pin=${ll.lat.toFixed(5)},${ll.lng.toFixed(5)}#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
     const miejsce = `${ul ? ul[0] + (ul[1] > 15 ? ` (ok. ${ul[1]} m od ulicy)` : '') : 'brak ulicy w pobliżu'}, komórka ${kom || '—'}, GPS ${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}`;
     const f = document.createElement('form'); f.className = 'zglos-popup';
     f.innerHTML = `<p><b>${esc(ul ? ul[0] : 'Miejsce bez nazwy ulicy')}</b>, komórka ${esc(kom || '—')}</p>
@@ -725,7 +776,11 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   // ponytail: śledzenie trwa do zamknięcia strony; wyłącznik dodać, jeśli ktoś zgłosi zużycie baterii
   const komEl = document.getElementById('komunikat'); let komT;
   const powiedz = t => { komEl.textContent = t; komEl.hidden = false; clearTimeout(komT); komT = setTimeout(() => komEl.hidden = true, 6000); };
-  map.getContainer().addEventListener('click', e => { const b = e.target.closest('.kopiuj'); if (!b) return;
+  document.addEventListener('click', e => {
+    if (e.target.closest('.selection-close')) { document.getElementById('selection-card').hidden = true; return; }
+    const report = e.target.closest('.selection-report');
+    if (report) { map.closePopup(); zglosW(L.latLng(Number(report.dataset.lat), Number(report.dataset.lng))); return; }
+    const b = e.target.closest('.kopiuj'); if (!b) return;
     const t = b.dataset.kopia;
     (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject())
       .then(() => { b.textContent = 'Skopiowano'; powiedz('Położenie skopiowane: wklej je w SMS-ie lub komunikatorze.'); })
@@ -843,8 +898,7 @@ document.getElementById('powitanie-info').onclick = () => { powitanie.hidden = t
 })();
 if (location.search.includes('indeks')) document.getElementById('indeks').classList.add('otwarty');
 
-// komputer: legenda otwarta na starcie, telefon: zamknięta
-if (matchMedia('(min-width: 601px)').matches) document.getElementById('legenda').classList.add('otwarta');
+// Legenda pozostaje zwinięta, dopóki użytkownik jej nie otworzy.
 document.getElementById('pokaz-leg').addEventListener('click', () => document.getElementById('legenda').classList.toggle('otwarta'));
 document.getElementById('zamknij-leg').onclick = () => document.getElementById('legenda').classList.remove('otwarta');
 </script>
