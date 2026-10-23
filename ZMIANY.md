@@ -79,3 +79,5 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-20 | Uwaga nr 72 (uzupełnienie) | Usunięte dawne połączenie Limby z Bolka i Lolka przy nr 54 (H5): ogrodzone działki, nie ma przejścia nawet pieszo. |
 | 2026-10-20 | Uwaga nr 93 (poprawka Dawida) | Samanty od Traktu Słonecznego do Poziomkowej (D6) z zielonego na żółte. |
 | 2026-10-21 | Uwaga nr 1 | Usunięta Macierzanki od Jemiołuszki do Saperów (C7): przejazd przez teren stadniny i ośrodka, droga spacerowa i dla koni, którą w terenie prowadzi skosem po dawnej szerokiej drodze do Traktu Słonecznego. |
+| 2026-10-23 | Uwaga nr 96 | Dorysowana droga gruntowa wg BDOT10k (E8, ok. 170 m) od Dzięciołów na południe do drogi przy granicy osiedla, na żółto; razem z Dzięciołów daje ciągły przejazd od 801. |
+| 2026-10-23 | Uwaga nr 98 | Na zielono Dzięciołów od 801 z przedłużeniem na wschód do drogi leśnej oraz droga leśna od Dzięciołów do Czerwonego Kapturka (E8–G6): szeroka, w miarę płaska, przejezdna dla ciężkiego wozu. |
