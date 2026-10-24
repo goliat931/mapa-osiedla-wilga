@@ -57,7 +57,8 @@
   body:has(#legenda.otwarta) #pokaz-leg, body.info-otwarte #pokaz-leg { display:none; }
   @keyframes ul-wej { from { opacity:0; } }
   .ulica { animation:ul-wej .25s ease-out; display:inline-block; background:var(--niebieski); color:#fff; font:600 12px "Bahnschrift","Segoe UI",sans-serif; padding:1px 5px; border-radius:3px; border:1px solid #fff; white-space:nowrap; box-shadow:0 1px 2px rgba(0,0,0,.3); }
-  .nr { cursor:pointer; font:700 13px "Bahnschrift","Segoe UI",sans-serif; color:#0b2545; text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff; white-space:nowrap; }
+  .nr { position:relative; cursor:pointer; font:700 13px "Bahnschrift","Segoe UI",sans-serif; color:#0b2545; text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff; white-space:nowrap; }
+  .nr::after { content:''; position:absolute; inset:-12px -14px; } /* większe pole dotyku numeru domu */
   .kom { font:700 22px "Segoe UI",sans-serif; color:rgba(30,30,30,.5); text-shadow:0 0 3px rgba(255,255,255,.7); }
   .obr { position:absolute; left:0; top:0; transform:translate(-50%,-50%); white-space:nowrap; font:600 13px "Segoe UI",sans-serif; letter-spacing:.06em; color:#c62828; text-shadow:0 0 3px #fff,0 0 3px #fff; }
   .poi { width:22px; height:22px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.4); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; }
@@ -396,7 +397,10 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   const opisAdresu = p => `<b>${esc(p.u)} ${esc(p.n)}</b><br><small>${p.u === 'Skurcza' ? 'miejscowość Skurcza, adres bez ulicy' : p.u === 'Nowy Żabieniec' ? 'miejscowość Nowy Żabieniec, adres bez ulicy' : p.u === 'Cyganówka' ? 'miejscowość Cyganówka, po stronie osiedla: <b>dojazd tylko od Garwolinki</b>, nie od DK76' : esc(p.m || 'Osiedle Wilga')}</small>`;
   const tekstAdresu = p => `${p.u} ${p.n}${p.m ? ` (${p.m})` : ''}`; // miejscowość tylko dla adresów spoza osiedla
   // numer działki z Krajowej Integracji Ewidencji Gruntów (GUGiK), dopisywany do dymka; bez sieci po prostu go nie ma
-  const dzialkaW = ll => fetch(`https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?SERVICE=WMS&REQUEST=GetFeatureInfo&VERSION=1.3.0&LAYERS=dzialki&QUERY_LAYERS=dzialki&CRS=EPSG:4326&BBOX=${ll.lat - 1e-4},${ll.lng - 1e-4},${ll.lat + 1e-4},${ll.lng + 1e-4}&WIDTH=101&HEIGHT=101&I=50&J=50&INFO_FORMAT=text/xml`)
+  const urlDzialki = ll => `https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow?SERVICE=WMS&REQUEST=GetFeatureInfo&VERSION=1.3.0&LAYERS=dzialki&QUERY_LAYERS=dzialki&CRS=EPSG:4326&BBOX=${ll.lat - 1e-4},${ll.lng - 1e-4},${ll.lat + 1e-4},${ll.lng + 1e-4}&WIDTH=101&HEIGHT=101&I=50&J=50&INFO_FORMAT=text/xml`;
+  // identyfikator działki w punkcie (null bez sieci): do sprawdzenia, czy adres stoi na klikniętej działce
+  const idDzialki = ll => fetch(urlDzialki(ll)).then(r => r.text()).then(t => (t.match(/Name="Identyfikator działki">([^<]*)</) || [])[1] || null).catch(() => null);
+  const dzialkaW = ll => fetch(urlDzialki(ll))
     .then(r => r.text()).then(t => { const a = n => (t.match(new RegExp(`Name="${n}">([^<]*)<`)) || [])[1];
       // nazwa obrębu tylko poza osiedlem (obręb 0010): numery działek powtarzają się w sąsiednich obrębach
       const ob = (a('Identyfikator działki') || '').split('.')[1] === '0010' ? '' : (a('Nazwa obrębu') || '').toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase());
@@ -410,8 +414,24 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     dymek(e.latlng, naj[1] ? kartaWyniku(L.latLng(naj[1].geometry.coordinates[1], naj[1].geometry.coordinates[0]), opisAdresu(naj[1].properties), tekstAdresu(naj[1].properties))
       : 'Brak adresu w rejestrze dla tego budynku');
   });
-  // kliknięcie w puste miejsce przy dużym przybliżeniu: numer działki
-  map.on('click', e => { if (map.getZoom() >= 17 && !document.body.classList.contains('tryb-zglos') && !e.originalEvent.target.closest('.leaflet-interactive')) dymek(e.latlng); });
+  // kliknięcie w puste miejsce przy dużym przybliżeniu: jeśli na tej działce stoi adres, okno adresu (jak po kliknięciu numeru),
+  // inaczej sam numer działki. Numer domu trudno trafić palcem, działkę łatwo.
+  let klikNr = 0;
+  map.on('click', async e => {
+    if (map.getZoom() < 17 || document.body.classList.contains('tryb-zglos') || e.originalEvent.target.closest('.leaflet-interactive')) return;
+    const ll = e.latlng, moj = ++klikNr;
+    const kand = adr.features.map(f => [map.distance(ll, [f.geometry.coordinates[1], f.geometry.coordinates[0]]), f]).filter(k => k[0] < 45).sort((a, b) => a[0] - b[0]).slice(0, 3);
+    if (!kand.length) return dymek(ll);
+    const pp = L.popup().setLatLng(ll).setContent('…').openOn(map);
+    const id = await idDzialki(ll); let traf = null;
+    if (id) { for (const [, f] of kand) if (await idDzialki(L.latLng(f.geometry.coordinates[1], f.geometry.coordinates[0])) === id) { traf = f; break; } }
+    else if (kand[0][0] < 15) traf = kand[0][1]; // bez sieci: tylko adres tuż obok
+    if (moj !== klikNr) return; // w międzyczasie kliknięto gdzie indziej
+    map.closePopup(pp);
+    if (!traf) return dymek(ll);
+    const a = L.latLng(traf.geometry.coordinates[1], traf.geometry.coordinates[0]);
+    dymek(a, kartaWyniku(a, opisAdresu(traf.properties), tekstAdresu(traf.properties)));
+  });
   zalezne(budL, 16);
   const dzialki = L.tileLayer.wms('https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow', {
     layers: 'dzialki', format: 'image/png', transparent: true, opacity: .35, maxZoom: 20, attribution: 'Działki &copy; GUGiK (KIEG)' });
