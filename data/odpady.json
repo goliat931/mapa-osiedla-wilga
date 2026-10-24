@@ -1,7 +1,7 @@
 {
  "rejon": "Rejon 1",
  "opis": "Osiedle Wilga (Wilga OTW)",
- "info": "Pojemniki i worki wystaw do godz. 7:00 przed posesją. PSZOK: Celejów 117 (dz. 1106, przy oczyszczalni), 8:00–15:00. Reklamacje: PreZero Otwock, tel. 22 710 10 80, otwock@prezero.com; Urząd Gminy Wilga, tel. 25 629 93 39.",
+ "info": "Pojemniki i worki wystaw do godz. 7:00 przed posesją. PSZOK, czyli Punkt Selektywnej Zbiórki Odpadów Komunalnych: Celejów 117 (dz. 1106, przy oczyszczalni ścieków), 8:00–15:00; przyjmuje m.in. gabaryty, odpady remontowe, elektrośmieci, opony, baterie, chemikalia, tekstylia. Reklamacje: PreZero Otwock, tel. 22 710 10 80, otwock@prezero.com; Urząd Gminy Wilga, tel. 25 629 93 39.",
  "wygenerowano": "2026-10-24",
  "frakcje": {
   "zmieszane": {
@@ -37,7 +37,7 @@
    "kolor": "#b91c1c"
   },
   "pszok": {
-   "nazwa": "PSZOK Celejów 117",
+   "nazwa": "Punkt selektywnej zbiórki (PSZOK), Celejów 117",
    "kolor": "#0f766e"
   }
  },
