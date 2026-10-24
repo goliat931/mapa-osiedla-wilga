@@ -94,7 +94,6 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 .lw i[style*="eab308"] { border-color: var(--road-light) !important; }
 .lw i[style*="dc2626"] { border-color: var(--road-blocked) !important; }
 .ulica { background: var(--pine); }
-#legenda > :nth-child(n+10) { display: none; }
 
 .selection-card { position: fixed; z-index: 1100; bottom: 16px; left: 16px; width: min(390px, calc(100vw - 116px)); max-height: 42vh; overflow: auto; padding: 14px; background: var(--glass-strong); }
 .selection-card[hidden] { display: none; }
