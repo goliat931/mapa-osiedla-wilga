@@ -247,7 +247,7 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 
 /* status kopii offline w panelu obok daty; pasek #map-tools z Atlasem i GPX tylko na komputerze (na telefonie linki są w „O mapie”) */
 .hud-prawa { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.hud-prawa .pwa-status { min-height: 24px; padding: 0; }
+.hud-prawa .pwa-status { min-height: 24px; padding: 0; margin-right: 0; }
 @media (max-width: 760px) {
   #map-tools { display: none; }
   .hud-prawa .pwa-status > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } /* sama kropka, tekst dla czytnika */
