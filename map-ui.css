@@ -216,3 +216,6 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 /* prawy dolny róg: kompas (pojawia się po obróceniu) zawsze nad przyciskiem położenia, który nie zmienia miejsca */
 .leaflet-bottom.leaflet-right { display: flex; flex-direction: column; align-items: flex-end; }
 .leaflet-bottom.leaflet-right .polnoc { order: -1; }
+
+/* nazwa „Osiedle Wilga” przy znaku także na telefonie (wilga.css chowa ją poniżej 520 px na innych stronach) */
+.map-hud-brand .wilga-brand span { display: inline; }
