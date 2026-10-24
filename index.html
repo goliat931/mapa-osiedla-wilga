@@ -654,6 +654,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   const idz = w => {
     sz.value = w.t; szX.hidden = false; zamknijPodp(); sz.blur();
     if (znacznik) map.removeLayer(znacznik); znacznik = null;
+    zamknijKarte(); // stara karta nie może zostać przy komórce, ulicy czy miejscu (Prowadź prowadziłby pod poprzedni adres)
     if (w.m) return pokazMiejsce(w.m);
     if (w.kom) { pokaz(komorki[w.kom]); return oglos(`Pokazano komórkę ${w.kom}`); }
     if (w.dz) { map.setView(w.dz.ll, 18); znacznik = pinezka(w.dz.ll); pokazKarte(w.dz.ll, `Działka ${esc(w.t)}`, `Działka ${w.t}`);
@@ -706,7 +707,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       + (hydrant ? `<div class="selection-water"><b>WODA</b><span>Najbliższy sprawdzony hydrant: ok. ${hydrant.meters} m${hydrant.cell ? ` (${esc(hydrant.cell)})` : ''}</span></div>` : '')
       + `</div>${przyciskProwadz(ll, tytul, 'selection-nav')}<div class="selection-actions"><button type="button" class="kopiuj selection-copy" data-kopia="${esc(tekstKopii(ll, tytul))}">Kopiuj położenie</button>`
       + `<button class="selection-report" type="button" data-lat="${ll.lat}" data-lng="${ll.lng}">Zgłoś uwagę do punktu</button></div>`;
-    karta.hidden = false;
+    karta.hidden = false; karta.dataset.tytul = tytul;
+    document.getElementById('legenda').classList.remove('otwarta'); // karta i legenda nie nachodzą na siebie
     // punkt nie może zniknąć pod kartą: przesuwamy mapę, żeby stał między górnym panelem a kartą
     const odslon = () => { if (karta.hidden) return; const k = karta.getBoundingClientRect(), g = document.getElementById('top').getBoundingClientRect(), m = map.getContainer().getBoundingClientRect();
       const y = m.top + map.latLngToContainerPoint(ll).y, x = m.left + map.latLngToContainerPoint(ll).x;
@@ -729,6 +731,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     podp.hidden = false; sz.setAttribute('aria-expanded', 'true'); akt = -1;
   };
   sz.addEventListener('input', podpowiedz);
+  sz.addEventListener('input', () => { if (!karta.hidden && sz.value !== karta.dataset.tytul) zamknijKarte(); }); // nowe wyszukiwanie: karta znika
   sz.addEventListener('focus', podpowiedz);
   sz.addEventListener('blur', zamknijPodp);
   sz.addEventListener('keydown', e => {
@@ -991,7 +994,8 @@ document.getElementById('powitanie-info').onclick = () => { powitanie.hidden = t
 if (location.search.includes('indeks')) document.getElementById('indeks').classList.add('otwarty');
 
 // Legenda pozostaje zwinięta, dopóki użytkownik jej nie otworzy.
-document.getElementById('pokaz-leg').addEventListener('click', () => document.getElementById('legenda').classList.toggle('otwarta'));
+document.getElementById('pokaz-leg').addEventListener('click', () => { const l = document.getElementById('legenda');
+  if (l.classList.toggle('otwarta')) document.getElementById('selection-card').hidden = true; }); // legenda zamiast karty, nie na niej
 document.getElementById('zamknij-leg').onclick = () => document.getElementById('legenda').classList.remove('otwarta');
 </script>
 </body>
