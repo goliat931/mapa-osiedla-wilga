@@ -181,3 +181,5 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
   #map-tools,
   .selection-card { animation: none; }
 }
+/* pinezka zgłoszenia: mapa zajmuje cały ekran, więc środek mapy to środek ekranu (bez przesunięcia pod dawny pasek strony) */
+#zglos-wskaz { position: fixed; top: 50%; }
