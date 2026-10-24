@@ -219,3 +219,20 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 
 /* nazwa „Osiedle Wilga” przy znaku także na telefonie (wilga.css chowa ją poniżej 520 px na innych stronach) */
 .map-hud-brand .wilga-brand span { display: inline; }
+
+/* jeden kolor akcji (sosna) dla wszystkich głównych przycisków; zieleń #16a34a zostaje tylko dla dróg „ciężki wóz” */
+.selection-nav, .karta-wyniku .prowadz, .zglos-popup button, .btn-primary { background: var(--pine); border-color: var(--pine); color: #fff; }
+.selection-nav:hover, .karta-wyniku .prowadz:hover, .zglos-popup button:hover, .btn-primary:hover:not(:disabled) { background: var(--pine-hover); border-color: var(--pine-hover); }
+@media (prefers-color-scheme: dark) {
+  .selection-nav, .karta-wyniku .prowadz, .zglos-popup button, .btn-primary, #top #btn-zglos { border: 1px solid #3d8a83; }
+}
+/* formularz zgłoszenia w stylu panelu */
+.zglos-popup select, .zglos-popup textarea, .zglos-popup input:not([type=file]) { border: 1px solid rgba(19, 78, 74, .28); border-radius: 8px; background: var(--glass-strong); color: inherit; }
+.zglos-popup select:focus-visible, .zglos-popup textarea:focus-visible, .zglos-popup input:focus-visible { outline: 2px solid var(--pine); outline-offset: 1px; }
+.zglos-popup button { border-radius: 8px; min-height: 44px; }
+.zglos-popup .aparat { border-color: var(--pine); color: var(--pine); border-radius: 8px; }
+.zglos-popup .drobne { color: var(--muted); }
+@media (prefers-color-scheme: dark) {
+  .zglos-popup select, .zglos-popup textarea, .zglos-popup input:not([type=file]) { border-color: rgba(226, 232, 240, .25); }
+  .zglos-popup .aparat { color: #b5ede7; border-color: #87beb8; }
+}
