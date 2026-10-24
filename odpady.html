@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wywóz odpadów — Osiedle Wilga</title>
+<meta name="description" content="Harmonogram wywozu odpadów na Osiedlu Wilga (Rejon 1): najbliższy termin, kalendarz do telefonu, PSZOK.">
+<link rel="icon" href="znak.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1d1f" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="wilga.css">
+<style>
+  :root { --pine: #134e4a; --pine-hover: #0d3d3a; }
+  @media (prefers-color-scheme: dark) { :root { --pine: #5fbfb3; --pine-hover: #7fd3c8; } }
+  body { margin: 0; font-family: var(--font); background: var(--bg); color: var(--text); }
+  main { max-width: 760px; margin: 0 auto; padding: 16px 16px 48px; }
+  .wroc { display: inline-flex; align-items: center; min-height: 44px; color: var(--link); font-weight: 600; text-decoration: none; }
+  h1 { font-size: clamp(24px, 5vw, 32px); margin: 8px 0 4px; }
+  .podtytul { color: var(--muted); margin: 0 0 20px; }
+  .najblizszy { padding: 18px 20px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); }
+  .najblizszy .kiedy { font-size: 15px; color: var(--muted); margin: 0 0 4px; }
+  .najblizszy .data { font-size: clamp(22px, 5vw, 28px); font-weight: 750; margin: 0 0 10px; }
+  .frakcje { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .frakcje li { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); font-size: 15px; font-weight: 600; }
+  .frakcje i { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+  .akcje { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 8px; }
+  .akcje a { display: inline-flex; align-items: center; min-height: 48px; padding: 0 18px; border-radius: 8px; font-weight: 700; text-decoration: none; }
+  .glowny { background: var(--pine); color: #fff; }
+  .glowny:hover { background: var(--pine-hover); }
+  @media (prefers-color-scheme: dark) { .glowny { color: #062521; } }
+  .drugi { border: 1px solid var(--border-strong); color: var(--text); }
+  .podpowiedz { color: var(--muted); font-size: 14px; line-height: 1.45; margin: 0 0 24px; }
+  .podpowiedz code { overflow-wrap: anywhere; color: var(--text); }
+  h2 { font-size: 19px; margin: 28px 0 8px; }
+  .miesiac { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--border); }
+  .miesiac > li { display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .miesiac .d { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .miesiac .d small { display: block; color: var(--muted); font-weight: 500; }
+  .miesiac > li.minal { opacity: .5; }
+  .przelacz { min-height: 44px; margin-top: 16px; padding: 0 14px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; cursor: pointer; }
+  .info { margin-top: 28px; padding: 14px 16px; border-radius: 10px; background: var(--surface-2); font-size: 15px; line-height: 1.5; }
+  .info b { display: block; margin-bottom: 4px; }
+  @media (max-width: 480px) { .miesiac > li { grid-template-columns: 1fr; gap: 4px; } }
+</style>
+</head>
+<body>
+<main>
+  <a class="wroc" href="./">← Mapa osiedla</a>
+  <h1>Wywóz odpadów</h1>
+  <p class="podtytul" id="rejon">Osiedle Wilga, Rejon 1</p>
+  <section class="najblizszy" aria-live="polite">
+    <p class="kiedy" id="kiedy">Wczytuję harmonogram…</p>
+    <p class="data" id="data"></p>
+    <ul class="frakcje" id="frakcje"></ul>
+  </section>
+  <div class="akcje">
+    <a class="glowny" id="subskrybuj" href="data/odpady.ics">Dodaj do kalendarza w telefonie</a>
+    <a class="drugi" href="data/odpady.ics" download="wywoz-odpadow-osiedle-wilga.ics">Pobierz plik kalendarza</a>
+  </div>
+  <p class="podpowiedz">Kalendarz przypomni o wywozie dzień wcześniej o 18:00 i sam się zaktualizuje, gdy zmienią się terminy.
+    Na iPhonie stuknij przycisk i wybierz „Subskrybuj”. Na Androidzie (Kalendarz Google) otwórz calendar.google.com, wybierz
+    „Inne kalendarze”, potem „Z adresu URL” i wklej adres: <code id="adres">data/odpady.ics</code>.
+    Plik do pobrania dodaje terminy jednorazowo, bez aktualizacji.</p>
+  <div id="lista"></div>
+  <button class="przelacz" id="przelacz" type="button" aria-pressed="false">Pokaż też minione terminy</button>
+  <div class="info"><b>Ważne</b><span id="info"></span></div>
+</main>
+<script>
+const MIES = ['styczeń', 'luty', 'marzec', 'kwiecień', 'maj', 'czerwiec', 'lipiec', 'sierpień', 'wrzesień', 'październik', 'listopad', 'grudzień'];
+const DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const lokalnie = d => { const [r, m, dz] = d.split('-').map(Number); return new Date(r, m - 1, dz); };
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+// subskrypcja: webcal:// otwiera kalendarz telefonu z opcją „Subskrybuj” (działa na https)
+document.getElementById('adres').textContent = new URL('data/odpady.ics', location.href).href;
+if (location.protocol === 'https:') document.getElementById('subskrybuj').href = `webcal://${location.host}${location.pathname.replace(/[^/]*$/, '')}data/odpady.ics`;
+let dane, minione = false;
+const chipy = (kody) => kody.map(k => `<li><i style="background:${dane.frakcje[k].kolor}" aria-hidden="true"></i>${esc(dane.frakcje[k].nazwa)}</li>`).join('');
+function rysuj() {
+  const dzis = iso(new Date());
+  const dni = Object.entries(dane.dni);
+  const nast = dni.find(([d]) => d >= dzis);
+  if (nast) {
+    const ile = Math.round((lokalnie(nast[0]) - lokalnie(dzis)) / 864e5);
+    document.getElementById('kiedy').textContent = ile === 0 ? 'Najbliższy wywóz: dziś (wystaw do 7:00)' : ile === 1 ? 'Najbliższy wywóz: jutro' : `Najbliższy wywóz: za ${ile} dni`;
+    const d = lokalnie(nast[0]);
+    document.getElementById('data').textContent = `${DNI[d.getDay()]}, ${d.getDate()} ${['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'][d.getMonth()]}`;
+    document.getElementById('frakcje').innerHTML = chipy(nast[1]);
+  } else {
+    document.getElementById('kiedy').textContent = 'Brak kolejnych terminów w harmonogramie. Nowy harmonogram pojawi się, gdy ogłosi go gmina.';
+  }
+  let html = '', mies = '';
+  for (const [d, kody] of dni) {
+    if (!minione && d < dzis) continue;
+    const dt = lokalnie(d), m = `${MIES[dt.getMonth()]} ${dt.getFullYear()}`;
+    if (m !== mies) { html += `${mies ? '</ul>' : ''}<h2>${m[0].toUpperCase() + m.slice(1)}</h2><ul class="miesiac">`; mies = m; }
+    html += `<li class="${d < dzis ? 'minal' : ''}"><span class="d">${dt.getDate()}.${String(dt.getMonth() + 1).padStart(2, '0')}<small>${DNI[dt.getDay()]}</small></span><ul class="frakcje">${chipy(kody)}</ul></li>`;
+  }
+  document.getElementById('lista').innerHTML = html + (mies ? '</ul>' : '');
+}
+document.getElementById('przelacz').onclick = e => { minione = !minione; e.target.setAttribute('aria-pressed', minione); e.target.textContent = minione ? 'Ukryj minione terminy' : 'Pokaż też minione terminy'; rysuj(); };
+fetch('data/odpady.json').then(r => r.json()).then(j => {
+  dane = j;
+  document.getElementById('rejon').textContent = `${j.opis}, ${j.rejon}`;
+  document.getElementById('info').textContent = j.info;
+  rysuj();
+}).catch(() => { document.getElementById('kiedy').textContent = 'Nie udało się wczytać harmonogramu. Sprawdź połączenie i odśwież stronę.'; });
+</script>
+</body>
+</html>

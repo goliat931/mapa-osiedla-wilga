@@ -1,0 +1,199 @@
+{
+ "rejon": "Rejon 1",
+ "opis": "Osiedle Wilga (Wilga OTW)",
+ "info": "Pojemniki i worki wystaw do godz. 7:00 przed posesją. PSZOK: Celejów 117 (dz. 1106, przy oczyszczalni), 8:00–15:00. Reklamacje: PreZero Otwock, tel. 22 710 10 80, otwock@prezero.com; Urząd Gminy Wilga, tel. 25 629 93 39.",
+ "wygenerowano": "2026-10-24",
+ "frakcje": {
+  "zmieszane": {
+   "nazwa": "Zmieszane",
+   "kolor": "#4b5563"
+  },
+  "bio": {
+   "nazwa": "Bio",
+   "kolor": "#8b5a2b"
+  },
+  "plastik": {
+   "nazwa": "Metale i tworzywa",
+   "kolor": "#ca8a04"
+  },
+  "papier": {
+   "nazwa": "Papier",
+   "kolor": "#2563eb"
+  },
+  "szklo": {
+   "nazwa": "Szkło",
+   "kolor": "#16a34a"
+  },
+  "popiol": {
+   "nazwa": "Popiół",
+   "kolor": "#6b7280"
+  },
+  "tekstylia": {
+   "nazwa": "Tekstylia",
+   "kolor": "#9333ea"
+  },
+  "gabaryty": {
+   "nazwa": "Wielkogabarytowe sprzed posesji",
+   "kolor": "#b91c1c"
+  },
+  "pszok": {
+   "nazwa": "PSZOK Celejów 117",
+   "kolor": "#0f766e"
+  }
+ },
+ "dni": {
+  "2026-01-17": [
+   "pszok"
+  ],
+  "2026-01-26": [
+   "zmieszane",
+   "bio",
+   "plastik",
+   "papier",
+   "szklo",
+   "popiol"
+  ],
+  "2026-02-23": [
+   "zmieszane",
+   "bio",
+   "plastik",
+   "papier",
+   "szklo",
+   "popiol"
+  ],
+  "2026-03-14": [
+   "pszok"
+  ],
+  "2026-03-23": [
+   "zmieszane",
+   "bio",
+   "plastik",
+   "papier",
+   "szklo",
+   "popiol"
+  ],
+  "2026-03-27": [
+   "tekstylia",
+   "gabaryty"
+  ],
+  "2026-04-07": [
+   "zmieszane",
+   "bio"
+  ],
+  "2026-04-20": [
+   "zmieszane",
+   "bio",
+   "plastik",
+   "papier",
+   "szklo"
+  ],
+  "2026-05-04": [
+   "zmieszane",
+   "bio"
+  ],
+  "2026-05-16": [
+   "pszok"
+  ],
+  "2026-05-18": [
+   "zmieszane",
+   "bio",
+   "plastik",
+   "papier",
+   "szklo"
+  ],
+  "2026-06-01": [
+   "zmieszane",
+   "bio"
+  ],
+  "2026-06-15": [
+   "zmieszane",
+   "bio",
+   "plastik",
+   "papier",
+   "szklo"
+  ],
+  "2026-06-16": [
+   "tekstylia"
+  ],
+  "2026-06-29": [
+   "zmieszane",
+   "bio"
+  ],
+  "2026-07-13": [
+   "zmieszane",
+   "bio",
+   "plastik",
+   "papier",
+   "szklo"
+  ],
+  "2026-07-18": [
+   "pszok"
+  ],
+  "2026-07-27": [
+   "zmieszane",
+   "bio"
+  ],
+  "2026-08-10": [
+   "zmieszane",
+   "bio",
+   "plastik",
+   "papier",
+   "szklo"
+  ],
+  "2026-08-24": [
+   "zmieszane",
+   "bio"
+  ],
+  "2026-09-07": [
+   "zmieszane",
+   "bio",
+   "plastik",
+   "papier",
+   "szklo"
+  ],
+  "2026-09-12": [
+   "pszok"
+  ],
+  "2026-09-21": [
+   "zmieszane",
+   "bio"
+  ],
+  "2026-10-05": [
+   "zmieszane",
+   "bio",
+   "plastik",
+   "papier",
+   "szklo"
+  ],
+  "2026-10-06": [
+   "tekstylia",
+   "gabaryty"
+  ],
+  "2026-10-19": [
+   "zmieszane",
+   "bio"
+  ],
+  "2026-11-02": [
+   "zmieszane",
+   "bio",
+   "plastik",
+   "papier",
+   "szklo",
+   "popiol"
+  ],
+  "2026-11-14": [
+   "pszok"
+  ],
+  "2026-12-07": [
+   "zmieszane",
+   "bio",
+   "plastik",
+   "papier",
+   "szklo",
+   "popiol"
+  ],
+  "2026-12-08": [
+   "tekstylia"
+  ]
+ }
+}

@@ -1,8 +1,8 @@
 // Kopia mapy w telefonie: najpierw sieć (świeże dane), a gdy jej brak albo jest zbyt wolna – ostatnia zapisana wersja.
 // Podkłady (OSM, ortofoto, cieniowanie) i zgłaszanie uwag nadal wymagają połączenia.
 // Nowy plik strony albo danych trzeba dopisać do listy PLIKI.
-const KOPIA = 'wilga-mapa-2', CZEKAJ_MS = 4000;
-const PLIKI = ['./', 'wilga.css', 'map-ui.css', 'znak.svg', 'manifest.webmanifest', 'wilga-osmand.gpx',
+const KOPIA = 'wilga-mapa-3', CZEKAJ_MS = 4000;
+const PLIKI = ['./', 'wilga.css', 'map-ui.css', 'odpady.html', 'data/odpady.json', 'data/odpady.ics', 'znak.svg', 'manifest.webmanifest', 'wilga-osmand.gpx',
   'lib/leaflet/leaflet.min.js', 'lib/leaflet-rotate/leaflet-rotate.js', 'lib/leaflet/leaflet.min.css', 'lib/leaflet/images/layers.png', 'lib/leaflet/images/layers-2x.png',
   ...['adresy', 'budynki', 'drogi', 'hydranty', 'miejsca', 'siatka', 'stromizny', 'woda_cieki', 'woda_obszary', 'zawracanie', 'obreby'].map(n => `data/${n}.geojson`),
   'data/indeks.json', 'data/dzialki.json', 'data/stan.json',
