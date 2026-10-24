@@ -102,11 +102,12 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 .selection-close { width: 32px; height: 32px; flex: none; border: 0; border-radius: 7px; background: transparent; color: #52615f; font-size: 20px; cursor: pointer; }
 .selection-close:hover { background: rgba(19, 78, 74, .08); }
 .selection-address { font-size: 16px; font-weight: 750; line-height: 1.35; }
-.selection-meta { display: grid; gap: 5px; margin-top: 9px; color: #465754; font-size: 12px; line-height: 1.4; }
+.selection-meta { display: grid; gap: 6px; margin-top: 9px; color: #34433f; font-size: 14px; line-height: 1.4; }
 .selection-road,
 .selection-water { display: flex; align-items: center; gap: 7px; }
 .selection-road i { width: 22px; height: 0; flex: none; border-top: 4px solid var(--road-light); border-radius: 2px; }
-.selection-water b { color: var(--water); }
+.selection-water b { color: #0369a1; }
+.selection-water { flex-wrap: wrap; }
 .selection-report { width: 100%; min-height: 42px; margin-top: 11px; padding: 0 12px; border: 1px solid var(--pine); border-radius: 8px; background: var(--pine); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
 .selection-report:hover { background: var(--pine-hover); }
 
@@ -235,4 +236,11 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 @media (prefers-color-scheme: dark) {
   .zglos-popup select, .zglos-popup textarea, .zglos-popup input:not([type=file]) { border-color: rgba(226, 232, 240, .25); }
   .zglos-popup .aparat { color: #b5ede7; border-color: #87beb8; }
+}
+
+@media (prefers-color-scheme: dark) { .selection-water b { color: #7dd3fc; } }
+@media (max-width: 760px) {
+  /* karta niżej (nad przyciskiem legendy) i wyższa: mieści drogę, wodę i wszystkie przyciski bez przewijania */
+  .selection-card { bottom: 72px; right: 76px; max-height: min(60vh, calc(100dvh - 210px)); } /* prawa kolumna zostaje dla przycisków mapy */
+  .selection-actions { grid-template-columns: 1fr; }
 }

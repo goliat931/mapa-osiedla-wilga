@@ -69,7 +69,13 @@
   .karta-wyniku .k { display:inline-block; margin-top:4px; padding:1px 7px; border-radius:5px; background:var(--surface-2); font-weight:700; }
   .karta-wyniku .dr { display:flex; align-items:center; gap:6px; margin-top:4px; }
   .karta-wyniku .dr i { flex:none; width:22px; height:0; border-top:5px solid; border-radius:3px; }
-  .karta-wyniku .dymek-akcje { display:flex; gap:6px; margin-top:8px; }
+  .karta-wyniku .dymek-akcje { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .karta-wyniku .woda { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:4px; }
+  .karta-wyniku .woda b { color:#0369a1; }
+  .karta-wyniku .dymek-zglos { min-height:36px; padding:0 12px; border:1px solid var(--border-strong); border-radius:7px; background:var(--surface); color:var(--text); font:600 14px var(--font); cursor:pointer; }
+  .pokaz-hydrant { min-height:32px; padding:0 10px; border:1px solid #0369a1; border-radius:999px; background:transparent; color:#0369a1; font:600 13px var(--font); cursor:pointer; }
+  @media (pointer: coarse) { .karta-wyniku .dymek-zglos, .pokaz-hydrant { min-height:44px; } }
+  @media (prefers-color-scheme: dark) { .karta-wyniku .woda b, .pokaz-hydrant { color:#7dd3fc; border-color:#7dd3fc; } }
   .karta-wyniku .prowadz { display:inline-flex; align-items:center; min-height:36px; padding:0 14px; border-radius:7px; background:var(--wilga); color:#fff !important; font:700 14px var(--font); text-decoration:none; }
   .karta-wyniku .prowadz:hover { background:var(--wilga-hover); }
   @media (pointer: coarse) { .karta-wyniku .prowadz { min-height:44px; } }
@@ -682,8 +688,12 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     });
     if (!best[1]) return null;
     const [lng, lat] = best[1].geometry.coordinates;
-    return { meters: Math.round(best[0]), cell: wKomorce(L.latLng(lat, lng)) };
+    return { meters: Math.round(best[0]), cell: wKomorce(L.latLng(lat, lng)), lat, lng };
   };
+  // wspólne wiersze karty i dymku: najbliższa droga (to nie musi być dojazd) i najbliższy sprawdzony hydrant z przyciskiem „pokaż”
+  const wierszDrogi = (d, klasa) => d ? `<div class="${klasa}"><i style="border-color:${KOLOR[d.k] || '#eab308'}"></i><span>Najbliższa droga: ${esc(d.n || 'bez nazwy')}, ${OPIS_DROGI[d.k] || ''}${d.m > 25 ? ` (ok. ${d.m} m)` : ''}</span></div>` : '';
+  const wierszWody = (ll, h, klasa) => h ? `<div class="${klasa}"><b>WODA</b><span>Najbliższy sprawdzony hydrant: ok. ${h.meters} m${h.cell ? ` (${esc(h.cell)})` : ''}</span>`
+    + `<button type="button" class="pokaz-hydrant" data-lat="${ll.lat}" data-lng="${ll.lng}" data-hlat="${h.lat}" data-hlng="${h.lng}">pokaż</button></div>` : '';
   // tekst dla dyspozytora: wklejany do SMS-a lub komunikatora, z linkiem otwierającym mapę z punktem
   const tekstKopii = (ll, tytul) => `${tytul}, komórka ${wKomorce(ll) || '—'}, GPS ${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}\n${location.origin}${location.pathname}?pin=${ll.lat.toFixed(5)},${ll.lng.toFixed(5)}#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
   // „Prowadź”: domyślna aplikacja nawigacyjna urządzenia. Android: geo: (Google Maps, OsmAnd… albo okno wyboru),
@@ -694,18 +704,18 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     return `https://www.google.com/maps/dir/?api=1&destination=${w}&travelmode=driving`; };
   const przyciskProwadz = (ll, nazwa, klasa) => `<a class="${klasa}" href="${esc(linkNawigacji(ll, nazwa))}" target="_blank" rel="noopener">Prowadź</a>`;
   // dymek po kliknięciu w mapę (numer domu, budynek)
-  const kartaWyniku = (ll, tytulHtml, tytul) => { const kom = wKomorce(ll), d = najblizszaDroga(ll);
+  const kartaWyniku = (ll, tytulHtml, tytul) => { const kom = wKomorce(ll);
     return `<div class="karta-wyniku">${tytulHtml}<br><span class="k">komórka ${esc(kom || '—')}</span>`
-      + (d ? `<div class="dr"><i style="border-color:${KOLOR[d.k] || '#9aa0a6'}"></i><span>${esc(d.n || 'droga bez nazwy')}: ${OPIS_DROGI[d.k] || ''}${d.m > 25 ? `, ok. ${d.m} m` : ''}</span></div>` : '')
-      + `<div class="dymek-akcje">${przyciskProwadz(ll, tytul, 'prowadz')}<button type="button" class="kopiuj" data-kopia="${esc(tekstKopii(ll, tytul))}">Kopiuj położenie</button></div></div>`; };
+      + wierszDrogi(najblizszaDroga(ll), 'dr') + wierszWody(ll, najblizszyHydrant(ll), 'woda')
+      + `<div class="dymek-akcje">${przyciskProwadz(ll, tytul, 'prowadz')}<button type="button" class="kopiuj" data-kopia="${esc(tekstKopii(ll, tytul))}">Kopiuj położenie</button>`
+      + `<button type="button" class="selection-report dymek-zglos" data-lat="${ll.lat}" data-lng="${ll.lng}">Zgłoś</button></div></div>`; };
   // karta wyniku wyszukiwania (dół ekranu): zamiast dymku, żeby nie zasłaniać mapy dwa razy
   const karta = document.getElementById('selection-card');
   const pokazKarte = (ll, tytulHtml, tytul) => { const kom = wKomorce(ll), d = najblizszaDroga(ll), hydrant = najblizszyHydrant(ll);
     map.closePopup();
     karta.innerHTML = `<div class="selection-card-head"><span class="selection-sector">SEKTOR ${esc(kom || 'POZA SIATKĄ')}<span class="selection-dz"></span></span><button class="selection-close" type="button" aria-label="Zamknij kartę miejsca">×</button></div>`
       + `<div class="selection-address">${tytulHtml}</div><div class="selection-meta">`
-      + (d ? `<div class="selection-road"><i style="border-color:${KOLOR[d.k] || '#eab308'}"></i><span>${esc(d.n || 'droga bez nazwy')}: ${OPIS_DROGI[d.k] || ''}${d.m > 25 ? `, ok. ${d.m} m` : ''}</span></div>` : '')
-      + (hydrant ? `<div class="selection-water"><b>WODA</b><span>Najbliższy sprawdzony hydrant: ok. ${hydrant.meters} m${hydrant.cell ? ` (${esc(hydrant.cell)})` : ''}</span></div>` : '')
+      + wierszDrogi(d, 'selection-road') + wierszWody(ll, hydrant, 'selection-water')
       + `</div>${przyciskProwadz(ll, tytul, 'selection-nav')}<div class="selection-actions"><button type="button" class="kopiuj selection-copy" data-kopia="${esc(tekstKopii(ll, tytul))}">Kopiuj położenie</button>`
       + `<button class="selection-report" type="button" data-lat="${ll.lat}" data-lng="${ll.lng}">Zgłoś uwagę do punktu</button></div>`;
     karta.hidden = false; karta.dataset.tytul = tytul;
@@ -873,6 +883,12 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   addEventListener('online', wyslijKolejke); wyslijKolejke();
   document.addEventListener('click', e => {
     if (e.target.closest('.selection-close')) { document.getElementById('selection-card').hidden = true; return; }
+    const ph = e.target.closest('.pokaz-hydrant');
+    if (ph) { const a = L.latLng(+ph.dataset.lat, +ph.dataset.lng), h = L.latLng(+ph.dataset.hlat, +ph.dataset.hlng), k = document.getElementById('selection-card'), g = document.getElementById('top').getBoundingClientRect();
+      map.closePopup();
+      map.fitBounds(L.latLngBounds([a, h]), { maxZoom: 18, paddingTopLeft: [40, g.bottom + 30], paddingBottomRight: [40, k.hidden ? 60 : innerHeight - k.getBoundingClientRect().top + 30] });
+      const o = L.circleMarker(h, { radius: 20, color: '#0369a1', weight: 4, fill: false, interactive: false }).addTo(map); setTimeout(() => map.removeLayer(o), 6000);
+      return; }
     const report = e.target.closest('.selection-report');
     if (report) { map.closePopup(); document.getElementById('selection-card').hidden = true; zglosW(L.latLng(Number(report.dataset.lat), Number(report.dataset.lng))); return; }
     const b = e.target.closest('.kopiuj'); if (!b) return;
