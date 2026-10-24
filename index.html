@@ -748,6 +748,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       if (d < best[0]) best = [d, f.properties]; } }));
     return best[1] && { ...best[1], m: Math.round(best[0] * map.distance(map.unproject([0, 0], 18), map.unproject([1, 0], 18))) }; };
   let zglosMarker;
+  const wyslijUwage = d => fetch(UWAGI_URL, { method: 'POST', body: JSON.stringify(d) }).then(r => r.json())
+    .then(r => { if (!r.ok) throw new Error(r.blad || 'Nie udało się zapisać uwagi.'); return r; });
   const UWAGI_URL = 'https://script.google.com/macros/s/AKfycbx5_boeKa5TW8bYz6l0BVVLcDrarPWOq-bw0F1mqtb853NetDbo1quVrEEqta77Y_FK_Q/exec';
   // licznik uwag w „O mapie”: same liczby z arkusza uwag; bez sieci po prostu się nie pokazuje
   fetch(UWAGI_URL).then(r => r.json()).then(r => { if (r.liczba) document.getElementById('licznik').textContent =
@@ -784,15 +786,20 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       const stan = f.querySelector('[role=status]'), btn = f.querySelector('button');
       btn.disabled = true; btn.textContent = 'Wysyłanie…'; stan.className = 'drobne';
       stan.textContent = zdj() ? 'Wysyłanie ze zdjęciem może potrwać kilkanaście sekund.' : '';
+      const koniec = html => { f.innerHTML = html + (zglosOkno.contains(f) ? '<button type="button" class="wroc">Wróć do mapy</button>' : '');
+        const wroc = f.querySelector('.wroc'); if (wroc) wroc.onclick = zglosOkno.zamknijOkno; };
+      // bez zasięgu zgłoszenie czeka w telefonie i wysyła się samo, gdy sieć wróci
+      const doKolejkiIKoniec = dane => { const w = doKolejki(dane); if (!w) return false;
+        koniec(`<p><b>Zapisano w telefonie.</b> Uwaga wyśle się sama, gdy wróci zasięg${w === 'bez zdjęcia' ? ' (bez zdjęcia: za mało miejsca w pamięci przeglądarki)' : ''}.</p><p>Jeśli zamkniesz mapę, wyślemy ją przy następnym otwarciu.</p>`); return true; };
+      let dane;
       try {
         const plik = zdj();
-        const r = await fetch(UWAGI_URL, { method: 'POST', body: JSON.stringify({ typ: f.typ.value, opis: f.opis.value, podpis: f.podpis.value,
-          www: f.www.value, miejsce, link, zdjecie: plik ? await zmniejsz(plik) : '' }) }).then(r => r.json());
-        if (!r.ok) throw new Error(r.blad);
-        f.innerHTML = `<p><b>Dziękujemy!</b> Uwaga${r.nr ? ' nr ' + esc(r.nr) : ''} została zapisana.</p><p>Sprawdzimy ją, zanim zmienimy mapę.</p>`
-          + (zglosOkno.contains(f) ? '<button type="button" class="wroc">Wróć do mapy</button>' : '');
-        const wroc = f.querySelector('.wroc'); if (wroc) wroc.onclick = zglosOkno.zamknijOkno;
+        dane = { typ: f.typ.value, opis: f.opis.value, podpis: f.podpis.value, www: f.www.value, miejsce, link, zdjecie: plik ? await zmniejsz(plik) : '' };
+        if (!navigator.onLine && doKolejkiIKoniec(dane)) return;
+        const r = await wyslijUwage(dane);
+        koniec(`<p><b>Dziękujemy!</b> Uwaga${r.nr ? ' nr ' + esc(r.nr) : ''} została zapisana.</p><p>Sprawdzimy ją, zanim zmienimy mapę.</p>`);
       } catch (err) {
+        if (dane && (err instanceof TypeError || !navigator.onLine) && doKolejkiIKoniec(dane)) return; // błąd sieci, nie odmowa serwera
         btn.disabled = false; btn.textContent = 'Wyślij uwagę'; stan.className = 'blad';
         stan.textContent = !navigator.onLine ? 'Brak zasięgu, uwaga nie została wysłana. Tekst zostaje w formularzu: wyślij, gdy wróci zasięg.'
           : (err && err.message && !/fetch|JSON|token/i.test(err.message) ? err.message + ' ' : 'Nie udało się wysłać uwagi. ') + 'Spróbuj ponownie.';
@@ -822,6 +829,23 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   // ponytail: śledzenie trwa do zamknięcia strony; wyłącznik dodać, jeśli ktoś zgłosi zużycie baterii
   const komEl = document.getElementById('komunikat'); let komT;
   const powiedz = t => { komEl.textContent = t; komEl.hidden = false; clearTimeout(komT); komT = setTimeout(() => komEl.hidden = true, 6000); };
+  // kolejka uwag zapisanych bez zasięgu (localStorage): wysyłka po powrocie sieci i przy otwarciu mapy
+  const KOLEJKA = 'wilga-kolejka-uwag';
+  const czytajKolejke = () => { try { return JSON.parse(localStorage.getItem(KOLEJKA)) || []; } catch (e) { return []; } };
+  const piszKolejke = k => { try { localStorage.setItem(KOLEJKA, JSON.stringify(k)); return true; } catch (e) { return false; } };
+  const doKolejki = d => { const k = czytajKolejke();
+    k.push({ ...d, opis: `${d.opis}\n(zapisane bez zasięgu ${new Date().toLocaleString('pl-PL')})` });
+    if (piszKolejke(k)) return 'ok';
+    k[k.length - 1].zdjecie = ''; return piszKolejke(k) ? 'bez zdjęcia' : false; }; // zdjęcie nie mieści się w pamięci
+  let wysylamKolejke = false;
+  const wyslijKolejke = async () => {
+    if (wysylamKolejke || !navigator.onLine) return; const k = czytajKolejke(); if (!k.length) return;
+    wysylamKolejke = true; const numery = [];
+    while (k.length) { try { const r = await wyslijUwage(k[0]); numery.push(r.nr); k.shift(); piszKolejke(k); } catch (e) { break; } }
+    wysylamKolejke = false;
+    if (numery.length) powiedz(numery.length === 1 ? `Wysłano uwagę zapisaną bez zasięgu (nr ${numery[0]}).` : `Wysłano ${numery.length} uwagi zapisane bez zasięgu (nr ${numery.join(', ')}).`);
+  };
+  addEventListener('online', wyslijKolejke); wyslijKolejke();
   document.addEventListener('click', e => {
     if (e.target.closest('.selection-close')) { document.getElementById('selection-card').hidden = true; return; }
     const report = e.target.closest('.selection-report');
