@@ -50,7 +50,7 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 .map-hud-brand { display: flex; min-height: 32px; align-items: center; justify-content: space-between; gap: 12px; padding: 0 4px 8px; }
 .map-hud-brand .wilga-brand { gap: 8px; color: var(--pine); font-size: 14px; }
 .map-hud-brand .wilga-znak { width: 32px; height: 22px; object-fit: contain; }
-.map-hud-brand .stan { margin: 0; color: #52615f; font-size: 11px; text-align: right; }
+.map-hud-brand .stan { margin: 0; color: #4a5856; font-size: 12px; text-align: right; }
 #top .wiersz { display: grid; grid-template-columns: minmax(0, 1fr) auto auto 44px; gap: 6px; }
 #top .wiersz .pole { min-width: 0; }
 #top #szukaj { height: 44px; padding: 0 38px 0 14px; border: 1px solid rgba(19, 78, 74, .2); border-radius: 8px; background: var(--glass-strong); font-size: 15px; }
@@ -72,7 +72,7 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 #map-tools { position: fixed; z-index: 1100; top: 16px; right: 16px; display: flex; min-height: 48px; align-items: center; gap: 6px; padding: 5px; }
 #map-tools a { display: inline-flex; min-height: 36px; align-items: center; justify-content: center; padding: 0 10px; border: 1px solid transparent; border-radius: 7px; color: #263b39; font-size: 12px; font-weight: 650; text-decoration: none; white-space: nowrap; }
 #map-tools a:hover { border-color: var(--glass-border); background: rgba(19, 78, 74, .08); }
-.pwa-status { display: inline-flex; min-height: 36px; align-items: center; gap: 7px; padding: 0 9px; color: #42534f; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.pwa-status { display: inline-flex; min-height: 36px; align-items: center; gap: 7px; padding: 0 9px; color: #42534f; font-size: 12px; font-weight: 700; white-space: nowrap; }
 .pwa-status i { width: 8px; height: 8px; flex: none; border-radius: 50%; background: #94a3a2; box-shadow: 0 0 0 3px rgba(148, 163, 162, .15); }
 .pwa-status[data-state="ready"] i { background: #15803d; box-shadow: 0 0 0 3px rgba(21, 128, 61, .14); }
 .pwa-status[data-state="offline"] i { background: #d97706; box-shadow: 0 0 0 3px rgba(217, 119, 6, .16); }
@@ -153,8 +153,8 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
   #top #btn-info { min-height: 42px; padding: 0 8px; font-size: 12px; }
   #top #btn-info { width: 42px; }
   #map-tools { top: 112px; right: 10px; bottom: auto; left: 10px; min-height: 42px; justify-content: flex-end; gap: 2px; padding: 3px; }
-  #map-tools a { min-height: 34px; padding: 0 8px; font-size: 11px; }
-  .pwa-status { min-height: 34px; margin-right: auto; padding: 0 7px; font-size: 11px; }
+  #map-tools a { min-height: 34px; padding: 0 8px; font-size: 12px; }
+  .pwa-status { min-height: 34px; margin-right: auto; padding: 0 7px; font-size: 12px; }
   #indeks { top: 10px; right: 10px; bottom: 10px; left: 10px; width: auto; }
   #info { top: 120px; left: 10px; width: min(460px, calc(100vw - 20px)); max-height: calc(100dvh - 140px); }
   #legenda { right: 10px; bottom: 170px; max-height: 45vh; }
@@ -256,3 +256,8 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
   #skrot { z-index: 1160; bottom: 72px; } /* baner instalacji nad przyciskiem legendy */
 }
 .hud-prawa .stan { white-space: nowrap; }
+
+/* drobne cele dotyku i strzałki stromizn w ciemnym motywie */
+#zamknij-leg, #skrot-x { min-width: 44px; min-height: 44px; }
+@media (pointer: coarse) { .zglos-popup input[type=file] { min-height: 44px; } }
+@media (prefers-color-scheme: dark) { .leaflet-marker-icon img[src*="strzalka_spadek"] { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 2px rgba(255, 255, 255, .8)); } }

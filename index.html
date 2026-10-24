@@ -226,7 +226,7 @@
   </div>
   <h1 class="sr">Mapa Osiedla Wilga</h1>
   <div class="wiersz">
-    <div class="pole"><input id="szukaj" placeholder="Adres lub ulica" aria-label="Szukaj ulicy, adresu, miejsca albo komórki siatki (np. C4)" autocomplete="off" enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls="podp" aria-expanded="false"><button id="szukaj-x" type="button" aria-label="Wyczyść wyszukiwanie" hidden>×</button></div>
+    <div class="pole"><input id="szukaj" placeholder="Adres, ulica lub C4" aria-label="Szukaj ulicy, adresu, miejsca albo komórki siatki (np. C4)" autocomplete="off" enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls="podp" aria-expanded="false"><button id="szukaj-x" type="button" aria-label="Wyczyść wyszukiwanie" hidden>×</button></div>
     <button id="btn-indeks" class="btn-secondary">Indeks</button>
     <button id="btn-zglos" class="btn-secondary" title="Zgłoś błąd lub brak na mapie">Zgłoś<span class="dl"> uwagę</span></button>
     <button id="btn-info" class="btn-secondary" title="O mapie" aria-label="O mapie"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:block"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
@@ -975,6 +975,7 @@ document.getElementById('zglos-anuluj').onclick = e => { e.preventDefault(); doc
 // Esc zamyka to, co otwarte (wyszukiwarka obsługuje Esc sama)
 addEventListener('keydown', e => {
   if (e.key !== 'Escape' || e.target.id === 'szukaj') return;
+  const pow = document.getElementById('powitanie'); if (!pow.hidden) { pow.hidden = true; return document.getElementById('szukaj').focus(); }
   const okno = document.getElementById('zglos-okno');
   if (!okno.hidden) return okno.zamknijOkno();
   const kartaEl = document.getElementById('selection-card');
@@ -990,7 +991,7 @@ addEventListener('keydown', e => {
 let pierwszaWizyta = false;
 try { if (!localStorage.getItem('wilga-info')) { pierwszaWizyta = true; localStorage.setItem('wilga-info', '1'); } } catch (e) {}
 const powitanie = document.getElementById('powitanie');
-if (pierwszaWizyta) powitanie.hidden = false;
+if (pierwszaWizyta) { powitanie.hidden = false; document.getElementById('powitanie-ok').focus({ preventScroll: true }); }
 document.getElementById('powitanie-ok').onclick = () => { powitanie.hidden = true; document.getElementById('szukaj').focus(); };
 document.getElementById('powitanie-info').onclick = () => { powitanie.hidden = true; ustawInfo(true); };
 // propozycja skrótu na ekranie głównym: tylko telefon i tablet, nie przy pierwszej wizycie; zamknięta nie wraca
