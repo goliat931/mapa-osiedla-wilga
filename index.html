@@ -281,6 +281,27 @@
 <script src="lib/leaflet-rotate/leaflet-rotate.js"></script>
 <script>
 // obracanie: leaflet-rotate (dwa palce, Shift + kółko); przycisk „północ” pojawia się po obróceniu
+// Próg obrotu jak w Google Maps: przy zwykłym przybliżaniu dwoma palcami mapa się nie obraca.
+// Obrót rusza dopiero, gdy kąt między palcami zmieni się o PROG_OBROTU stopni, i startuje od tego miejsca (bez skoku).
+const PROG_OBROTU = 15;
+(() => {
+  const TG = L.Map.TouchGestures.prototype, start = TG._onTouchStart, ruch = TG._onTouchMove;
+  const kat = (e, m) => { const a = m.mouseEventToContainerPoint(e.touches[0]).subtract(m.mouseEventToContainerPoint(e.touches[1]));
+    return { theta: Math.atan(a.x / a.y), dol: a.y < 0 }; };
+  TG._onTouchStart = function (e) { this._obrotRuszyl = false; return start.call(this, e); };
+  TG._onTouchMove = function (e) {
+    if (this._rotating && !this._obrotRuszyl && e.touches && e.touches.length === 2) {
+      const k = kat(e, this._map);
+      // ile stopni obróciłaby mapę biblioteka (jej wzór), względem obecnego obrotu
+      const rLib = (k.theta - this._startTheta) * L.DomUtil.RAD_TO_DEG + (k.dol ? 180 : 0);
+      let d = this._startBearing - rLib - this._map.getBearing(); d = ((d % 360) + 540) % 360 - 180;
+      if (Math.abs(d) < PROG_OBROTU) { this._rotating = false; ruch.call(this, e); this._rotating = true; return; }
+      // próg przekroczony: obrót liczony od bieżącego ułożenia palców
+      this._obrotRuszyl = true; this._startTheta = k.theta; this._startBearing = this._map.getBearing() + (k.dol ? 180 : 0);
+    }
+    return ruch.call(this, e);
+  };
+})();
 const urlParams = new URLSearchParams(location.search);
 const pinValues = (urlParams.get('pin') || '').split(',').map(Number);
 const h = location.hash.slice(1).split('/').map(Number);
