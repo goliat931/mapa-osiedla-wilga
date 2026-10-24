@@ -281,7 +281,7 @@
 </div>
 
 <div id="map" aria-label="Mapa osiedla"></div>
-<section id="selection-card" class="panel selection-card" aria-live="polite" hidden></section>
+<section id="selection-card" class="panel selection-card" aria-label="Wybrane miejsce" hidden></section>
 <script src="lib/leaflet/leaflet.min.js"></script>
 <script src="lib/leaflet-rotate/leaflet-rotate.js"></script>
 <script>
@@ -616,11 +616,12 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
 
   const ikona = (src, s = 24) => L.icon({ iconUrl: src, iconSize: [s, s], iconAnchor: [s / 2, s / 2], popupAnchor: [0, -s / 2] });
   const hydPewne = L.geoJSON(hyd, { filter: f => f.properties.t !== 'do_weryfikacji',
-    pointToLayer: (f, ll) => L.marker(ll, { icon: ikona(f.properties.t === 'zbiornik_wodny' ? 'ikony/zbiornik.svg' : 'ikony/hydrant.svg') }),
+    pointToLayer: (f, ll) => { const zb = f.properties.t === 'zbiornik_wodny', n = zb ? 'Zbiornik wodny' : 'Hydrant sprawdzony w terenie';
+      return L.marker(ll, { icon: ikona(zb ? 'ikony/zbiornik.svg' : 'ikony/hydrant.svg'), alt: n, title: n }); },
     onEachFeature: (f, l) => l.bindPopup(f.properties.t === 'zbiornik_wodny' ? '<b>Zbiornik wodny</b>' : '<b>Hydrant</b><br>Sprawdzony w terenie (stoi). Nie sprawdzano, czy działa.') });
   dodaj('Hydranty i zbiorniki', hydPewne);
   dodaj('Hydranty do sprawdzenia (z mapy sieci)', L.geoJSON(hyd, { filter: f => f.properties.t === 'do_weryfikacji',
-    pointToLayer: (f, ll) => L.marker(ll, { icon: ikona('ikony/hydrant_do_weryfikacji.svg', 22) }),
+    pointToLayer: (f, ll) => L.marker(ll, { icon: ikona('ikony/hydrant_do_weryfikacji.svg', 22), alt: 'Hydrant z mapy sieci, niesprawdzony', title: 'Hydrant z mapy sieci, niesprawdzony' }),
     onEachFeature: (f, l) => l.bindPopup('<b>Hydrant z mapy sieci wodociągowej</b><br>Niesprawdzony w terenie — nie wiadomo, czy istnieje i działa.') }), false);
 
   const strL = L.geoJSON(str, { pointToLayer: (f, ll) => L.marker(ll, { keyboard: false, rotateWithView: true, icon: L.divIcon({ className: '',
@@ -630,13 +631,13 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
 
   const miejsca = [];
   const mieL = L.geoJSON(mie, { pointToLayer: (f, ll) => { const [k, z] = POI[f.properties.t] || POI.inne;
-      return L.marker(ll, { icon: L.divIcon({ className: '', html: `<div class="poi" style="background:${k}">${z}</div>`, iconSize: [22, 22], iconAnchor: [11, 11] }) }); },
+      return L.marker(ll, { title: f.properties.n, icon: L.divIcon({ className: '', html: `<div class="poi" style="background:${k}" aria-hidden="true">${z}</div>`, iconSize: [22, 22], iconAnchor: [11, 11] }) }); },
     onEachFeature: (f, l) => { const o = (POI[f.properties.t] || POI.inne)[2]; miejsca.push({ n: f.properties.n, o, l });
       l.bindPopup(`<b>${esc(f.properties.n)}</b><br>${o}`); } });
   dodaj('Miejsca charakterystyczne', mieL);
   // miejsce zawracania: niebieska plakietka z dwiema strzałkami w kółko
   const ZAWROC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 0 1-12.8 5.3M4.5 12a7.5 7.5 0 0 1 12.8-5.3" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M18.6 2.8v4.9h-4.9M5.4 21.2v-4.9h4.9" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  dodaj('Miejsca zawracania', L.geoJSON(zaw, { pointToLayer: (f, ll) => L.marker(ll, { icon: L.divIcon({ className: '', html: `<div class="zaw-ikona">${ZAWROC}</div>`, iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }) }),
+  dodaj('Miejsca zawracania', L.geoJSON(zaw, { pointToLayer: (f, ll) => L.marker(ll, { title: 'Miejsce zawracania', icon: L.divIcon({ className: '', html: `<div class="zaw-ikona">${ZAWROC}</div>`, iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }) }),
     onEachFeature: (f, l) => l.bindPopup('<b>Miejsce zawracania</b> (ocena wstępna)') }));
 
   // wyszukiwarka: podpowiada najpierw ulice, potem miejsca, potem adresy; bez polskich znaków też znajduje
@@ -648,7 +649,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     .map(w => ({ ...w, k: bez(w.t) })).sort((a, b) => a.r - b.r || a.t.localeCompare(b.t, 'pl', { numeric: true }));
   const sz = document.getElementById('szukaj'), podp = document.getElementById('podp'), szX = document.getElementById('szukaj-x');
   let znacznik, wyniki = [], akt = -1;
-  const zamknijPodp = () => { podp.hidden = true; sz.setAttribute('aria-expanded', 'false'); akt = -1; };
+  const zamknijPodp = () => { podp.hidden = true; sz.setAttribute('aria-expanded', 'false'); sz.removeAttribute('aria-activedescendant'); akt = -1; };
   const pokazMiejsce = m => { if (!map.hasLayer(mieL)) map.addLayer(mieL); map.setView(m.l.getLatLng(), 18); m.l.openPopup();
     if (window.innerWidth <= 600) document.getElementById('indeks').classList.remove('otwarty'); };
   const idz = w => {
@@ -719,7 +720,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   const zamknijKarte = () => { karta.hidden = true; };
   // czytnik ekranu dostaje wynik wyszukiwania na głos
   const oglos = t => { const o = document.getElementById('ogloszenie'); o.textContent = ''; setTimeout(() => o.textContent = t, 50); };
-  const zaznacz = i => { akt = i; [...podp.children].forEach((li, j) => li.setAttribute('aria-selected', j === i)); if (podp.children[i]) podp.children[i].scrollIntoView({ block: 'nearest' }); };
+  const zaznacz = i => { akt = i; [...podp.children].forEach((li, j) => li.setAttribute('aria-selected', j === i));
+    if (podp.children[i]) { podp.children[i].scrollIntoView({ block: 'nearest' }); sz.setAttribute('aria-activedescendant', podp.children[i].id); } };
   const podpowiedz = () => {
     const q = bez(sz.value); szX.hidden = !sz.value;
     if (!q) return zamknijPodp();
@@ -727,7 +729,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     wyniki = [...baza.filter(w => w.k.startsWith(q)), ...baza.filter(w => !w.k.startsWith(q) && w.k.includes(q))].sort((a, b) => a.r - b.r).slice(0, 12);
     const kod = q.replace(/ /g, '').toUpperCase(); // komórka siatki jak w atlasie: „C4”
     if (siat.features.some(f => f.properties.c === kod)) wyniki.unshift({ t: kod, o: 'komórka siatki', kom: kod });
-    podp.innerHTML = wyniki.length ? wyniki.map((w, i) => `<li role="option" data-i="${i}"><span>${esc(w.t)}</span><small>${esc(w.o)}</small></li>`).join('') : '<li class="brak">Brak wyników. Wpisz samą nazwę ulicy albo otwórz Indeks.</li>';
+    podp.innerHTML = wyniki.length ? wyniki.map((w, i) => `<li role="option" id="podp-${i}" data-i="${i}"><span>${esc(w.t)}</span><small>${esc(w.o)}</small></li>`).join('') : '<li class="brak">Brak wyników. Wpisz samą nazwę ulicy albo otwórz Indeks.</li>';
     podp.hidden = false; sz.setAttribute('aria-expanded', 'true'); akt = -1;
   };
   sz.addEventListener('input', podpowiedz);
@@ -915,7 +917,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     el.zbuduj = () => { el.zbuduj = null;
       Object.keys(obreby).forEach(o => {
         const tu = wpisy.filter(w => w.dz.ob === o).sort((a, b) => a.t.localeCompare(b.t, 'pl', { numeric: true })); if (!tu.length) return;
-        el.insertAdjacentHTML('beforeend', `<div class="lit">${esc(obreby[o])}</div><div class="dz">${tu.map(w => `<span><a data-i="${baza.indexOf(w)}">${esc(w.t)}</a> <small>${w.dz.kom}</small></span>`).join('')}</div>`);
+        el.insertAdjacentHTML('beforeend', `<div class="lit">${esc(obreby[o])}</div><div class="dz">${tu.map(w => `<span><a href="#" data-i="${baza.indexOf(w)}">${esc(w.t)}</a> <small>${w.dz.kom}</small></span>`).join('')}</div>`);
       });
       el.onclick = e => { const a = e.target.closest('a[data-i]'); if (a) idz(baza[+a.dataset.i]); };
     };
@@ -932,7 +934,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     const elM = document.getElementById('indeks-miejsca');
     [...miejsca].sort((a, b) => a.n.localeCompare(b.n, 'pl')).forEach(m => {
       const d = document.createElement('div'), k = wKomorce(m.l.getLatLng()); d.className = 'ul';
-      d.innerHTML = `<a>${esc(m.n)}</a><div class="kw"><span class="k">${k ? `<a data-k="${esc(k)}">${esc(k)}</a>` : '—'}</span><span>${esc(m.o)}</span></div>`;
+      d.innerHTML = `<a href="#">${esc(m.n)}</a><div class="kw"><span class="k">${k ? `<a href="#" data-k="${esc(k)}">${esc(k)}</a>` : '—'}</span><span>${esc(m.o)}</span></div>`;
       d.querySelector('a').onclick = () => pokazMiejsce(m);
       doKomorek(d); elM.appendChild(d);
     });
@@ -940,12 +942,13 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       const l = u[0].toUpperCase();
       if (l !== lit) { lit = l; el.insertAdjacentHTML('beforeend', `<div class="lit">${esc(l)}</div>`); }
       const d = document.createElement('div'); d.className = 'ul';
-      d.innerHTML = `<a>${esc(u)}</a>` + w.map(r => `<div class="kw"><span class="k">${r.k.map(k => `<a data-k="${esc(k)}">${esc(k)}</a>`).join(', ')}</span>${r.nr ? `<span>nr ${esc(r.nr)}</span>` : ''}</div>`).join('');
+      d.innerHTML = `<a href="#">${esc(u)}</a>` + w.map(r => `<div class="kw"><span class="k">${r.k.map(k => `<a href="#" data-k="${esc(k)}">${esc(k)}</a>`).join(', ')}</span>${r.nr ? `<span>nr ${esc(r.nr)}</span>` : ''}</div>`).join('');
       d.querySelector('a').onclick = () => { const c = indeks[u] || indeks[u.replace(/ \(.*\)$/, '')]; if (c) pokaz(c); };
       doKomorek(d); el.appendChild(d);
     });
   });
 });
+document.getElementById('indeks').addEventListener('click', e => { if (e.target.closest('a[href="#"]')) e.preventDefault(); }); // linki Indeksu nie zmieniają adresu
 document.getElementById('btn-indeks').onclick = () => document.getElementById('indeks').classList.toggle('otwarty');
 document.getElementById('zamknij-indeks').onclick = () => document.getElementById('indeks').classList.remove('otwarty');
 const info = document.getElementById('info');
