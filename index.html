@@ -54,7 +54,7 @@
   #legenda.otwarta { display:block; }
   #zamknij-leg { position:sticky; top:0; float:right; margin:-4px -6px 0 8px; border:0; background:var(--surface); color:var(--muted); font-size:26px; line-height:1; padding:2px 8px; border-radius:6px; cursor:pointer; }
   #pokaz-leg { position:absolute; z-index:1000; bottom:22px; left:10px; padding:8px 12px; font-size:14px; border-radius:8px; box-shadow:var(--shadow); }
-  body:has(#legenda.otwarta) #pokaz-leg, body.info-otwarte #pokaz-leg { display:none; }
+  body.info-otwarte #pokaz-leg { display:none; } /* przy otwartej legendzie przycisk zostaje (zamyka ją) */
   @keyframes ul-wej { from { opacity:0; } }
   .ulica { animation:ul-wej .25s ease-out; display:inline-block; background:var(--niebieski); color:#fff; font:600 12px "Bahnschrift","Segoe UI",sans-serif; padding:1px 5px; border-radius:3px; border:1px solid #fff; white-space:nowrap; box-shadow:0 1px 2px rgba(0,0,0,.3); }
   .nr { position:relative; cursor:pointer; font:700 13px "Bahnschrift","Segoe UI",sans-serif; color:#0b2545; text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff; white-space:nowrap; }
@@ -222,7 +222,7 @@
 <div id="top" class="panel map-hud">
   <div class="map-hud-brand">
     <a class="wilga-brand" href="https://wilga.goliat.dev/" aria-label="Osiedle Wilga, strona główna"><img class="wilga-znak" src="znak.svg" alt=""><span>Osiedle Wilga</span></a>
-    <span class="stan" id="stan"></span>
+    <span class="hud-prawa"><span id="pwa-status" class="pwa-status" data-state="checking" role="status"><i aria-hidden="true"></i><span>Sprawdzam kopię offline</span></span><span class="stan" id="stan"></span></span>
   </div>
   <h1 class="sr">Mapa Osiedla Wilga</h1>
   <div class="wiersz">
@@ -232,10 +232,9 @@
     <button id="btn-info" class="btn-secondary" title="O mapie" aria-label="O mapie"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:block"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
   </div>
   <ul id="podp" role="listbox" aria-label="Podpowiedzi" hidden></ul>
-  <p id="offline" role="status">Bez zasięgu: mapa z pamięci telefonu. Ulice, numery, drogi i hydranty działają; podkład i zgłaszanie uwag wrócą z zasięgiem.</p>
+  <p id="offline" role="status">Bez zasięgu: mapa z pamięci telefonu. Ulice, numery, drogi i hydranty działają. Podkład wróci z zasięgiem, a zgłoszone uwagi poczekają w telefonie i wyślą się same.</p>
 </div>
 <nav id="map-tools" aria-label="Status i pliki mapy">
-  <span id="pwa-status" class="pwa-status" data-state="checking" role="status"><i aria-hidden="true"></i><span>Sprawdzam kopię offline</span></span>
   <a href="atlas-a3.pdf" target="_blank" rel="noopener">Atlas A3</a>
   <a href="wilga-osmand.gpx" download>GPX OsmAnd</a>
 </nav>
@@ -356,7 +355,7 @@ const POI = { gastronomia: ['#e07b00', '🍴', 'restauracja / bar'], osrodek: ['
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const get = n => fetch('data/' + n + '.geojson').then(r => r.json());
 
-fetch('data/stan.json').then(r => r.json()).then(s => document.getElementById('stan').textContent = 'stan na ' + s.stan_na).catch(() => {});
+fetch('data/stan.json').then(r => r.json()).then(s => { const [r, m, d] = s.stan_na.split('-'); document.getElementById('stan').textContent = `stan ${d}.${m}.${r}`; }).catch(() => {}); // krótko, mieści się obok nazwy na telefonie
 // kopia mapy w telefonie (sw.js): bez połączenia działa wszystko poza podkładami i zgłaszaniem uwag
 const pwaStatus = document.getElementById('pwa-status');
 const ustawStatusPwa = state => {
