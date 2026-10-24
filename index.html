@@ -68,7 +68,11 @@
   .karta-wyniku .k { display:inline-block; margin-top:4px; padding:1px 7px; border-radius:5px; background:var(--surface-2); font-weight:700; }
   .karta-wyniku .dr { display:flex; align-items:center; gap:6px; margin-top:4px; }
   .karta-wyniku .dr i { flex:none; width:22px; height:0; border-top:5px solid; border-radius:3px; }
-  .karta-wyniku .kopiuj { display:block; margin-top:8px; min-height:36px; padding:0 12px; border:1px solid var(--border-strong); border-radius:7px; background:var(--surface); color:var(--text); font:600 14px var(--font); cursor:pointer; }
+  .karta-wyniku .dymek-akcje { display:flex; gap:6px; margin-top:8px; }
+  .karta-wyniku .prowadz { display:inline-flex; align-items:center; min-height:36px; padding:0 14px; border-radius:7px; background:var(--wilga); color:#fff !important; font:700 14px var(--font); text-decoration:none; }
+  .karta-wyniku .prowadz:hover { background:var(--wilga-hover); }
+  @media (pointer: coarse) { .karta-wyniku .prowadz { min-height:44px; } }
+  .karta-wyniku .kopiuj { display:block; margin-top:0; min-height:36px; padding:0 12px; border:1px solid var(--border-strong); border-radius:7px; background:var(--surface); color:var(--text); font:600 14px var(--font); cursor:pointer; }
   .karta-wyniku .kopiuj:hover { background:var(--surface-2); }
   @media (pointer: coarse) { .karta-wyniku .kopiuj { min-height:44px; } }
   .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
@@ -660,11 +664,18 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   };
   // tekst dla dyspozytora: wklejany do SMS-a lub komunikatora, z linkiem otwierającym mapę z punktem
   const tekstKopii = (ll, tytul) => `${tytul}, komórka ${wKomorce(ll) || '—'}, GPS ${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}\n${location.origin}${location.pathname}?pin=${ll.lat.toFixed(5)},${ll.lng.toFixed(5)}#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
+  // „Prowadź”: domyślna aplikacja nawigacyjna urządzenia. Android: geo: (Google Maps, OsmAnd… albo okno wyboru),
+  // iPhone/iPad: Mapy Apple, komputer: trasa w Google Maps w przeglądarce
+  const linkNawigacji = (ll, nazwa) => { const w = `${ll.lat.toFixed(6)},${ll.lng.toFixed(6)}`;
+    if (/Android/i.test(navigator.userAgent)) return `geo:${w}?q=${w}(${encodeURIComponent(nazwa)})`;
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return `https://maps.apple.com/?daddr=${w}&dirflg=d`;
+    return `https://www.google.com/maps/dir/?api=1&destination=${w}&travelmode=driving`; };
+  const przyciskProwadz = (ll, nazwa, klasa) => `<a class="${klasa}" href="${esc(linkNawigacji(ll, nazwa))}" target="_blank" rel="noopener">Prowadź</a>`;
   // dymek po kliknięciu w mapę (numer domu, budynek)
   const kartaWyniku = (ll, tytulHtml, tytul) => { const kom = wKomorce(ll), d = najblizszaDroga(ll);
     return `<div class="karta-wyniku">${tytulHtml}<br><span class="k">komórka ${esc(kom || '—')}</span>`
       + (d ? `<div class="dr"><i style="border-color:${KOLOR[d.k] || '#9aa0a6'}"></i><span>${esc(d.n || 'droga bez nazwy')}: ${OPIS_DROGI[d.k] || ''}${d.m > 25 ? `, ok. ${d.m} m` : ''}</span></div>` : '')
-      + `<button type="button" class="kopiuj" data-kopia="${esc(tekstKopii(ll, tytul))}">Kopiuj położenie</button></div>`; };
+      + `<div class="dymek-akcje">${przyciskProwadz(ll, tytul, 'prowadz')}<button type="button" class="kopiuj" data-kopia="${esc(tekstKopii(ll, tytul))}">Kopiuj położenie</button></div></div>`; };
   // karta wyniku wyszukiwania (dół ekranu): zamiast dymku, żeby nie zasłaniać mapy dwa razy
   const karta = document.getElementById('selection-card');
   const pokazKarte = (ll, tytulHtml, tytul) => { const kom = wKomorce(ll), d = najblizszaDroga(ll), hydrant = najblizszyHydrant(ll);
@@ -673,9 +684,14 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       + `<div class="selection-address">${tytulHtml}</div><div class="selection-meta">`
       + (d ? `<div class="selection-road"><i style="border-color:${KOLOR[d.k] || '#eab308'}"></i><span>${esc(d.n || 'droga bez nazwy')}: ${OPIS_DROGI[d.k] || ''}${d.m > 25 ? `, ok. ${d.m} m` : ''}</span></div>` : '')
       + (hydrant ? `<div class="selection-water"><b>WODA</b><span>Najbliższy sprawdzony hydrant: ok. ${hydrant.meters} m${hydrant.cell ? ` (${esc(hydrant.cell)})` : ''}</span></div>` : '')
-      + `</div><div class="selection-actions"><button type="button" class="kopiuj selection-copy" data-kopia="${esc(tekstKopii(ll, tytul))}">Kopiuj położenie</button>`
+      + `</div>${przyciskProwadz(ll, tytul, 'selection-nav')}<div class="selection-actions"><button type="button" class="kopiuj selection-copy" data-kopia="${esc(tekstKopii(ll, tytul))}">Kopiuj położenie</button>`
       + `<button class="selection-report" type="button" data-lat="${ll.lat}" data-lng="${ll.lng}">Zgłoś uwagę do punktu</button></div>`;
     karta.hidden = false;
+    // punkt nie może zniknąć pod kartą: przesuwamy mapę, żeby stał między górnym panelem a kartą
+    const odslon = () => { if (karta.hidden) return; const k = karta.getBoundingClientRect(), g = document.getElementById('top').getBoundingClientRect(), m = map.getContainer().getBoundingClientRect();
+      const y = m.top + map.latLngToContainerPoint(ll).y, x = m.left + map.latLngToContainerPoint(ll).x;
+      if (x > k.left - 30 && x < k.right + 30 && y > k.top - 50) map.panBy([0, y - (g.bottom + k.top) / 2], { animate: false }); };
+    map.once('moveend', odslon); requestAnimationFrame(() => { if (!map._animatingZoom && !(map._panAnim && map._panAnim._inProgress)) odslon(); }); // po animacji przybliżania
     dzialkaW(ll).then(t => { const el = karta.querySelector('.selection-dz'); if (t && el) el.innerHTML = ' · ' + t.replace(/<\/?b>/g, '').replace('Działka nr', 'DZ.'); });
   };
   const zamknijKarte = () => { karta.hidden = true; };
