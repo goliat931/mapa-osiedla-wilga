@@ -212,3 +212,7 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 @media (prefers-color-scheme: dark) {
   .selection-sector, #pokaz-leg, .leaflet-bar a, .leaflet-bar a:hover, .leaflet-control-layers, .selection-address { color: #b5ede7; }
 }
+
+/* prawy dolny róg: kompas (pojawia się po obróceniu) zawsze nad przyciskiem położenia, który nie zmienia miejsca */
+.leaflet-bottom.leaflet-right { display: flex; flex-direction: column; align-items: flex-end; }
+.leaflet-bottom.leaflet-right .polnoc { order: -1; }
