@@ -346,7 +346,7 @@ if (pinPoint) map.setView(pinPoint, 17);
 else if (h.length === 3 && h.every(isFinite)) map.setView([h[1], h[2]], h[0]); else map.setView([51.838, 21.418], 14);
 if (pinPoint) {
   const pinMarker = L.circleMarker(pinPoint, { radius: 12, color: '#dc2626', weight: 3, fillOpacity: .18 })
-    .bindPopup('Punkt ze zgłoszenia').addTo(map);
+    .bindPopup('Punkt ze zgłoszenia', { bezZglos: true }).addTo(map);
   map.whenReady(() => pinMarker.openPopup());
 }
 map.on('moveend', () => { const c = map.getCenter(), url = new URL(location.href);
@@ -809,14 +809,14 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
       URL.revokeObjectURL(img.src); ok(c.toDataURL('image/jpeg', .82)); };
     img.onerror = () => zle(new Error('Nie udało się odczytać zdjęcia.')); img.src = URL.createObjectURL(plik); });
-  const zglosW = ll => {
+  const zglosW = (ll, { typ, obiekt } = {}) => {
     document.body.classList.remove('tryb-zglos');
     const kom = wKomorce(ll), ul = najblizsza(ll);
     const link = `${location.origin}${location.pathname}?pin=${ll.lat.toFixed(5)},${ll.lng.toFixed(5)}#18/${ll.lat.toFixed(5)}/${ll.lng.toFixed(5)}`;
     const miejsce = `${ul ? ul[0] + (ul[1] > 15 ? ` (ok. ${ul[1]} m od ulicy)` : '') : 'brak ulicy w pobliżu'}, komórka ${kom || '—'}, GPS ${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}`;
     const f = document.createElement('form'); f.className = 'zglos-popup';
-    f.innerHTML = `<p><b>${esc(ul ? ul[0] : 'Miejsce bez nazwy ulicy')}</b>, komórka ${esc(kom || '—')}</p>
-      <label>Czego dotyczy<select name="typ">${TYPY_UWAG.map(t => `<option>${esc(t)}</option>`).join('')}</select></label>
+    f.innerHTML = `${obiekt ? `<p>Dotyczy: <b>${esc(obiekt)}</b></p>` : ''}<p><b>${esc(ul ? ul[0] : 'Miejsce bez nazwy ulicy')}</b>, komórka ${esc(kom || '—')}</p>
+      <label>Czego dotyczy<select name="typ">${TYPY_UWAG.map(t => `<option${t === typ ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></label>
       <label>Opis<textarea name="opis" rows="4" maxlength="2000" required placeholder="Co jest nie tak i jak jest w rzeczywistości?"></textarea></label>
       <label>Zdjęcie lub zrzut ekranu (nieobowiązkowo)<input type="file" name="plik" accept="image/*"></label>
       <label class="aparat">📷 Zrób zdjęcie<input type="file" name="aparat" accept="image/*" capture="environment"></label>
@@ -902,7 +902,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       const o = L.circleMarker(h, { radius: 20, color: '#0369a1', weight: 4, fill: false, interactive: false }).addTo(map); setTimeout(() => map.removeLayer(o), 6000);
       return; }
     const report = e.target.closest('.selection-report');
-    if (report) { map.closePopup(); document.getElementById('selection-card').hidden = true; zglosW(L.latLng(Number(report.dataset.lat), Number(report.dataset.lng))); return; }
+    if (report) { map.closePopup(); document.getElementById('selection-card').hidden = true;
+      zglosW(L.latLng(Number(report.dataset.lat), Number(report.dataset.lng)), { typ: report.dataset.typ, obiekt: report.dataset.obiekt }); return; }
     const b = e.target.closest('.kopiuj'); if (!b) return;
     const t = b.dataset.kopia;
     (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject())
@@ -910,6 +911,17 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
       .catch(() => { powiedz(t); }); // bez dostępu do schowka: tekst do przepisania lub zaznaczenia
   });
   let ja, jaKolo, poUstaleniu;
+  // każdy dymek dostaje przycisk „Zgłoś uwagę” z miejscem kliknięcia; typ uwagi podpowiada się z rodzaju obiektu
+  const wstawZglos = p => {
+    const el = p._contentNode, ll = p.getLatLng();
+    if (!el || !ll || p.options.bezZglos || el.querySelector('.selection-report, .zglos-popup')) return;
+    const tekst = el.textContent, obiekt = (el.querySelector('b') || {}).textContent || '';
+    const typ = /hydrant|zbiornik/i.test(tekst) ? 'Hydrant lub zbiornik wody' : /stromy podjazd/i.test(tekst) ? 'Droga nieprzejezdna lub trudny dojazd'
+      : Object.values(OPIS_DROGI).some(o => tekst.includes(o)) ? 'Droga przejezdna, a na mapie oznaczona inaczej' : '';
+    el.insertAdjacentHTML('beforeend', `<div class="dymek-akcje karta-wyniku"><button type="button" class="selection-report dymek-zglos" data-lat="${ll.lat}" data-lng="${ll.lng}" data-typ="${esc(typ)}" data-obiekt="${esc(obiekt)}">Zgłoś uwagę</button></div>`);
+  };
+  const tresciDymku = L.Popup.prototype._updateContent;
+  L.Popup.prototype._updateContent = function () { tresciDymku.call(this); wstawZglos(this); };
   const lok = new (L.Control.extend({ onAdd() {
     const d = L.DomUtil.create('div', 'leaflet-bar lok');
     d.innerHTML = '<a role="button" href="#" title="Pokaż moje położenie" aria-label="Pokaż moje położenie"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg></a>';

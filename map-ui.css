@@ -331,3 +331,4 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 /* panel „O mapie” pod nowym, wyższym paskiem (nazwa + wyszukiwanie) */
 #info { top: 128px; max-height: calc(100dvh - 144px); }
 @media (max-width: 760px) { #info { top: 118px; max-height: calc(100dvh - 128px); } }
+.dymek-akcje.karta-wyniku { display: flex; margin-top: 8px; }
