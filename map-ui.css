@@ -261,3 +261,73 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 #zamknij-leg, #skrot-x { min-width: 44px; min-height: 44px; }
 @media (pointer: coarse) { .zglos-popup input[type=file] { min-height: 44px; } }
 @media (prefers-color-scheme: dark) { .leaflet-marker-icon img[src*="strzalka_spadek"] { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 2px rgba(255, 255, 255, .8)); } }
+
+/* ===== Mały pasek u góry i przyciski mapy (wzór: wersja z AI Studio, 25.10.2026) =====
+   Dwie „pigułki” zamiast jednego panelu: nazwa ze statusem i przyciskami, pod nią samo wyszukiwanie.
+   Przyciski mapy po prawej: osobne zaokrąglone kafelki z ikonami, kompas zawsze widoczny. */
+:root { --hud-r: 16px; --hud-h: 46px; }
+#top.map-hud { padding: 0; border: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; display: grid; gap: 8px; width: min(520px, calc(100vw - 32px)); }
+#top .map-hud-brand, #top .wiersz .pole, #top #podp, #top #offline {
+  border: 1px solid var(--glass-border); border-radius: var(--hud-r); background: var(--glass-strong); box-shadow: var(--hud-shadow);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+#top .map-hud-brand { min-height: 0; padding: 4px 4px 4px 12px; gap: 8px; }
+#top .map-hud-brand .wilga-brand { font-size: 14px; white-space: nowrap; }
+#top .hud-prawa { margin-left: auto; }
+.hud-akcje { display: flex; align-items: center; gap: 4px; flex: none; }
+.hud-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 38px; height: 38px; padding: 0 10px; border: 0; border-radius: 12px;
+  background: transparent; color: var(--pine); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: background .15s, transform .1s; }
+.hud-btn svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.hud-btn:hover { background: rgba(19, 78, 74, .09); }
+.hud-btn:active { transform: scale(.95); }
+.hud-btn.zglos { background: var(--pine); color: #fff; }
+.hud-btn.zglos:hover { background: var(--pine-hover); }
+#top .wiersz { display: block; }
+#top .wiersz .pole { position: relative; display: flex; align-items: center; transition: border-color .15s, box-shadow .15s; }
+#top .wiersz .pole:focus-within { border-color: var(--pine); box-shadow: var(--hud-shadow), 0 0 0 3px rgba(19, 78, 74, .18); }
+#top .lupa { position: absolute; left: 14px; width: 18px; height: 18px; fill: none; stroke: #657572; stroke-width: 2.2; stroke-linecap: round; pointer-events: none; }
+#top #szukaj { width: 100%; height: var(--hud-h); padding: 0 42px 0 42px; border: 0; border-radius: var(--hud-r); background: transparent; font-size: 15px; }
+#top #szukaj:focus-visible { outline: none; }
+#top #podp { margin: 0; }
+#top #offline { margin: 0; }
+
+/* przyciski mapy: osobne kafelki z ikonami */
+.leaflet-bottom.leaflet-right { gap: 8px; }
+.leaflet-bottom.leaflet-right .leaflet-control { margin: 0 !important; }
+.leaflet-bar, .leaflet-control-layers { border-radius: var(--hud-r) !important; overflow: hidden; box-shadow: var(--hud-shadow) !important; }
+.leaflet-bar a, .leaflet-touch .leaflet-bar a { width: 46px; height: 46px; line-height: 46px; display: grid; place-items: center; border-radius: 0 !important; transition: background .15s; }
+.leaflet-bar a:active { background: rgba(19, 78, 74, .14); }
+.leaflet-control-zoom a { font-size: 0 !important; }
+.leaflet-control-zoom a::before { content: ''; width: 20px; height: 20px; background: currentColor;
+  -webkit-mask: var(--ikona) center / contain no-repeat; mask: var(--ikona) center / contain no-repeat; }
+.leaflet-control-zoom-in { --ikona: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E"); }
+.leaflet-control-zoom-out { --ikona: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E"); }
+.leaflet-bar.lok a svg, .leaflet-bar.polnoc a svg { width: 22px; height: 22px; }
+.leaflet-bar.polnoc a { position: relative; }
+.leaflet-bar.polnoc svg { transition: transform .12s ease-out; }
+.leaflet-bar.polnoc.obrocona { border-color: #d97706 !important; box-shadow: var(--hud-shadow), 0 0 0 2px rgba(217, 119, 6, .35) !important; }
+.leaflet-bar.polnoc .stopnie { position: absolute; bottom: 3px; left: 0; right: 0; font-size: 9.5px; font-weight: 800; line-height: 1; color: #b45309; text-align: center; }
+.leaflet-touch .leaflet-control-layers-toggle, .leaflet-control-layers-toggle { width: 46px; height: 46px; background-size: 24px; }
+@media (prefers-color-scheme: dark) {
+  #top .lupa { stroke: #aabbb7; }
+  .hud-btn { color: #b5ede7; }
+  .hud-btn:hover { background: rgba(181, 237, 231, .1); }
+  .hud-btn.zglos { color: #fff; border: 1px solid #3d8a83; }
+  .leaflet-bar.polnoc .stopnie { color: #fbbf24; }
+}
+@media (pointer: coarse), (max-width: 760px) {
+  .leaflet-bar a, .leaflet-touch .leaflet-bar a { width: 48px; height: 48px; line-height: 48px; }
+  .leaflet-touch .leaflet-control-layers-toggle { width: 48px; height: 48px; }
+  .leaflet-bottom.leaflet-right .leaflet-control { margin-bottom: 0; }
+  .hud-btn { min-width: 42px; height: 42px; }
+}
+@media (max-width: 760px) {
+  #top.map-hud { top: 10px; left: 10px; width: calc(100vw - 20px); padding: 0; }
+  #top .map-hud-brand { padding-left: 10px; min-height: 0; }
+  #top .hud-prawa .stan { display: none; } /* data jest w „O mapie” */
+  .hud-btn .etyk { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .leaflet-top.leaflet-left, .leaflet-top.leaflet-right, #zglos-pasek { top: 118px; }
+}
+@media (prefers-reduced-motion: reduce) { .hud-btn, .leaflet-bar.polnoc svg { transition: none; } }
+/* panel „O mapie” pod nowym, wyższym paskiem (nazwa + wyszukiwanie) */
+#info { top: 128px; max-height: calc(100dvh - 144px); }
+@media (max-width: 760px) { #info { top: 118px; max-height: calc(100dvh - 128px); } }
