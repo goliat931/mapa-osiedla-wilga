@@ -41,6 +41,7 @@
   .przelacz { min-height: 44px; margin-top: 16px; padding: 0 14px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; cursor: pointer; }
   .info { margin-top: 28px; padding: 14px 16px; border-radius: 10px; background: var(--surface-2); font-size: 15px; line-height: 1.5; }
   .info b { display: block; margin-bottom: 4px; }
+  .zrodlo { font-size: 15px; line-height: 1.5; margin: 0 0 8px; }
   .pszok { margin-top: 32px; padding: 18px 20px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); }
   .pszok h2 { margin: 0 0 6px; font-size: 21px; }
   .pszok .termin { margin: 0 0 4px; font-size: 17px; line-height: 1.45; }
@@ -80,6 +81,7 @@
     Na iPhonie stuknij przycisk i wybierz „Subskrybuj”. Na Androidzie (Kalendarz Google) otwórz calendar.google.com, wybierz
     „Inne kalendarze”, potem „Z adresu URL” i wklej adres: <code id="adres">data/odpady.ics</code>.
     Plik do pobrania dodaje terminy jednorazowo, bez aktualizacji.</p>
+  <p class="zrodlo">Terminy według harmonogramu PreZero: <a id="pdf" href="https://prezero.com/pl/asset/download/35257/pz_media_file_file/HARMONOGRAM%2520WILGA%25202026%2520.pdf?version=2">harmonogram Wilga 2026 (PDF)</a>, <a href="https://prezero.com/pl/uslugi/mieszkancy/harmonogramy">wszystkie harmonogramy PreZero</a>.</p>
   <div id="lista"></div>
   <button class="przelacz" id="przelacz" type="button" aria-pressed="false">Pokaż też minione terminy</button>
   <section class="pszok" id="pszok" hidden aria-labelledby="pszok-tytul"></section>
