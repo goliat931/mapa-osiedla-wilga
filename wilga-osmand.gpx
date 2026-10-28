@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" creator="mapa-osiedle-wilga.goliat.dev" xmlns="http://www.topografix.com/GPX/1/1" xmlns:osmand="https://osmand.net">
-<metadata><name>Mapa Osiedla Wilga dla służb (2026-10-23)</name></metadata>
+<metadata><name>Mapa Osiedla Wilga dla służb (2026-10-28)</name></metadata>
 <wpt lat="51.819610" lon="21.410730"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.843022" lon="21.416479"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.841600" lon="21.412535"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
@@ -91,6 +91,8 @@
 <wpt lat="51.827480" lon="21.409070"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.853894" lon="21.414365"><name>Zbiornik wodny</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.844010" lon="21.394880"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
+<wpt lat="51.840833" lon="21.412585"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
+<wpt lat="51.843180" lon="21.393299"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.839771" lon="21.408784"><name>Miejsce do zawracania</name><extensions><osmand:color>#7a3db8</osmand:color></extensions></wpt>
 <wpt lat="51.843437" lon="21.413360"><name>Miejsce do zawracania</name><extensions><osmand:color>#7a3db8</osmand:color></extensions></wpt>
 <wpt lat="51.843855" lon="21.435921"><name>Miejsce do zawracania</name><extensions><osmand:color>#7a3db8</osmand:color></extensions></wpt>
@@ -122,6 +124,7 @@
 <wpt lat="51.832093" lon="21.410701"><name>Dawny ośrodek Z.U.D. (opuszczony), Bolka i Lolka</name><extensions><osmand:color>#555555</osmand:color></extensions></wpt>
 <wpt lat="51.843550" lon="21.445540"><name>Kapliczka</name><extensions><osmand:color>#555555</osmand:color></extensions></wpt>
 <wpt lat="51.852500" lon="21.428800"><name>Szlaban Nadleśnictwa Garwolin</name><extensions><osmand:color>#555555</osmand:color></extensions></wpt>
+<wpt lat="51.825661" lon="21.396197"><name>Ośrodek buddyzmu tybetańskiego Yungdrung Bon „Ligmincha Polska”, Al. Huberta 4</name><extensions><osmand:color>#555555</osmand:color></extensions></wpt>
 <wpt lat="51.843599" lon="21.431453"><name>Lipowa 12</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.821582" lon="21.401946"><name>Saperów 1A</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.85953" lon="21.44509"><name>Cyganówka 70</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
@@ -1692,10 +1695,10 @@
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.830941" lon="21.389458"/><trkpt lat="51.830443" lon="21.387415"/></trkseg>
 </trk>
-<trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>droga bez nazwy</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.830147" lon="21.400531"/><trkpt lat="51.830207" lon="21.401119"/></trkseg>
 </trk>
-<trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trk><name>droga bez nazwy</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.830207" lon="21.401119"/><trkpt lat="51.830292" lon="21.401933"/></trkseg>
 </trk>
 <trk><name>Czapli</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
@@ -2273,5 +2276,8 @@
 </trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.817594" lon="21.433523"/><trkpt lat="51.817438" lon="21.433421"/><trkpt lat="51.817369" lon="21.433365"/><trkpt lat="51.816944" lon="21.432602"/></trkseg>
+</trk>
+<trk><name>Saperów</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
+<trkseg><trkpt lat="51.824035" lon="21.394266"/><trkpt lat="51.824050" lon="21.394380"/><trkpt lat="51.824100" lon="21.394757"/><trkpt lat="51.824121" lon="21.394895"/><trkpt lat="51.824133" lon="21.395067"/><trkpt lat="51.824135" lon="21.395095"/><trkpt lat="51.824159" lon="21.395459"/><trkpt lat="51.824198" lon="21.396023"/></trkseg>
 </trk>
 </gpx>

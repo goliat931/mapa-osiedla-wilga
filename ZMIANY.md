@@ -82,3 +82,7 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-23 | Uwaga nr 96 | Dorysowana droga gruntowa wg BDOT10k (E8, ok. 170 m) od Dzięciołów na południe do drogi przy granicy osiedla, na żółto; razem z Dzięciołów daje ciągły przejazd od 801. |
 | 2026-10-23 | Uwaga nr 98 | Na zielono Dzięciołów od 801 z przedłużeniem na wschód do drogi leśnej oraz droga leśna od Dzięciołów do Czerwonego Kapturka (E8–G6): szeroka, w miarę płaska, przejezdna dla ciężkiego wozu. |
 | 2026-10-23 | Dawid Karczewski (mieszkaniec) | Hydrant przy Szpaka, obok działki 2093 (B3), potwierdzony w terenie. W GESUT zapisany jako dwie zasuwy „w” na odgałęzieniu od przewodu, dlatego algorytm go nie wykrył (jak przy uwagach nr 3, 4 i 30). |
+| 2026-10-28 | Uwagi nr 99, 103 | Nowe hydranty: przy Poziomkowej (D4, zdjęcie) i przy Szpaka, ok. 60 m od świetlicy (B3). Oba przy ogrodzeniu; pinezki zgłoszeń były niedokładne, więc punkty przesunięte o ok. 2 m na koniec przewodu wodociągowego według GESUT. |
+| 2026-10-28 | Uwaga nr 100 | Bezimienny odcinek od Zięby w głąb ośrodka Politechniki (C6, ok. 100 m, zgodny z BDOT10k) z żółtego na czerwony: za bramą jest chodnik, tylko pieszo (zdjęcie). |
+| 2026-10-28 | Uwaga nr 101 | Dorysowana odnoga Saperów od 801 do Czapli (B7, ok. 120 m, żwir), przebieg według BDOT10k, na żółto. |
+| 2026-10-28 | Uwaga nr 102 | Nowy punkt charakterystyczny: ośrodek buddyzmu tybetańskiego Yungdrung Bon „Ligmincha Polska”, Al. Huberta 4 (B7), także w wyszukiwarce. |
