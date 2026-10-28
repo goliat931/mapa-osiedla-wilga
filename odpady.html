@@ -41,6 +41,24 @@
   .przelacz { min-height: 44px; margin-top: 16px; padding: 0 14px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; cursor: pointer; }
   .info { margin-top: 28px; padding: 14px 16px; border-radius: 10px; background: var(--surface-2); font-size: 15px; line-height: 1.5; }
   .info b { display: block; margin-bottom: 4px; }
+  .pszok { margin-top: 32px; padding: 18px 20px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); }
+  .pszok h2 { margin: 0 0 6px; font-size: 21px; }
+  .pszok .termin { margin: 0 0 4px; font-size: 17px; line-height: 1.45; }
+  .pszok .termin b { color: var(--pine); }
+  .pszok p { margin: 0 0 12px; line-height: 1.5; }
+  .pszok h3 { font-size: 17px; margin: 18px 0 8px; }
+  .pszok ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 16px; line-height: 1.4; }
+  .pszok li { display: grid; grid-template-columns: 36px 1fr; column-gap: 10px; align-items: start; }
+  .pszok li small { grid-column: 2; }
+  .pszok .pikt { position: relative; grid-row: span 2; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; font-size: 21px; line-height: 1; background: var(--surface-2); }
+  .pszok .tak .pikt { background: color-mix(in srgb, var(--pine) 14%, transparent); }
+  .pszok .nie .pikt { background: color-mix(in srgb, #c0392b 12%, transparent); }
+  .pszok .pikt b { position: absolute; right: -4px; bottom: -4px; display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; background: #c0392b; color: #fff; font-size: 11px; }
+  .pszok h3 { display: flex; align-items: center; gap: 6px; }
+  .pszok a { white-space: nowrap; }
+  .pszok small { display: block; color: var(--muted); font-size: 14.5px; }
+  @media (min-width: 640px) { .pszok .kolumny { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; } }
+  @media (prefers-color-scheme: dark) { .pszok .nie li::before { color: #f08a7e; } }
   @media (max-width: 480px) { .miesiac > li { grid-template-columns: 1fr; gap: 4px; } }
 </style>
 </head>
@@ -64,6 +82,7 @@
     Plik do pobrania dodaje terminy jednorazowo, bez aktualizacji.</p>
   <div id="lista"></div>
   <button class="przelacz" id="przelacz" type="button" aria-pressed="false">Pokaż też minione terminy</button>
+  <section class="pszok" id="pszok" hidden aria-labelledby="pszok-tytul"></section>
   <div class="info"><b>Ważne</b><span id="info"></span></div>
 </main>
 <script>
@@ -98,6 +117,22 @@ function rysuj() {
     html += `<li class="${d < dzis ? 'minal' : ''}"><span class="d">${dt.getDate()}.${String(dt.getMonth() + 1).padStart(2, '0')}<small>${DNI[dt.getDay()]}</small></span><ul class="frakcje">${chipy(kody)}</ul></li>`;
   }
   document.getElementById('lista').innerHTML = html + (mies ? '</ul>' : '');
+  pszok(dzis, dni);
+}
+function pszok(dzis, dni) {
+  const P = dane.pszok, el = document.getElementById('pszok');
+  if (!P) return;
+  const nast = dni.find(([d, k]) => d >= dzis && k.includes('pszok'));
+  const kiedy = nast ? (d => `${DNI[d.getDay()]}, ${d.getDate()} ${['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'][d.getMonth()]}`)(lokalnie(nast[0])) : 'termin jeszcze nieznany';
+  el.innerHTML = `<h2 id="pszok-tytul">PSZOK: punkt selektywnej zbiórki odpadów</h2>
+    <p class="termin">Najbliższy termin: <b>${esc(kiedy)}</b>, godz. ${esc(P.godziny)}</p>
+    <p>${esc(P.adres)}. Pytania: Urząd Gminy Wilga, tel. <a href="tel:+48${P.telefon.replace(/\D/g, '')}">${esc(P.telefon)}</a>.</p>
+    <div class="kolumny">
+      <div><h3>✅ Przyjmuje</h3><ul class="tak">${P.przyjmuje.map(([ik, x]) => `<li><span class="pikt" aria-hidden="true">${ik}</span>${esc(x)}</li>`).join('')}</ul></div>
+      <div><h3>⛔ Nie przyjmuje</h3><ul class="nie">${P.nie_przyjmuje.map(([ik, co, gdzie]) => `<li><span class="pikt" aria-hidden="true">${ik}<b>✕</b></span>${esc(co)}${gdzie ? `<small>${esc(gdzie)}</small>` : ''}</li>`).join('')}</ul>
+        <h3>Zasady</h3><ul class="zasady">${P.zasady.map(([ik, x]) => `<li><span class="pikt" aria-hidden="true">${ik}</span>${esc(x)}</li>`).join('')}</ul></div>
+    </div>`;
+  el.hidden = false;
 }
 document.getElementById('przelacz').onclick = e => { minione = !minione; e.target.setAttribute('aria-pressed', minione); e.target.textContent = minione ? 'Ukryj minione terminy' : 'Pokaż też minione terminy'; rysuj(); };
 fetch('data/odpady.json').then(r => r.json()).then(j => {

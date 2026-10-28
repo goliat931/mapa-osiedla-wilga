@@ -195,5 +195,110 @@
   "2026-12-08": [
    "tekstylia"
   ]
+ },
+ "pszok": {
+  "adres": "Celejów 117 (przy oczyszczalni ścieków)",
+  "godziny": "8:00–15:00",
+  "telefon": "25 629 93 39",
+  "przyjmuje": [
+   [
+    "📰",
+    "Papier i tektura"
+   ],
+   [
+    "🥫",
+    "Metal i tworzywa sztuczne"
+   ],
+   [
+    "🍾",
+    "Szkło"
+   ],
+   [
+    "🧃",
+    "Opakowania wielomateriałowe"
+   ],
+   [
+    "🔌",
+    "Zużyty sprzęt elektryczny i elektroniczny"
+   ],
+   [
+    "💊",
+    "Przeterminowane leki i chemikalia"
+   ],
+   [
+    "🎨",
+    "Opakowania po farbach i lakierach"
+   ],
+   [
+    "🔋",
+    "Zużyte baterie i akumulatory"
+   ],
+   [
+    "🧱",
+    "Odpady budowlane (najwyżej 2 m³ na rok)"
+   ],
+   [
+    "🛞",
+    "Zużyte opony (najwyżej 4 sztuki na rok)"
+   ],
+   [
+    "🍂",
+    "Bioodpady"
+   ],
+   [
+    "🛋️",
+    "Meble i inne odpady wielkogabarytowe"
+   ],
+   [
+    "👕",
+    "Tekstylia (odzież, obuwie, pościel)"
+   ]
+  ],
+  "nie_przyjmuje": [
+   [
+    "🗑️",
+    "Odpady nieposegregowane",
+    ""
+   ],
+   [
+    "🏚️",
+    "Materiały z azbestem i papa",
+    "Oddaj firmie, która zajmuje się odbiorem i utylizacją takich odpadów."
+   ],
+   [
+    "🚗",
+    "Części samochodowe",
+    "Oddaj do stacji demontażu pojazdów albo innego uprawnionego punktu."
+   ],
+   [
+    "💧",
+    "Odpady w nieszczelnych opakowaniach",
+    ""
+   ],
+   [
+    "🏢",
+    "Odpady z działalności gospodarczej",
+    "Przedsiębiorca sam organizuje odbiór i ma dokumenty przekazania."
+   ],
+   [
+    "🧪",
+    "Opakowania po nawozach i środkach ochrony roślin",
+    "Sklepy, które je sprzedają, często muszą przyjąć puste opakowania."
+   ]
+  ],
+  "zasady": [
+   [
+    "♻️",
+    "Odpady muszą być posegregowane."
+   ],
+   [
+    "🛍️",
+    "Drobne odpady przywieź w workach, łatwiej je rozładować."
+   ],
+   [
+    "🚚",
+    "Transport zapewniasz sam i sam rozładowujesz odpady do właściwych kontenerów."
+   ]
+  ]
  }
 }
