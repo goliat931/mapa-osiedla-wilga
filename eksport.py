@@ -77,6 +77,7 @@ POZA_PRG = [('Lipowa', '12', 21.431453, 51.843599), ('Saperów', '1A', 21.401946
             ('Cyganówka', '183', 21.44386, 51.85955),  # uwaga nr 85: prośba mieszkanki, w PRG brak
             ('Śnieżki', '3', 21.444811, 51.831351),  # uwaga nr 73: tabliczka na bramie (zdjęcie), budynek obok punktu PRG „Śnieżki 4”
             ('Czeremchy', '1M', 21.405706, 51.828551),  # uwaga nr 80
+            ('Wspólna Chata', '9C', 21.401917, 51.835833),  # uwaga nr 110: budynek na płn.-zach. od 9B
             ('Wspólna Chata', '16A', 21.403648, 51.836397),  # uwaga nr 111
             ('Wspólna Chata', '4', 21.407858, 51.836095),  # uwaga nr 114
             ('Wspólna Chata', '5A', 21.406396, 51.83566),  # uwaga nr 113: tabliczka na furtce (zdjęcie), działka 1030

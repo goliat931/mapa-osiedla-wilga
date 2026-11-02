@@ -95,3 +95,5 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-11-02 | Uwagi nr 111, 114 | Nowe adresy: Wspólna Chata 16A i Wspólna Chata 4 (C5). |
 | 2026-11-02 | Uwaga nr 113 | Na działce 1030 zamiast Macierzanki 14 adres Wspólna Chata 5A (C5), według tabliczki na furtce. Punkt PRG Macierzanki 14 usunięty z mapy. |
 | 2026-11-02 | Uwaga nr 116 | Czarny Staw jako zbiornik wodny, punkt poboru wody (B7). |
+| 2026-11-02 | Uwaga nr 110 | Nowy adres Wspólna Chata 9C (C5), budynek na północny zachód od 9B. |
+| 2026-11-02 | Dawid (czat) | Kubusia Puchatka poprawiona według cieniowania terenu, przebieg bliżej faktycznej drogi. Kolory bez zmian. |

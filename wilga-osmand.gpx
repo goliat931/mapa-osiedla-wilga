@@ -132,6 +132,7 @@
 <wpt lat="51.85955" lon="21.44386"><name>Cyganówka 183</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.831351" lon="21.444811"><name>Śnieżki 3</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.828551" lon="21.405706"><name>Czeremchy 1M</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
+<wpt lat="51.835833" lon="21.401917"><name>Wspólna Chata 9C</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.836397" lon="21.403648"><name>Wspólna Chata 16A</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.836095" lon="21.407858"><name>Wspólna Chata 4</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.83566" lon="21.406396"><name>Wspólna Chata 5A</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
@@ -512,13 +513,13 @@
 <trkseg><trkpt lat="51.829914" lon="21.395149"/><trkpt lat="51.831475" lon="21.396412"/><trkpt lat="51.831599" lon="21.396513"/></trkseg>
 </trk>
 <trk><name>Kubusia Puchatka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.831599" lon="21.396513"/><trkpt lat="51.833459" lon="21.398036"/><trkpt lat="51.833590" lon="21.398139"/><trkpt lat="51.834743" lon="21.399053"/><trkpt lat="51.835044" lon="21.399291"/><trkpt lat="51.836874" lon="21.400753"/><trkpt lat="51.836909" lon="21.400790"/></trkseg>
+<trkseg><trkpt lat="51.831599" lon="21.396514"/><trkpt lat="51.833459" lon="21.398037"/><trkpt lat="51.833730" lon="21.398330"/><trkpt lat="51.834030" lon="21.398593"/><trkpt lat="51.834491" lon="21.398951"/><trkpt lat="51.834713" lon="21.399108"/><trkpt lat="51.834934" lon="21.399280"/><trkpt lat="51.835191" lon="21.399468"/><trkpt lat="51.835590" lon="21.399758"/><trkpt lat="51.835909" lon="21.399985"/><trkpt lat="51.836874" lon="21.400752"/><trkpt lat="51.836909" lon="21.400791"/></trkseg>
 </trk>
 <trk><name>Kubusia Puchatka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.836909" lon="21.400790"/><trkpt lat="51.837585" lon="21.401512"/></trkseg>
 </trk>
 <trk><name>Kubusia Puchatka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.837585" lon="21.401512"/><trkpt lat="51.837764" lon="21.401703"/><trkpt lat="51.838736" lon="21.402618"/><trkpt lat="51.840130" lon="21.403995"/></trkseg>
+<trkseg><trkpt lat="51.837584" lon="21.401512"/><trkpt lat="51.837764" lon="21.401703"/><trkpt lat="51.837821" lon="21.401757"/><trkpt lat="51.837993" lon="21.401897"/><trkpt lat="51.838150" lon="21.402166"/><trkpt lat="51.838308" lon="21.402349"/><trkpt lat="51.838505" lon="21.402577"/><trkpt lat="51.838650" lon="21.402759"/><trkpt lat="51.838809" lon="21.402920"/><trkpt lat="51.839036" lon="21.403041"/><trkpt lat="51.839199" lon="21.403195"/><trkpt lat="51.839516" lon="21.403532"/><trkpt lat="51.840130" lon="21.403994"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.823700" lon="21.394405"/><trkpt lat="51.823550" lon="21.394280"/><trkpt lat="51.823231" lon="21.394080"/><trkpt lat="51.823142" lon="21.394047"/><trkpt lat="51.823096" lon="21.394050"/><trkpt lat="51.823039" lon="21.394078"/><trkpt lat="51.822990" lon="21.394134"/><trkpt lat="51.822945" lon="21.394211"/><trkpt lat="51.822907" lon="21.394320"/><trkpt lat="51.822887" lon="21.394426"/><trkpt lat="51.822878" lon="21.394485"/><trkpt lat="51.822867" lon="21.394594"/><trkpt lat="51.822881" lon="21.394779"/><trkpt lat="51.822997" lon="21.395110"/><trkpt lat="51.823140" lon="21.395399"/></trkseg>
@@ -2288,10 +2289,10 @@
 <trkseg><trkpt lat="51.826711" lon="21.382410"/><trkpt lat="51.826703" lon="21.382439"/><trkpt lat="51.826671" lon="21.382487"/><trkpt lat="51.826575" lon="21.382532"/><trkpt lat="51.826486" lon="21.382556"/><trkpt lat="51.826340" lon="21.382587"/><trkpt lat="51.826267" lon="21.382623"/><trkpt lat="51.826206" lon="21.382669"/><trkpt lat="51.826163" lon="21.382713"/><trkpt lat="51.826102" lon="21.382792"/><trkpt lat="51.826060" lon="21.382873"/><trkpt lat="51.826014" lon="21.382988"/><trkpt lat="51.826004" lon="21.383084"/><trkpt lat="51.826007" lon="21.383242"/><trkpt lat="51.826019" lon="21.383414"/><trkpt lat="51.826056" lon="21.383592"/><trkpt lat="51.826106" lon="21.383741"/><trkpt lat="51.826152" lon="21.383874"/><trkpt lat="51.826174" lon="21.383991"/><trkpt lat="51.826176" lon="21.384079"/><trkpt lat="51.826141" lon="21.384432"/><trkpt lat="51.826087" lon="21.384995"/><trkpt lat="51.826043" lon="21.385529"/><trkpt lat="51.825983" lon="21.386250"/><trkpt lat="51.825967" lon="21.386382"/></trkseg>
 </trk>
 <trk><name>Kubusia Puchatka</name><desc>nieprzejezdna</desc><extensions><osmand:color>#e3141b</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.840130" lon="21.403995"/><trkpt lat="51.840210" lon="21.404072"/><trkpt lat="51.840583" lon="21.404478"/><trkpt lat="51.840952" lon="21.404881"/></trkseg>
+<trkseg><trkpt lat="51.840130" lon="21.403994"/><trkpt lat="51.840209" lon="21.404072"/><trkpt lat="51.840583" lon="21.404479"/><trkpt lat="51.840668" lon="21.404547"/><trkpt lat="51.840796" lon="21.404701"/><trkpt lat="51.840933" lon="21.404971"/></trkseg>
 </trk>
 <trk><name>Kubusia Puchatka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.840952" lon="21.404881"/><trkpt lat="51.841433" lon="21.405405"/></trkseg>
+<trkseg><trkpt lat="51.840933" lon="21.404971"/><trkpt lat="51.841001" lon="21.405105"/><trkpt lat="51.841171" lon="21.405227"/><trkpt lat="51.841320" lon="21.405350"/><trkpt lat="51.841433" lon="21.405404"/></trkseg>
 </trk>
 <trk><name>Łosia</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.838823" lon="21.404887"/><trkpt lat="51.838762" lon="21.404911"/><trkpt lat="51.838485" lon="21.405088"/><trkpt lat="51.838309" lon="21.405088"/><trkpt lat="51.838184" lon="21.405243"/><trkpt lat="51.837807" lon="21.405334"/></trkseg>
@@ -2309,6 +2310,6 @@
 <trkseg><trkpt lat="51.838823" lon="21.404887"/><trkpt lat="51.839100" lon="21.406305"/></trkseg>
 </trk>
 <trk><name>droga bez nazwy</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.840952" lon="21.404881"/><trkpt lat="51.840912" lon="21.405625"/><trkpt lat="51.840607" lon="21.405623"/></trkseg>
+<trkseg><trkpt lat="51.840933" lon="21.404971"/><trkpt lat="51.840912" lon="21.405625"/><trkpt lat="51.840607" lon="21.405623"/></trkseg>
 </trk>
 </gpx>
