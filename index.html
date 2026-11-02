@@ -627,7 +627,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   adr.features.forEach(f => {
     const [x, y] = f.geometry.coordinates;
     L.marker([y, x], { keyboard: false, icon: L.divIcon({ className: '', html: `<span class="nr">${esc(f.properties.n)}</span>`, iconSize: null, iconAnchor: [6, 7] }) })
-      .bindPopup(() => kartaWyniku(L.latLng(y, x), opisAdresu(f.properties), tekstAdresu(f.properties))).addTo(nrL);
+      .on('click', () => dymek(L.latLng(y, x), kartaWyniku(L.latLng(y, x), opisAdresu(f.properties), tekstAdresu(f.properties)), { autoPanPaddingTopLeft: [10, 125] })).addTo(nrL);
     indeks[tekstAdresu(f.properties)] = L.latLng(y, x);
   });
   zalezne(nrL, 17);
