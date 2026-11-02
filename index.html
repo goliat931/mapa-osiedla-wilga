@@ -215,6 +215,10 @@
     #zglos-pasek { right:10px; transform:none; width:auto; max-width:none; }
     #zglos-pasek span { flex-basis:calc(100% - 36px); } /* tekst w pierwszym wierszu, trzy przyciski razem pod nim */
   }
+  #licznik { display: flex; gap: 8px; margin: 12px 0; }
+  #licznik:empty { display: none; }
+  #licznik div { flex: 1; font-size: 13px; line-height: 1.3; color: var(--muted); }
+  #licznik b { display: block; font-size: 24px; line-height: 1.2; color: var(--link); }
 </style>
 <link rel="stylesheet" href="map-ui.css">
 </head>
@@ -248,8 +252,8 @@
     <p>Mapa powstała jako oddolna inicjatywa mieszkańca Osiedla Wilga, wsparta przez Sołtysa Osiedla Wilga, Marcina Olkowicza.</p>
     <p>Pomysł narodził się na zebraniu wiejskim, w dyskusji ze strażakami: w lesie gubi się sygnał GPS, a trafienie pod właściwy adres zajmuje cenne minuty. Dlatego mapa ma przede wszystkim <b>ułatwić służbom ratunkowym dojazd do posesji</b>: pokazuje nazwy ulic i numery domów, przejezdność dróg dla wozów strażackich, hydranty, zbiorniki wody i strome podjazdy.</p>
     <p>To wersja robocza, uzupełniana na bieżąco<span id="stan-info"></span>. Przejezdność dróg i stromizny są wstępne i weryfikowane razem z jednostkami OSP.</p>
+    <div id="licznik"></div>
     <p>Widzisz błąd albo brak? Kliknij <b>Zgłoś</b>, przesuń mapę tak, żeby pinezka wskazała miejsce, i kliknij <b>Zgłoś tutaj</b>: nie trzeba się logować, można dołączyć zdjęcie z terenu albo zrzut ekranu. Każdą uwagę sprawdzamy, zanim zmienimy mapę.</p>
-    <p id="licznik"></p>
     <p>Raz otwarta mapa działa potem także bez zasięgu: ulice, numery, drogi i hydranty są zapisane w telefonie. Bez połączenia nie wczytuje się tylko podkład (OSM, ortofotomapa) i nie da się wysłać uwagi.</p>
     <p>Terminy wywozu śmieci: <a href="odpady.html">harmonogram wywozu odpadów</a>, z kalendarzem do telefonu, który przypomni dzień wcześniej.</p>
     <p>Wersja do druku: <a href="atlas-a3.pdf" target="_blank" rel="noopener">atlas A3 w PDF</a> (8 arkuszy, ok. 9 MB) z legendą i indeksem ulic.</p>
@@ -799,8 +803,8 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
     .then(r => { if (!r.ok) throw new Error(r.blad || 'Nie udało się zapisać uwagi.'); return r; });
   const UWAGI_URL = 'https://script.google.com/macros/s/AKfycbx5_boeKa5TW8bYz6l0BVVLcDrarPWOq-bw0F1mqtb853NetDbo1quVrEEqta77Y_FK_Q/exec';
   // licznik uwag w „O mapie”: same liczby z arkusza uwag; bez sieci po prostu się nie pokazuje
-  fetch(UWAGI_URL).then(r => r.json()).then(r => { if (r.liczba) document.getElementById('licznik').textContent =
-    `Zgłoszone uwagi: ${r.liczba}, naniesione na mapę: ${r.naniesione}.`; }).catch(() => {});
+  fetch(UWAGI_URL).then(r => r.json()).then(r => { if (r.liczba) document.getElementById('licznik').innerHTML =
+    [[r.liczba, 'zgłoszonych uwag'], [r.naniesione, 'naniesionych na mapę'], [r.liczba - r.naniesione, 'bez zmiany lub w toku']].map(([n, t]) => `<div><b>${n}</b>${t}</div>`).join(''); }).catch(() => {});
   const TYPY_UWAG = ['Droga nieprzejezdna lub trudny dojazd', 'Droga przejezdna, a na mapie oznaczona inaczej', 'Wąski przejazd lub przeszkoda (brama, szlaban, gałęzie, mostek)',
     'Trudno trafić / brak oznakowania', 'Hydrant lub zbiornik wody', 'Numer domu lub adres', 'Nazwa ulicy', 'Brakująca droga lub skrót', 'Inne'];
   // zdjęcie z telefonu zmniejszone do 1600 px (JPEG), żeby wysyłka działała też przy słabym zasięgu
