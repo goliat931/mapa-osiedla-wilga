@@ -87,3 +87,11 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-28 | Uwaga nr 101 | Dorysowana odnoga Saperów od 801 do Czapli (B7, ok. 120 m, żwir), przebieg według BDOT10k, na żółto. |
 | 2026-10-28 | Uwaga nr 102 | Nowy punkt charakterystyczny: ośrodek buddyzmu tybetańskiego Yungdrung Bon „Ligmincha Polska”, Al. Huberta 4 (B7), także w wyszukiwarce. |
 | 2026-11-02 | Uwaga nr 115 | Droga od 801 wzdłuż wału do zbiornika przy Wiśle (A7, poza siatką) na zielono: istniejący żółty odcinek zmieniony, ostatnie ok. 330 m dorysowane według BDOT10k. |
+| 2026-11-02 | Uwaga nr 104 | Odcinek bez nazwy od północnego wjazdu z 801 przez skrzyżowanie do małego pomnika przy wodzie (A7–B7) z czerwonego na żółty. |
+| 2026-11-02 | Uwagi nr 105, 108 | Kubusia Puchatka od Babci i Dziadka do dojazdu do pierwszego domu od Traktu Słonecznego oraz północny koniec Łosia, do dojazdu do Łosia 4E, na czerwono (C4): samochodem nieprzejezdne. Dorysowany żółty dojazd do pierwszego domu, przebieg według cieniowania terenu. Reszta Łosia zostaje żółta. |
+| 2026-11-02 | Uwagi nr 106, 112 | Jelenich Rogów na żółto od Traktu Słonecznego do posesji nr 4 oraz od Wspólnej Chaty do pierwszej posesji (C4–C5). Środek zostaje czerwony. |
+| 2026-11-02 | Uwaga nr 107 | Dorysowany żółty dojazd do Łosia 4E (C4), ok. 100 m, przebieg według BDOT10k. |
+| 2026-11-02 | Uwaga nr 109 | Wspólna Chata od 801 do Traktu Słonecznego na zielono (B4–C5). |
+| 2026-11-02 | Uwagi nr 111, 114 | Nowe adresy: Wspólna Chata 16A i Wspólna Chata 4 (C5). |
+| 2026-11-02 | Uwaga nr 113 | Na działce 1030 zamiast Macierzanki 14 adres Wspólna Chata 5A (C5), według tabliczki na furtce. Punkt PRG Macierzanki 14 usunięty z mapy. |
+| 2026-11-02 | Uwaga nr 116 | Czarny Staw jako zbiornik wodny, punkt poboru wody (B7). |
