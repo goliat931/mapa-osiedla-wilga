@@ -86,3 +86,4 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-10-28 | Uwaga nr 100 | Bezimienny odcinek od Zięby w głąb ośrodka Politechniki (C6, ok. 100 m, zgodny z BDOT10k) z żółtego na czerwony: za bramą jest chodnik, tylko pieszo (zdjęcie). |
 | 2026-10-28 | Uwaga nr 101 | Dorysowana odnoga Saperów od 801 do Czapli (B7, ok. 120 m, żwir), przebieg według BDOT10k, na żółto. |
 | 2026-10-28 | Uwaga nr 102 | Nowy punkt charakterystyczny: ośrodek buddyzmu tybetańskiego Yungdrung Bon „Ligmincha Polska”, Al. Huberta 4 (B7), także w wyszukiwarce. |
+| 2026-11-02 | Uwaga nr 115 | Droga od 801 wzdłuż wału do zbiornika przy Wiśle (A7, poza siatką) na zielono: istniejący żółty odcinek zmieniony, ostatnie ok. 330 m dorysowane według BDOT10k. |
