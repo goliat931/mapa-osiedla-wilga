@@ -97,3 +97,4 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-11-02 | Uwaga nr 116 | Czarny Staw jako zbiornik wodny, punkt poboru wody (B7). |
 | 2026-11-02 | Uwaga nr 110 | Nowy adres Wspólna Chata 9C (C5), budynek na północny zachód od 9B. |
 | 2026-11-02 | Dawid (czat) | Kubusia Puchatka poprawiona według cieniowania terenu, przebieg bliżej faktycznej drogi. Kolory bez zmian. |
+| 2026-11-08 | Gmina (Wod-Kan Wilga, stan 30.09.2026) | Hydranty przy Wiewiórek (dz. 1928), Jemiołuszki (dz. 519/3) i Alei Cichej (dz. 1583) oznaczone jako niesprawne: wyblakła ikona, opis w dymku, pomijane przy „najbliższym hydrancie”. Hydrant przy Wiewiórek potwierdzony wykazem gminy. |

@@ -55,7 +55,7 @@ L = lambda n: prj.mapLayersByName(n)[0]
 
 dump(L('drogi'), 'drogi', lambda f: {
     'n': f['nazwa'], 'k': f['kategoria'], 'u': opis(tag(f['other_tags'], 'weryfikacja'))})
-dump(L('hydranty_reczne'), 'hydranty', lambda f: {'t': f['typ'], 'u': f['uwagi']})
+dump(L('hydranty_reczne'), 'hydranty', lambda f: {'t': f['typ'], 'u': f['uwagi'], 's': f['stan'] or None})
 dump(L('stromizny'), 'stromizny', lambda f: {
     'n': f['ulica'], 's': f['spadek_proc'], 'k': f['klasa'], 'a': f['azymut_pod_gore'],
     'l': f['dlugosc_m'], 'c': f['komorka']})
@@ -202,7 +202,7 @@ def wpt(lyr, nazwa, kolor):
         p = tr.transform(f.geometry().centroid().asPoint())
         gpx.append(f'<wpt lat="{p.y():.6f}" lon="{p.x():.6f}"><name>{esc(nazwa(f))}</name>'
                    f'<extensions><osmand:color>{kolor}</osmand:color></extensions></wpt>')
-wpt(L('hydranty_reczne'), lambda f: {'hydrant': 'Hydrant', 'zbiornik_wodny': 'Zbiornik wodny'}.get(f['typ'], 'Hydrant do weryfikacji'), '#0050d0')
+wpt(L('hydranty_reczne'), lambda f: {'hydrant': 'Hydrant', 'zbiornik_wodny': 'Zbiornik wodny'}.get(f['typ'], 'Hydrant do weryfikacji') + (' (niesprawny)' if f['stan'] else ''), '#0050d0')
 wpt(L('miejsca_zawracania'), lambda f: 'Miejsce do zawracania', '#7a3db8')
 wpt(L('miejsca_charakterystyczne'), lambda f: f['nazwa'] or '', '#555555')
 for u, n, x, y in POZA_PRG:

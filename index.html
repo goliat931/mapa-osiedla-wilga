@@ -277,6 +277,7 @@
   <div class="lw"><i style="border-color:#dc2626;border-top-style:dashed"></i>nieprzejezdna, dojście pieszo</div>
   <h2>Woda dla straży</h2>
   <div class="lw"><img src="ikony/hydrant.svg" alt="">hydrant sprawdzony w terenie (działanie niesprawdzone)</div>
+  <div class="lw"><img src="ikony/hydrant.svg" alt="" style="opacity:.45">hydrant niesprawny wg wodociągów gminy</div>
   <div class="lw"><img src="ikony/hydrant_do_weryfikacji.svg" alt="">hydrant z mapy sieci — niesprawdzony</div>
   <div class="lw"><img src="ikony/zbiornik.svg" alt="">zbiornik wodny</div>
   <h2>Stromy podjazd (grot = pod górę)</h2>
@@ -638,9 +639,10 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
 
   const ikona = (src, s = 24) => L.icon({ iconUrl: src, iconSize: [s, s], iconAnchor: [s / 2, s / 2], popupAnchor: [0, -s / 2] });
   const hydPewne = L.geoJSON(hyd, { filter: f => f.properties.t !== 'do_weryfikacji',
-    pointToLayer: (f, ll) => { const zb = f.properties.t === 'zbiornik_wodny', n = zb ? 'Zbiornik wodny' : 'Hydrant sprawdzony w terenie';
-      return L.marker(ll, { icon: ikona(zb ? 'ikony/zbiornik.svg' : 'ikony/hydrant.svg'), alt: n, title: n }); },
-    onEachFeature: (f, l) => l.bindPopup(f.properties.t === 'zbiornik_wodny' ? '<b>Zbiornik wodny</b>' : '<b>Hydrant</b><br>Sprawdzony w terenie (stoi). Nie sprawdzano, czy działa.') });
+    pointToLayer: (f, ll) => { const zb = f.properties.t === 'zbiornik_wodny', n = zb ? 'Zbiornik wodny' : f.properties.s ? 'Hydrant niesprawny' : 'Hydrant sprawdzony w terenie';
+      return L.marker(ll, { icon: ikona(zb ? 'ikony/zbiornik.svg' : 'ikony/hydrant.svg'), alt: n, title: n, opacity: f.properties.s ? .45 : 1 }); },
+    onEachFeature: (f, l) => l.bindPopup(f.properties.t === 'zbiornik_wodny' ? '<b>Zbiornik wodny</b>'
+      : f.properties.s ? `<b>Hydrant niesprawny</b><br>${esc(f.properties.s)}.` : '<b>Hydrant</b><br>Sprawdzony w terenie (stoi). Nie sprawdzano, czy działa.') });
   dodaj('Hydranty i zbiorniki', hydPewne);
   dodaj('Hydranty do sprawdzenia (z mapy sieci)', L.geoJSON(hyd, { filter: f => f.properties.t === 'do_weryfikacji',
     pointToLayer: (f, ll) => L.marker(ll, { icon: ikona('ikony/hydrant_do_weryfikacji.svg', 22), alt: 'Hydrant z mapy sieci, niesprawdzony', title: 'Hydrant z mapy sieci, niesprawdzony' }),
@@ -698,7 +700,7 @@ Promise.all(['woda_obszary', 'woda_cieki', 'budynki', 'drogi', 'adresy', 'hydran
   const najblizszyHydrant = ll => {
     let best = [Infinity, null];
     hyd.features.forEach(f => {
-      if (f.properties.t !== 'hydrant') return;
+      if (f.properties.t !== 'hydrant' || f.properties.s) return;  // bez niesprawnych
       const [lng, lat] = f.geometry.coordinates, distance = map.distance(ll, [lat, lng]);
       if (distance < best[0]) best = [distance, f];
     });

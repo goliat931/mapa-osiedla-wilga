@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" creator="mapa-osiedle-wilga.goliat.dev" xmlns="http://www.topografix.com/GPX/1/1" xmlns:osmand="https://osmand.net">
-<metadata><name>Mapa Osiedla Wilga dla służb (2026-11-02)</name></metadata>
+<metadata><name>Mapa Osiedla Wilga dla służb (2026-11-08)</name></metadata>
 <wpt lat="51.819610" lon="21.410730"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.843022" lon="21.416479"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.841600" lon="21.412535"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
@@ -56,8 +56,8 @@
 <wpt lat="51.829805" lon="21.405451"><name>Hydrant do weryfikacji</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.823017" lon="21.405374"><name>Hydrant do weryfikacji</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.822459" lon="21.405549"><name>Hydrant do weryfikacji</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
-<wpt lat="51.823504" lon="21.405399"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
-<wpt lat="51.829798" lon="21.406303"><name>Hydrant do weryfikacji</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
+<wpt lat="51.823504" lon="21.405399"><name>Hydrant (niesprawny)</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
+<wpt lat="51.829798" lon="21.406303"><name>Hydrant (niesprawny)</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.828670" lon="21.407813"><name>Hydrant do weryfikacji</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.828027" lon="21.407838"><name>Hydrant do weryfikacji</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.828368" lon="21.412563"><name>Hydrant do weryfikacji</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
@@ -87,7 +87,7 @@
 <wpt lat="51.830848" lon="21.409601"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.825352" lon="21.408994"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.843566" lon="21.420559"><name>Hydrant do weryfikacji</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
-<wpt lat="51.843020" lon="21.431210"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
+<wpt lat="51.843020" lon="21.431210"><name>Hydrant (niesprawny)</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.827480" lon="21.409070"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.853894" lon="21.414365"><name>Zbiornik wodny</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
 <wpt lat="51.844010" lon="21.394880"><name>Hydrant</name><extensions><osmand:color>#0050d0</osmand:color></extensions></wpt>
