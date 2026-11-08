@@ -98,3 +98,9 @@ Każda poprawka danych na mapie ma tu wiersz: skąd się wzięła (numer uwagi z
 | 2026-11-02 | Uwaga nr 110 | Nowy adres Wspólna Chata 9C (C5), budynek na północny zachód od 9B. |
 | 2026-11-02 | Dawid (czat) | Kubusia Puchatka poprawiona według cieniowania terenu, przebieg bliżej faktycznej drogi. Kolory bez zmian. |
 | 2026-11-08 | Gmina (Wod-Kan Wilga, stan 30.09.2026) | Hydranty przy Wiewiórek (dz. 1928), Jemiołuszki (dz. 519/3) i Alei Cichej (dz. 1583) oznaczone jako niesprawne: wyblakła ikona, opis w dymku, pomijane przy „najbliższym hydrancie”. Hydrant przy Wiewiórek potwierdzony wykazem gminy. |
+| 2026-11-08 | Uwaga nr 117 | Rusałki 1 na dz. 202 (tabliczka na płocie); PRG podaje tu Samanty 27, oba adresy na mapie. |
+| 2026-11-08 | Uwaga nr 118 | Maksa Rozbójnika 24 na budynku dz. 234/2 (tabliczka przy furtce); punkt PRG 22 zostaje do wyjaśnienia. |
+| 2026-11-08 | Uwaga nr 119 | Pliszki bez 52 m od budynku na południowym końcu do skrzyżowania (w terenie i w BDOT10k brak drogi). |
+| 2026-11-08 | Uwaga nr 120 | Maksa Rozbójnika 28 na dz. 231 (tabliczka). |
+| 2026-11-08 | Uwaga nr 121 | Samanty 43 na dz. 193. |
+| 2026-11-08 | Uwaga nr 122 | Hydrant przy Wiewiórek potwierdzony (zmiana w commicie 5ae0a12). |

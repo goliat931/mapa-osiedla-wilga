@@ -134,6 +134,10 @@
 <wpt lat="51.828551" lon="21.405706"><name>Czeremchy 1M</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.835833" lon="21.401917"><name>Wspólna Chata 9C</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.836397" lon="21.403648"><name>Wspólna Chata 16A</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
+<wpt lat="51.828955" lon="21.424017"><name>Rusałki 1</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
+<wpt lat="51.828522" lon="21.426088"><name>Maksa Rozbójnika 24</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
+<wpt lat="51.827818" lon="21.4268"><name>Maksa Rozbójnika 28</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
+<wpt lat="51.826803" lon="21.426147"><name>Samanty 43</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.836095" lon="21.407858"><name>Wspólna Chata 4</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.83566" lon="21.406396"><name>Wspólna Chata 5A</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
 <wpt lat="51.829059" lon="21.423572"><name>Samanty 25</name><extensions><osmand:color>#000000</osmand:color></extensions></wpt>
@@ -2007,7 +2011,7 @@
 <trkseg><trkpt lat="51.834990" lon="21.409311"/><trkpt lat="51.835008" lon="21.410087"/><trkpt lat="51.835025" lon="21.411104"/></trkseg>
 </trk>
 <trk><name>Pliszki</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
-<trkseg><trkpt lat="51.828118" lon="21.428041"/><trkpt lat="51.828651" lon="21.427968"/><trkpt lat="51.829462" lon="21.427896"/><trkpt lat="51.829897" lon="21.428152"/><trkpt lat="51.830309" lon="21.428711"/></trkseg>
+<trkseg><trkpt lat="51.828584" lon="21.427978"/><trkpt lat="51.828651" lon="21.427968"/><trkpt lat="51.829462" lon="21.427896"/><trkpt lat="51.829897" lon="21.428152"/><trkpt lat="51.830309" lon="21.428711"/></trkseg>
 </trk>
 <trk><name>Puszczyka</name><desc>lekki wóz / do sprawdzenia</desc><extensions><osmand:color>#f5c400</osmand:color><osmand:width>bold</osmand:width></extensions>
 <trkseg><trkpt lat="51.848232" lon="21.393422"/><trkpt lat="51.848483" lon="21.393900"/><trkpt lat="51.848830" lon="21.394543"/><trkpt lat="51.848838" lon="21.394573"/><trkpt lat="51.849653" lon="21.396083"/></trkseg>

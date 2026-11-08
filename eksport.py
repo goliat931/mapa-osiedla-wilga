@@ -79,6 +79,10 @@ POZA_PRG = [('Lipowa', '12', 21.431453, 51.843599), ('Saperów', '1A', 21.401946
             ('Czeremchy', '1M', 21.405706, 51.828551),  # uwaga nr 80
             ('Wspólna Chata', '9C', 21.401917, 51.835833),  # uwaga nr 110: budynek na płn.-zach. od 9B
             ('Wspólna Chata', '16A', 21.403648, 51.836397),  # uwaga nr 111
+            ('Rusałki', '1', 21.424017, 51.828955),  # uwaga nr 117: tabliczka na płocie dz. 202, PRG podaje tu Samanty 27
+            ('Maksa Rozbójnika', '24', 21.426088, 51.828522),  # uwaga nr 118: tabliczka przy furtce dz. 234/2, PRG podaje tu 22
+            ('Maksa Rozbójnika', '28', 21.426800, 51.827818),  # uwaga nr 120: tabliczka „dz. 231”
+            ('Samanty', '43', 21.426147, 51.826803),  # uwaga nr 121: dz. 193
             ('Wspólna Chata', '4', 21.407858, 51.836095),  # uwaga nr 114
             ('Wspólna Chata', '5A', 21.406396, 51.83566),  # uwaga nr 113: tabliczka na furtce (zdjęcie), działka 1030
             ('Samanty', '25', 21.423572, 51.829059)]  # uwaga nr 2: zgoda właścicieli, w PRG brak (do wyjaśnienia z Marcinem)
