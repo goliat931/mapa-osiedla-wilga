@@ -1,13 +1,13 @@
 // Kopia mapy w telefonie: najpierw sieć (świeże dane), a gdy jej brak albo jest zbyt wolna – ostatnia zapisana wersja.
 // Podkłady (OSM, ortofoto, cieniowanie) i zgłaszanie uwag nadal wymagają połączenia.
 // Nowy plik strony albo danych trzeba dopisać do listy PLIKI.
-const KOPIA = 'wilga-mapa-6', CZEKAJ_MS = 4000;
+const KOPIA = 'wilga-mapa-7', CZEKAJ_MS = 4000;
 const PLIKI = ['./', 'wilga.css', 'map-ui.css', 'odpady.html', 'data/odpady.json', 'data/odpady.ics', 'znak.svg', 'manifest.webmanifest', 'wilga-osmand.gpx',
   'lib/leaflet/leaflet.min.js', 'lib/leaflet-rotate/leaflet-rotate.js', 'lib/leaflet/leaflet.min.css', 'lib/leaflet/images/layers.png', 'lib/leaflet/images/layers-2x.png',
   ...['adresy', 'budynki', 'drogi', 'hydranty', 'miejsca', 'siatka', 'stromizny', 'woda_cieki', 'woda_obszary', 'zawracanie', 'obreby'].map(n => `data/${n}.geojson`),
   'data/indeks.json', 'data/dzialki.json', 'data/stan.json',
   ...['hydrant', 'hydrant_do_weryfikacji', 'zbiornik', 'swietlica', 'strzalka_spadek_1', 'strzalka_spadek_2', 'strzalka_spadek_3'].map(n => `ikony/${n}.svg`),
-  'ikony/app-192.png'];
+  'ikony/app-192.png', 'fonts/plex.css', 'fonts/plex-mono-latin-400.woff2', 'fonts/plex-mono-latin-500.woff2', 'fonts/plex-mono-latin-ext-400.woff2', 'fonts/plex-mono-latin-ext-500.woff2', 'fonts/plex-sans-latin-ext-italic.woff2', 'fonts/plex-sans-latin-ext-normal.woff2', 'fonts/plex-sans-latin-italic.woff2', 'fonts/plex-sans-latin-normal.woff2'];
 
 self.addEventListener('install', e => e.waitUntil(caches.open(KOPIA).then(c => c.addAll(PLIKI)).then(() => self.skipWaiting())));
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));

@@ -26,7 +26,7 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 #powitanie,
 #skrot {
   border: 1px solid var(--glass-border);
-  border-radius: 12px;
+  border-radius: 18px;
   background: var(--glass);
   box-shadow: var(--hud-shadow);
   -webkit-backdrop-filter: blur(14px);
@@ -53,24 +53,24 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 .map-hud-brand .stan { margin: 0; color: #4a5856; font-size: 12px; text-align: right; }
 #top .wiersz { display: grid; grid-template-columns: minmax(0, 1fr) auto auto 44px; gap: 6px; }
 #top .wiersz .pole { min-width: 0; }
-#top #szukaj { height: 44px; padding: 0 38px 0 14px; border: 1px solid rgba(19, 78, 74, .2); border-radius: 8px; background: var(--glass-strong); font-size: 15px; }
+#top #szukaj { height: 44px; padding: 0 38px 0 14px; border: 1px solid rgba(19, 78, 74, .2); border-radius: 999px; background: var(--glass-strong); font-size: 15px; }
 #top #szukaj::placeholder { color: #657572; }
 #top #szukaj:focus-visible { border-color: var(--pine); outline-color: var(--pine); }
 #top #szukaj-x { right: 3px; width: 38px; height: 38px; padding: 0; }
 #top #btn-indeks,
 #top #btn-zglos,
-#top #btn-info { min-height: 44px; padding: 0 12px; border-radius: 8px; font-size: 13px; font-weight: 650; }
+#top #btn-info { min-height: 44px; padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 650; }
 #top #btn-zglos { border-color: var(--pine); background: var(--pine); color: #fff; }
 #top #btn-zglos:hover { background: var(--pine-hover); }
 #top #btn-info { display: grid; width: 44px; place-items: center; padding: 0; }
-#top #podp { position: relative; z-index: 2; max-height: min(42vh, 360px); margin: 8px 0 0; padding: 4px; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--glass-strong); box-shadow: 0 8px 20px rgba(15, 23, 42, .12); }
+#top #podp { position: relative; z-index: 2; max-height: min(42vh, 360px); margin: 8px 0 0; padding: 4px; border: 1px solid var(--glass-border); border-radius: 14px; background: var(--glass-strong); box-shadow: 0 8px 20px rgba(15, 23, 42, .12); }
 #top #podp li { min-height: 40px; align-items: center; padding: 7px 10px; }
 #top #podp li[aria-selected="true"],
 #top #podp li:hover { background: rgba(19, 78, 74, .09); }
-#offline { border-radius: 8px; }
+#offline { border-radius: 999px; }
 
 #map-tools { position: fixed; z-index: 1100; top: 16px; right: 16px; display: flex; min-height: 48px; align-items: center; gap: 6px; padding: 5px; }
-#map-tools a { display: inline-flex; min-height: 36px; align-items: center; justify-content: center; padding: 0 10px; border: 1px solid transparent; border-radius: 7px; color: #263b39; font-size: 12px; font-weight: 650; text-decoration: none; white-space: nowrap; }
+#map-tools a { display: inline-flex; min-height: 36px; align-items: center; justify-content: center; padding: 0 12px; border: 1px solid transparent; border-radius: 999px; color: #263b39; font-size: 12px; font-weight: 650; text-decoration: none; white-space: nowrap; }
 #map-tools a:hover { border-color: var(--glass-border); background: rgba(19, 78, 74, .08); }
 .pwa-status { display: inline-flex; min-height: 36px; align-items: center; gap: 7px; padding: 0 9px; color: #42534f; font-size: 12px; font-weight: 700; white-space: nowrap; }
 .pwa-status i { width: 8px; height: 8px; flex: none; border-radius: 50%; background: #94a3a2; box-shadow: 0 0 0 3px rgba(148, 163, 162, .15); }
@@ -81,12 +81,12 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 #indeks { position: fixed; z-index: 1250; top: 16px; right: 16px; bottom: 16px; width: min(360px, calc(100vw - 32px)); background: var(--glass-strong); }
 #indeks header,
 #info header { position: sticky; top: 0; z-index: 1; background: var(--glass-strong); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
-#info { position: fixed; z-index: 1250; top: 82px; left: 16px; max-height: calc(100dvh - 98px); border-radius: 12px; background: var(--glass-strong); }
+#info { position: fixed; z-index: 1250; top: 82px; left: 16px; max-height: calc(100dvh - 98px); border-radius: 18px; background: var(--glass-strong); }
 #zglos-pasek { z-index: 1300; border-color: var(--pine); background: var(--pine); }
 
-#legenda { position: fixed; z-index: 1150; right: 16px; bottom: 72px; left: auto; width: min(330px, calc(100vw - 32px)); max-width: none; max-height: min(68vh, 560px); border-radius: 12px; background: var(--glass-strong); }
+#legenda { position: fixed; z-index: 1150; right: 16px; bottom: 72px; left: auto; width: min(330px, calc(100vw - 32px)); max-width: none; max-height: min(68vh, 560px); border-radius: 18px; background: var(--glass-strong); }
 #pokaz-leg { position: fixed; z-index: 1151; right: 76px; bottom: 16px; left: auto; display: inline-flex; min-height: 44px; align-items: center; gap: 9px; padding: 0 14px; border: 1px solid var(--glass-border); border-radius: 999px; background: var(--glass-strong); color: var(--pine); box-shadow: var(--hud-shadow); font-size: 13px; font-weight: 700; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
-#zamknij-leg { border-radius: 7px; }
+#zamknij-leg { border-radius: 50%; }
 .mini i:first-child { border-color: var(--road-heavy) !important; }
 .mini i:nth-child(2) { border-color: var(--road-light) !important; }
 .mini i:nth-child(3) { border-color: var(--road-blocked) !important; }
@@ -99,7 +99,7 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 .selection-card[hidden] { display: none; }
 .selection-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
 .selection-sector { color: var(--pine); font-size: 12px; font-weight: 800; line-height: 1.4; }
-.selection-close { width: 32px; height: 32px; flex: none; border: 0; border-radius: 7px; background: transparent; color: #52615f; font-size: 20px; cursor: pointer; }
+.selection-close { width: 32px; height: 32px; flex: none; border: 0; border-radius: 50%; background: transparent; color: #52615f; font-size: 20px; cursor: pointer; }
 .selection-close:hover { background: rgba(19, 78, 74, .08); }
 .selection-address { font-size: 16px; font-weight: 750; line-height: 1.35; }
 .selection-meta { display: grid; gap: 6px; margin-top: 9px; color: #34433f; font-size: 14px; line-height: 1.4; }
@@ -108,7 +108,7 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 .selection-road i { width: 22px; height: 0; flex: none; border-top: 4px solid var(--road-light); border-radius: 2px; }
 .selection-water b { color: #0369a1; }
 .selection-water { flex-wrap: wrap; }
-.selection-report { width: 100%; min-height: 42px; margin-top: 11px; padding: 0 12px; border: 1px solid var(--pine); border-radius: 8px; background: var(--pine); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.selection-report { width: 100%; min-height: 42px; margin-top: 11px; padding: 0 12px; border: 1px solid var(--pine); border-radius: 999px; background: var(--pine); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
 .selection-report:hover { background: var(--pine-hover); }
 
 .leaflet-container { font-family: inherit; }
@@ -119,7 +119,7 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 .leaflet-bar a,
 .leaflet-control-layers { color: var(--pine); }
 .leaflet-bar a:hover { background: rgba(19, 78, 74, .08); color: var(--pine); }
-.leaflet-popup-content-wrapper { border-radius: 10px; }
+.leaflet-popup-content-wrapper { border-radius: 16px; }
 .leaflet-popup-content { margin: 12px 14px; }
 .leaflet-control-attribution { border-radius: 7px 0 0; }
 .leaflet-top.leaflet-left { top: 112px; left: 16px; }
@@ -187,12 +187,12 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 /* karta wyniku: dwa przyciski obok siebie (kopiuj położenie, zgłoś uwagę) */
 .selection-actions { display: grid; grid-template-columns: auto 1fr; gap: 8px; margin-top: 11px; }
 .selection-actions .selection-report { margin-top: 0; }
-.selection-copy { min-height: 42px; padding: 0 12px; border: 1px solid var(--pine); border-radius: 8px; background: transparent; color: var(--pine); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.selection-copy { min-height: 42px; padding: 0 12px; border: 1px solid var(--pine); border-radius: 999px; background: transparent; color: var(--pine); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
 .selection-copy:hover { background: rgba(19, 78, 74, .08); }
 @media (prefers-color-scheme: dark) { .selection-copy { color: #cfe6e3; border-color: #87beb8; } }
 
 /* „Prowadź”: najważniejszy przycisk karty, na całą szerokość */
-.selection-nav { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; margin-top: 11px; border-radius: 8px; background: var(--road-heavy); color: #fff; font-size: 15px; font-weight: 800; text-decoration: none; }
+.selection-nav { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; margin-top: 11px; border-radius: 999px; background: var(--road-heavy); color: #fff; font-size: 15px; font-weight: 800; text-decoration: none; }
 .selection-nav:hover { background: #15803d; }
 .selection-nav::before { content: ""; width: 18px; height: 18px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2 4.5 20.3l.7.7L12 18l6.8 3 .7-.7z'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2 4.5 20.3l.7.7L12 18l6.8 3 .7-.7z'/%3E%3C/svg%3E") center / contain no-repeat; }
 .selection-actions { margin-top: 8px; }
@@ -228,10 +228,10 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
   .selection-nav, .karta-wyniku .prowadz, .zglos-popup button, .btn-primary, #top #btn-zglos { border: 1px solid #3d8a83; }
 }
 /* formularz zgłoszenia w stylu panelu */
-.zglos-popup select, .zglos-popup textarea, .zglos-popup input:not([type=file]) { border: 1px solid rgba(19, 78, 74, .28); border-radius: 8px; background: var(--glass-strong); color: inherit; }
+.zglos-popup select, .zglos-popup textarea, .zglos-popup input:not([type=file]) { border: 1px solid rgba(19, 78, 74, .28); border-radius: 12px; background: var(--glass-strong); color: inherit; }
 .zglos-popup select:focus-visible, .zglos-popup textarea:focus-visible, .zglos-popup input:focus-visible { outline: 2px solid var(--pine); outline-offset: 1px; }
-.zglos-popup button { border-radius: 8px; min-height: 44px; }
-.zglos-popup .aparat { border-color: var(--pine); color: var(--pine); border-radius: 8px; }
+.zglos-popup button { border-radius: 999px; min-height: 44px; }
+.zglos-popup .aparat { border-color: var(--pine); color: var(--pine); border-radius: 999px; }
 .zglos-popup .drobne { color: var(--muted); }
 @media (prefers-color-scheme: dark) {
   .zglos-popup select, .zglos-popup textarea, .zglos-popup input:not([type=file]) { border-color: rgba(226, 232, 240, .25); }
@@ -274,7 +274,7 @@ html body #map { position: fixed; inset: 0; width: 100vw; height: 100vh; height:
 #top .map-hud-brand .wilga-brand { font-size: 14px; white-space: nowrap; }
 #top .hud-prawa { margin-left: auto; }
 .hud-akcje { display: flex; align-items: center; gap: 4px; flex: none; }
-.hud-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 38px; height: 38px; padding: 0 10px; border: 0; border-radius: 12px;
+.hud-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 38px; height: 38px; padding: 0 12px; border: 0; border-radius: 999px;
   background: transparent; color: var(--pine); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: background .15s, transform .1s; }
 .hud-btn svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .hud-btn:hover { background: rgba(19, 78, 74, .09); }
